@@ -33,9 +33,9 @@ export interface ProductFilterInput {
   limit?: number;
   search?: string;
   category?: string[];
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sort?: "desc" | "asc" | "lowestPrice" | "highestPrice" | "a-z" | "z-a";
 }
 
 export interface PaginatedResponse<T> {
