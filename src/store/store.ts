@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PERSIST_STORE_NAME } from "@/constants/app.constant";
 import authReducer from "./features/auth/auth.slice";
+import productReducer from "./features/products/product.slice";
 
 // Configuration for persisting state
 const persistConfig = {
@@ -14,6 +15,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
+  product: productReducer,
 });
 
 // Wrap reducers with persistReducer
