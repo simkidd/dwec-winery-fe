@@ -135,7 +135,7 @@ const CartSheet = ({
                   className="w-full cursor-pointer"
                   onClick={handleViewCart}
                 >
-                  Go to Cart
+                  View Cart
                 </Button>
               </div>
             </div>

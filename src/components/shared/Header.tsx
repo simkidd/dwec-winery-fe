@@ -1,25 +1,61 @@
 "use client";
-import React, { useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 import { SearchIcon, ShoppingCartIcon, User2Icon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "../ui/button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import ThemeSwitcher from "./ThemeSwitcher";
-import MenuNavigation from "./MenuNavigation";
+import { Input } from "../ui/input";
 import CartSheet from "./CartSheet";
+import MenuNavigation from "./MenuNavigation";
+import ThemeSwitcher from "./ThemeSwitcher";
+
+const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+
+    // Show/hide header based on scroll direction
+    if (currentScrollY > SCROLL_THRESHOLD) {
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        setIsScrolled(true);
+      } else {
+        // Scrolling up
+        setIsScrolled(false);
+      }
+    } else {
+      // At top of page
+      setIsScrolled(false);
+    }
+
+    setLastScrollY(currentScrollY);
+  }, [lastScrollY]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   return (
-    <div className="w-full">
+    <div
+      className={cn(
+        "w-full sticky top-0 z-30 transition-transform duration-500 ease-in-out",
+        isScrolled ? "-translate-y-full" : "translate-y-0"
+      )}
+    >
       {/* top header */}
-      <div className="container mx-auto px-4">
-        <div className="w-full grid grid-cols-3 py-4">
+      <div className="bg-background">
+        <div className="w-full container mx-auto px-4 grid grid-cols-3 py-4">
           {/* logo */}
           <div className="flex-shrink-0 font-bold text-lg text-primary">
             Logo
@@ -99,7 +135,7 @@ const Header = () => {
       </div>
 
       {/* botton header */}
-      <div className=" bg-gray-100 dark:bg-background border-t border-b">
+      <div className=" bg-gray-50 dark:bg-gray-900 border-t border-b">
         <div className="container mx-auto px-4 flex">
           <MenuNavigation />
         </div>
