@@ -1,19 +1,19 @@
 "use client";
 
 import useProducts from "@/hooks/use-products";
+import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { ChevronDown, FilterX, Frown, Loader2 } from "lucide-react";
+import { ChevronDown, Frown, Loader2 } from "lucide-react";
 import ProductCard from "../home/ProductCard";
 import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
-import ProductFilter from "./ProductFilter";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { setFilter } from "@/store/features/products/product.slice";
+import { Skeleton } from "../ui/skeleton";
+import ProductFilter from "./ProductFilter";
 
 type SortOption =
   | "desc"
@@ -70,24 +70,13 @@ const ProductsGrid = () => {
             </div>
           </div>
 
-
           {/* Products Grid */}
           <div className="flex-1">
             {/* Mobile Filters & Sort Header */}
             <div className="flex justify-between items-center gap-4 mb-6">
               {/* Mobile Filters */}
               <div className="md:hidden">
-                <Button variant="outline" className="rounded-sm" asChild>
-                  <details className="dropdown">
-                    <summary className="flex items-center gap-2">
-                      <FilterX className="h-4 w-4" />
-                      Filters
-                    </summary>
-                    <div className="mt-2 p-4 border rounded-lg shadow-lg">
-                      <ProductFilter mobileView />
-                    </div>
-                  </details>
-                </Button>
+                <ProductFilter />
               </div>
 
               <div className="ms-auto">
@@ -96,10 +85,10 @@ const ProductsGrid = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2 rounded-sm">
                       <span>{currentSortLabel}</span>
-                      <ChevronDown className="h-4 w-4 opacity-50" />
+                      <ChevronDown />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56">
+                  <DropdownMenuContent className="w-40 space-y-0.5">
                     {sortOptions.map((option) => (
                       <DropdownMenuItem
                         key={option.value}
