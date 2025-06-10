@@ -28,17 +28,19 @@ const ExploreCategories = () => {
               curated for every occasion and palate.
             </p>
           </div>
-          <Link
-            href="/product-categories"
-            className="hidden md:flex items-center gap-1 hover:underline hover:underline-offset-2 text-primary"
-          >
-            View all categories <ChevronRight className="h-4 w-4" />
-          </Link>
+          <Button variant={'link'} asChild className="hidden md:flex ">
+            <Link
+              href="/product-categories"
+              className="flex items-center gap-1"
+            >
+              View all categories <ChevronRight />
+            </Link>
+          </Button>
         </div>
 
         {isPending ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {[...Array(4)].map((_,i)=>(
+            {[...Array(4)].map((_, i) => (
               <Skeleton key={i} className="aspect-square rounded-sm" />
             ))}
           </div>

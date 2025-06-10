@@ -21,9 +21,14 @@ const FeaturedProducts = () => {
               Discover our hand-selected premium wines from renowned vineyards
             </p>
           </div>
-          <Link href={"/products"} className="flex items-center gap-1 hover:underline hover:underline-offset-2 text-primary">
-            View all wines <ChevronRight className="ml-2 h-4 w-4" />
-          </Link>
+          <Button asChild variant={'link'}>
+            <Link
+              href={"/products"}
+              className="flex items-center gap-1"
+            >
+              View all wines <ChevronRight />
+            </Link>
+          </Button>
         </div>
 
         {isPending ? (

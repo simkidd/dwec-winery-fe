@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { SearchIcon, ShoppingCartIcon, User2Icon } from "lucide-react";
+import { DownloadIcon, SearchIcon, ShoppingCartIcon, User2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -12,14 +12,15 @@ import { Input } from "../ui/input";
 import CartSheet from "./CartSheet";
 import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
   const [lastScrollY, setLastScrollY] = useState(0);
+  const isMobile = useIsMobile()
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -81,6 +82,34 @@ const Header = () => {
 
           {/* user & cart  */}
           <div className="flex items-center justify-end gap-4">
+            {/* download app */}
+             {!isMobile && (
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <DownloadIcon className="h-4 w-4" />
+                    <span>Get App</span>
+                  </Button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-[400px]">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">Download Our App</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Enjoy exclusive app-only deals and easier shopping.
+                    </p>
+                    <div className="flex gap-2 pt-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        iOS
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        Android
+                      </Button>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            )}
+
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Button
