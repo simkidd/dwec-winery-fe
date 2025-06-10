@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/navigation-menu";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Menu } from "lucide-react";
 // import useCategories from "@/hooks/use-categories";
 
 const featuredProducts = [
@@ -34,8 +39,10 @@ const featuredProducts = [
   },
 ];
 
-const MenuNavigation = () => {
+const MenuNavigation = ({ mobileView = false }: { mobileView?: boolean }) => {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(false);
   // const { categories, isPending } = useCategories();
 
   const isActive = (href: string) => {
@@ -45,6 +52,55 @@ const MenuNavigation = () => {
       pathname.startsWith(href + "/")
     );
   };
+
+  if (mobileView || isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[300px]">
+          <nav className="flex flex-col space-y-4 pt-6">
+            <MobileNavItem href="/" isActive={isActive("/")}>
+              Home
+            </MobileNavItem>
+
+            <div className="space-y-2">
+              <p className="px-4 text-sm font-medium text-muted-foreground">
+                Products
+              </p>
+              {featuredProducts.map((item) => (
+                <MobileNavItem
+                  key={item.href}
+                  href={item.href}
+                  isActive={isActive(item.href)}
+                >
+                  {item.title}
+                </MobileNavItem>
+              ))}
+            </div>
+
+            <MobileNavItem href="/about-us" isActive={isActive("/about-us")}>
+              About Us
+            </MobileNavItem>
+
+            <MobileNavItem href="/blog" isActive={isActive("/blog")}>
+              Blog
+            </MobileNavItem>
+
+            <MobileNavItem
+              href="/contact-us"
+              isActive={isActive("/contact-us")}
+            >
+              Contact Us
+            </MobileNavItem>
+          </nav>
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <NavigationMenu viewport={false}>
@@ -141,3 +197,25 @@ function ListItem({
     </li>
   );
 }
+
+const MobileNavItem = ({
+  href,
+  isActive,
+  children,
+}: {
+  href: string;
+  isActive: boolean;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "block px-4 py-2 text-sm font-medium transition-colors hover:text-primary",
+        isActive ? "text-primary" : "text-muted-foreground"
+      )}
+    >
+      {children}
+    </Link>
+  );
+};
