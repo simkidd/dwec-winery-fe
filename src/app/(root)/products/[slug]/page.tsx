@@ -1,7 +1,9 @@
 import PageHeader from "@/components/product/PageHeader";
+import ProductDetails from "@/components/product/ProductDetails";
 import { IProduct } from "@/interfaces/product.interface";
 import { getAllProducts, getProductBySlug } from "@/lib/api/products";
 import { config } from "@/utils/config";
+import { notFound } from "next/navigation";
 import React from "react";
 
 export const generateMetadata = async ({
@@ -93,9 +95,14 @@ const ProductPage = async ({
   const { slug } = await params;
   const { product } = await getProductBySlug(slug);
 
+  if (!product) {
+    return notFound();
+  }
+
   return (
     <div>
       <PageHeader product={product} />
+      <ProductDetails product={product} />
     </div>
   );
 };

@@ -62,7 +62,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           </div>
 
           {/* offer badge */}
-          {!hasDiscount && (
+          {hasDiscount && (
             <Badge
               className={cn(
                 "absolute top-2 right-2 bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full z-[2] transition-all duration-500 ease-in-out",
@@ -71,7 +71,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                   : "opacity-100 translate-x-0"
               )}
             >
-              -45% {/* -{product?.currentOffer?.percentageOff}% off */}
+              -{product?.currentOffer?.percentageOff}%
             </Badge>
           )}
 
@@ -110,7 +110,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
             </h3>
           </Link>
           <div className="flex justify-center items-center gap-1">
-            {!hasDiscount && (
+            {hasDiscount && (
               <span className="line-through text-gray-500 text-sm">
                 {formatCurrency(product?.price)}
               </span>
