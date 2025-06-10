@@ -50,6 +50,16 @@ export const getAllCategories = async () => {
   }
 };
 
+export const getCategoryBySlug = async (slug: string) => {
+  try {
+    const response = await instance.get(`/categories/slug/${slug}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export const getAds = async () => {
   try {
     const response = await instance.get(`/users/ads/get-ads`);

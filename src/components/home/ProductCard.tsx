@@ -43,7 +43,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               src={product.images[0]}
               alt={product.name}
               fill
-              className={`w-full h-full object-contain transition-opacity duration-300 ${
+              className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
                 isHovered && product.images[1] ? "opacity-0" : "opacity-100"
               }`}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -53,7 +53,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                 src={product.images[1]}
                 alt={`${product.name} - alternate view`}
                 fill
-                className={`w-full h-full object-contain transition-opacity duration-300 ${
+                className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
                   isHovered ? "opacity-100" : "opacity-0"
                 }`}
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -65,7 +65,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           {!hasDiscount && (
             <Badge
               className={cn(
-                "absolute top-2 right-2 bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full z-[2] transition-all duration-300",
+                "absolute top-2 right-2 bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full z-[2] transition-all duration-500 ease-in-out",
                 isHovered
                   ? "opacity-0 translate-x-2"
                   : "opacity-100 translate-x-0"
@@ -79,7 +79,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           <Button
             variant="ghost"
             size="icon"
-            className={`absolute top-2 right-2 rounded-full bg-background/80 backdrop-blur-sm transition-all duration-300 cursor-pointer z-[2] ${
+            className={`absolute top-2 right-2 rounded-full bg-background/80 backdrop-blur-sm transition-all duration-500 ease-in-out cursor-pointer z-[2] ${
               isHovered
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 translate-x-2"
