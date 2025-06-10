@@ -1,11 +1,15 @@
 "use client";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { Apple, GooglePlay } from "iconsax-reactjs";
 import {
   DownloadIcon,
+  MenuIcon,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
 } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -14,14 +18,12 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { Input } from "../ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import CartSheet from "./CartSheet";
 import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useIsMobile } from "@/hooks/use-mobile";
-import Link from "next/link";
-import { Apple, GooglePlay } from "iconsax-reactjs";
 
-const SCROLL_THRESHOLD = 100; // Minimum pixels to scroll before hiding header
+const SCROLL_THRESHOLD = 100;
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -32,17 +34,13 @@ const Header = () => {
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
 
-    // Show/hide header based on scroll direction
     if (currentScrollY > SCROLL_THRESHOLD) {
       if (currentScrollY > lastScrollY) {
-        // Scrolling down
         setIsScrolled(true);
       } else {
-        // Scrolling up
         setIsScrolled(false);
       }
     } else {
-      // At top of page
       setIsScrolled(false);
     }
 
@@ -61,35 +59,69 @@ const Header = () => {
         isScrolled ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      {/* top header */}
+      {/* Top Header */}
       <div className="bg-background">
-        <div className="w-full container mx-auto px-4 grid grid-cols-3 py-4">
-          {/* logo */}
+        <div className="w-full container mx-auto px-4 py-4 flex items-center justify-between">
+          {/* Mobile Menu Button */}
+          {isMobile && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="mr-2">
+                  <MenuIcon className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                <div className="flex flex-col h-full">
+                  <div className="flex-1 overflow-y-auto py-4">
+                    <MenuNavigation />
+                  </div>
+                  <div className="border-t p-4">
+                    <div className="flex flex-col gap-2">
+                      <Button variant="outline" className="w-full">
+                        Sign In
+                      </Button>
+                      <Button className="w-full">Create Account</Button>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
+
+          {/* Logo */}
           <div className="flex-shrink-0 font-bold text-lg text-primary">
             Logo
           </div>
 
-          {/* search input */}
-          <div className="flex w-full items-center justify-center gap-2">
-            <div className="flex items-center relative w-full">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                className="focus-visible:ring-0 shadow-none rounded-sm pl-10 w-full"
-              />
+          {/* Search Input - Hidden on mobile */}
+          {!isMobile && (
+            <div className="flex-1 max-w-xl mx-4">
+              <div className="flex items-center relative">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search products..."
+                  className="focus-visible:ring-0 shadow-none rounded-sm pl-10 w-full"
+                />
+                <Button
+                  type="submit"
+                  className="ml-2 rounded-sm cursor-pointer"
+                >
+                  Search
+                </Button>
+              </div>
             </div>
-            <Button
-              type="submit"
-              className="rounded-sm cursor-pointer shrink-0"
-            >
-              Search
-            </Button>
-          </div>
+          )}
 
-          {/* user & cart  */}
-          <div className="flex items-center justify-end gap-4">
-            {/* download app */}
+          {/* Mobile Search Button */}
+          {isMobile && (
+            <Button variant="ghost" size="icon" className="mr-2">
+              <SearchIcon className="h-5 w-5" />
+            </Button>
+          )}
+
+          {/* User & Cart */}
+          <div className="flex items-center gap-2 sm:gap-4">
             {!isMobile && (
               <HoverCard>
                 <HoverCardTrigger asChild>
@@ -100,10 +132,7 @@ const Header = () => {
                 </HoverCardTrigger>
                 <HoverCardContent className="w-fit">
                   <div className="flex flex-col">
-                    <h3 className="font-semibold">Download the DWEC Winery App</h3>
-                    {/* <p className="text-sm text-muted-foreground">
-                      Enjoy exclusive app-only deals and easier shopping.
-                    </p> */}
+                    <h3 className="font-semibold">Download the App</h3>
                     <div className="flex items-center gap-2 mt-4">
                       <Link
                         href={"#"}
@@ -119,7 +148,6 @@ const Header = () => {
                           </p>
                         </div>
                       </Link>
-
                       <Link
                         href={"#"}
                         className="flex items-center justify-center text-left border shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1"
@@ -140,41 +168,41 @@ const Header = () => {
               </HoverCard>
             )}
 
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="gap-1.5 hover:bg-transparent rounded-sm   dark:hover:bg-transparent cursor-pointer"
-                  aria-label="Account options"
-                >
-                  <User2Icon className="h-5 w-5" />
-                  <span className="hidden sm:inline">Account</span>
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent>
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Account</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Sign in to view your orders, wishlist, and preferences.
-                  </p>
-                  <div className="flex flex-col gap-2 pt-2">
-                    <Button variant="outline" size="sm" className="w-full">
-                      Sign In
-                    </Button>
-                    <Button size="sm" className="w-full">
-                      Create Account
-                    </Button>
+            {!isMobile && (
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="gap-1.5 hover:bg-transparent rounded-sm dark:hover:bg-transparent"
+                  >
+                    <User2Icon className="h-5 w-5" />
+                    <span>Account</span>
+                  </Button>
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">Account</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Sign in to view your orders, wishlist, and preferences.
+                    </p>
+                    <div className="flex flex-col gap-2 pt-2">
+                      <Button variant="outline" size="sm" className="w-full">
+                        Sign In
+                      </Button>
+                      <Button size="sm" className="w-full">
+                        Create Account
+                      </Button>
+                    </div>
                   </div>
-                </div>{" "}
-              </HoverCardContent>
-            </HoverCard>
+                </HoverCardContent>
+              </HoverCard>
+            )}
 
             <Button
               variant="ghost"
               size="icon"
-              className="relative hover:bg-transparent rounded-sm dark:hover:bg-transparent cursor-pointer"
-              aria-label="Shopping cart"
-              onClick={() => setIsCartOpen(!isCartOpen)}
+              className="relative hover:bg-transparent rounded-sm dark:hover:bg-transparent"
+              onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCartIcon className="h-5 w-5" />
               <span className="sr-only">Cart</span>
@@ -183,22 +211,35 @@ const Header = () => {
               </span>
             </Button>
 
-            <CartSheet
-              isOpen={isCartOpen}
-              onChange={() => setIsCartOpen(!isCartOpen)}
-            />
-
             <ThemeSwitcher />
           </div>
         </div>
+
+        {/* Mobile Search Bar - Appears when search button clicked */}
+        {isMobile && (
+          <div className="px-4 pb-4">
+            <div className="flex items-center relative">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search products..."
+                className="focus-visible:ring-0 shadow-none rounded-sm pl-10 w-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* botton header */}
-      <div className=" bg-gray-50 dark:bg-gray-900 border-t border-b">
-        <div className="container mx-auto px-4 flex">
-          <MenuNavigation />
+      {/* Bottom Header - Hidden on mobile */}
+      {!isMobile && (
+        <div className="bg-gray-50 dark:bg-gray-900 border-t border-b">
+          <div className="container mx-auto px-4 flex">
+            <MenuNavigation />
+          </div>
         </div>
-      </div>
+      )}
+
+      <CartSheet isOpen={isCartOpen} onChange={() => setIsCartOpen(!isCartOpen)} />
     </div>
   );
 };

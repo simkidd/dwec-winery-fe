@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+// import useCategories from "@/hooks/use-categories";
 
 const featuredProducts = [
   {
@@ -35,6 +36,7 @@ const featuredProducts = [
 
 const MenuNavigation = () => {
   const pathname = usePathname();
+  // const { categories, isPending } = useCategories();
 
   const isActive = (href: string) => {
     return (
@@ -76,31 +78,40 @@ const MenuNavigation = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink asChild  className={cn(
+          <NavigationMenuLink
+            asChild
+            className={cn(
               "border-b-3 border-b-transparent",
               navigationMenuTriggerStyle(),
               isActive("/about-us") && "border-b-primary font-semibold"
-            )}>
+            )}
+          >
             <Link href="/about-us">About Us</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild  className={cn(
+          <NavigationMenuLink
+            asChild
+            className={cn(
               "border-b-3 border-b-transparent",
               navigationMenuTriggerStyle(),
               isActive("/blog") && "border-b-primary font-semibold"
-            )}>
+            )}
+          >
             <Link href="/blog">Blog</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild  className={cn(
+          <NavigationMenuLink
+            asChild
+            className={cn(
               "border-b-3 border-b-transparent",
               navigationMenuTriggerStyle(),
               isActive("/contact-us") && "border-b-primary font-semibold"
-            )}>
+            )}
+          >
             <Link href="/contact-us">Contact Us</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
