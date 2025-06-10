@@ -1,11 +1,15 @@
+"use client"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IProduct } from "@/interfaces/product.interface";
 import { formatCurrency } from "@/utils/helpers";
-import { Heart, Share2, Shield, Truck } from "lucide-react";
+import { Heart, Minus, Plus, Share2, Shield, Truck } from "lucide-react";
 import ProductImages from "./ProductImages";
+import { useState } from "react";
 
 const ProductDetails = ({ product }: { product: IProduct }) => {
+  const [quantity, setQuantity] = useState(1);
+
   const hasDiscount =
     product.currentOffer?.isActive && product.currentOffer?.percentageOff;
 
@@ -19,6 +23,14 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
         product?.currentOffer?.percentageOff
       )
     : product?.price;
+
+  const handleIncrement = () => {
+    setQuantity((prev) => Math.min(prev + 1, 10)); // Limit to max 10
+  };
+
+  const handleDecrement = () => {
+    setQuantity((prev) => Math.max(prev - 1, 1)); // Minimum 1
+  };
 
   return (
     <section>
@@ -68,13 +80,39 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
               <p className="text-muted-foreground">{product.description}</p>
             </div>
 
+            {/* Quantity Selector */}
+            <div className="mb-6 flex items-center gap-4">
+              <h3 className="text-sm font-medium">Quantity:</h3>
+              <div className="flex items-center border rounded-sm">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-none"
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-10 text-center">{quantity}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-none"
+                  onClick={handleIncrement}
+                  disabled={quantity >= 10}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
               <Button
                 size="lg"
                 className="flex-1 min-w-[200px] rounded-sm cursor-pointer"
               >
-                Add to Cart
+                Add to Cart 
               </Button>
 
               <Button variant="ghost" size="icon" className="rounded-full">
