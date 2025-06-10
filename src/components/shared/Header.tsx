@@ -1,6 +1,11 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { DownloadIcon, SearchIcon, ShoppingCartIcon, User2Icon } from "lucide-react";
+import {
+  DownloadIcon,
+  SearchIcon,
+  ShoppingCartIcon,
+  User2Icon,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -13,6 +18,8 @@ import CartSheet from "./CartSheet";
 import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useIsMobile } from "@/hooks/use-mobile";
+import Link from "next/link";
+import { Apple, GooglePlay } from "iconsax-reactjs";
 
 const SCROLL_THRESHOLD = 100; // Minimum pixels to scroll before hiding header
 
@@ -20,7 +27,7 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -83,7 +90,7 @@ const Header = () => {
           {/* user & cart  */}
           <div className="flex items-center justify-end gap-4">
             {/* download app */}
-             {!isMobile && (
+            {!isMobile && (
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <Button variant="ghost" size="sm" className="gap-2">
@@ -91,19 +98,42 @@ const Header = () => {
                     <span>Get App</span>
                   </Button>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-[400px]">
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Download Our App</h3>
-                    <p className="text-sm text-muted-foreground">
+                <HoverCardContent className="w-fit">
+                  <div className="flex flex-col">
+                    <h3 className="font-semibold">Download the DWEC Winery App</h3>
+                    {/* <p className="text-sm text-muted-foreground">
                       Enjoy exclusive app-only deals and easier shopping.
-                    </p>
-                    <div className="flex gap-2 pt-2">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        iOS
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
-                        Android
-                      </Button>
+                    </p> */}
+                    <div className="flex items-center gap-2 mt-4">
+                      <Link
+                        href={"#"}
+                        className="flex items-center justify-center text-left border shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1"
+                      >
+                        <Apple size="32" variant="Bold" className="shrink-0" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold text-nowrap">
+                            Download on the
+                          </span>
+                          <p className="font-semibold leading-[1] text-nowrap">
+                            App Store
+                          </p>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href={"#"}
+                        className="flex items-center justify-center text-left border shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1"
+                      >
+                        <GooglePlay size="32" variant="Bold" />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-bold text-nowrap">
+                            Download on the
+                          </span>
+                          <p className="font-semibold leading-[1] text-nowrap">
+                            Play Store
+                          </p>
+                        </div>
+                      </Link>
                     </div>
                   </div>
                 </HoverCardContent>

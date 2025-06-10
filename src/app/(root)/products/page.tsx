@@ -1,11 +1,11 @@
-import ProductHeader from '@/components/product/ProductHeader'
+import PageHeader from '@/components/product/PageHeader'
 import ProductsGrid from '@/components/product/ProductsGrid'
 import React from 'react'
 
 const Products = () => {
   return (
     <div>
-      <ProductHeader />
+      <PageHeader />
       <ProductsGrid />
     </div>
   )

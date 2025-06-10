@@ -129,7 +129,7 @@ const ProductFilter = () => {
                 </button>
 
                 {expandedSections.category && (
-                  <ScrollArea className="h-40 w-full">
+                  <ScrollArea className="h-32 w-full">
                     <div className="space-y-3 pt-2">
                       {categoriesLoading
                         ? [...Array(5)].map((_, i) => (
@@ -262,6 +262,7 @@ const ProductFilter = () => {
               <Button
                 variant="outline"
                 className="flex-1 cursor-pointer rounded-sm"
+                disabled={categoriesLoading}
                 onClick={handleResetFilters}
               >
                 Reset
@@ -270,6 +271,7 @@ const ProductFilter = () => {
             <DrawerClose asChild>
               <Button
                 className="flex-1 cursor-pointer rounded-sm"
+                disabled={categoriesLoading}
                 onClick={applyFilters}
               >
                 Apply Filters
@@ -302,7 +304,7 @@ const ProductFilter = () => {
         </button>
 
         {expandedSections.category && (
-          <ScrollArea className="h-40 w-full">
+          <ScrollArea className="h-32  w-full">
             <div className="space-y-3 pt-2">
               {categoriesLoading
                 ? [...Array(5)].map((_, i) => (
@@ -426,12 +428,14 @@ const ProductFilter = () => {
         <Button
           variant="outline"
           className="flex-1 cursor-pointer rounded-sm"
+          disabled={categoriesLoading}
           onClick={handleResetFilters}
         >
           Reset
         </Button>
         <Button
           className="flex-1 cursor-pointer rounded-sm"
+          disabled={categoriesLoading}
           onClick={applyFilters}
         >
           Apply Filters

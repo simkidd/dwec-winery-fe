@@ -1,20 +1,20 @@
 "use client";
-
-import useProducts from "@/hooks/use-products";
-import { resetFilter, setFilter } from "@/store/features/products/product.slice";
+import { ICategory } from "@/interfaces/product.interface";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { ChevronDown, Frown, Loader2 } from "lucide-react";
-import ProductCard from "../home/ProductCard";
-import { Button } from "../ui/button";
+import React, { useEffect } from "react";
+import ProductFilter from "./ProductFilter";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { ChevronDown, Frown, Loader2 } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
-import ProductFilter from "./ProductFilter";
-import { useEffect } from "react";
+import useProducts from "@/hooks/use-products";
+import { setFilter } from "@/store/features/products/product.slice";
+import ProductCard from "../home/ProductCard";
 
 type SortOption =
   | "desc"
@@ -33,7 +33,7 @@ const sortOptions = [
   { value: "z-a", label: "Name: Z-A" },
 ];
 
-const ProductsGrid = () => {
+const CategoryProductGrid = ({ category }: { category: ICategory }) => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
   const {
@@ -49,14 +49,19 @@ const ProductsGrid = () => {
   } = useProducts(filter);
 
   useEffect(() => {
-    dispatch(resetFilter());
-  }, [dispatch]);
+    dispatch(
+      setFilter({
+        category: [category._id],
+      })
+    );
+  }, [dispatch, category._id]);
 
   const handleSortFilter = (value: SortOption) => {
     dispatch(
       setFilter({
         ...filter,
         sort: value,
+        category: [category._id],
       })
     );
   };
@@ -190,4 +195,4 @@ const ProductsGrid = () => {
   );
 };
 
-export default ProductsGrid;
+export default CategoryProductGrid;

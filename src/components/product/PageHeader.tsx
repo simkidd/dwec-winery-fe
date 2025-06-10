@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Breadcrumb,
@@ -8,23 +8,49 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type BreadcrumbItem = {
   name: string;
   href: string;
 };
 
-const ProductHeader = () => {
+type ProductHeaderProps = {
+  product?: {
+    name: string;
+    category?: {
+      name: string;
+      slug: string;
+    };
+  };
+};
+
+const PageHeader = ({ product }: ProductHeaderProps) => {
   const pathname = usePathname();
-  
-  // Generate breadcrumbs from the current path
+
+  // Generate breadcrumbs based on product data or path
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    const paths = pathname.split('/').filter(Boolean);
-    const breadcrumbs: BreadcrumbItem[] = [];
-    
-    let accumulatedPath = '';
+    const breadcrumbs: BreadcrumbItem[] = [
+      { name: "Home", href: "/" }, // Always include Home
+    ];
+
+    // If we have product data with category, use that
+    if (product?.category) {
+      breadcrumbs.push(
+        {
+          name: product.category.name,
+          href: `/category/${product.category.slug}`,
+        },
+        { name: product.name, href: pathname }
+      );
+      return breadcrumbs;
+    }
+
+    // Fallback to path-based breadcrumbs
+    const paths = pathname.split("/").filter(Boolean);
+
+    let accumulatedPath = "";
     for (let i = 0; i < paths.length; i++) {
       accumulatedPath += `/${paths[i]}`;
       breadcrumbs.push({
@@ -32,16 +58,15 @@ const ProductHeader = () => {
         href: accumulatedPath,
       });
     }
-    
+
     return breadcrumbs;
   };
 
-  // Format the breadcrumb name to be more readable
   const formatBreadcrumbName = (name: string): string => {
     return name
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   const breadcrumbs = generateBreadcrumbs();
@@ -52,16 +77,6 @@ const ProductHeader = () => {
       <div className="container mx-auto px-4">
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Home
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            
-            {breadcrumbs.length > 0 && <BreadcrumbSeparator />}
-            
             {breadcrumbs.map((crumb, index) => (
               <React.Fragment key={crumb.href}>
                 <BreadcrumbItem>
@@ -71,8 +86,8 @@ const ProductHeader = () => {
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link 
-                        href={crumb.href} 
+                      <Link
+                        href={crumb.href}
                         className="hover:text-primary transition-colors"
                       >
                         {crumb.name}
@@ -90,4 +105,4 @@ const ProductHeader = () => {
   );
 };
 
-export default ProductHeader;
+export default PageHeader;

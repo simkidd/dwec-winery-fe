@@ -1,9 +1,13 @@
-import React from 'react'
+import PageHeader from "@/components/product/PageHeader";
+import React from "react";
 
 const AboutUs = () => {
   return (
-    <div>AboutUs</div>
-  )
-}
+    <div>
+      <PageHeader />
+      AboutUs
+    </div>
+  );
+};
 
-export default AboutUs
+export default AboutUs;

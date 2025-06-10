@@ -1,10 +1,10 @@
 "use client";
 import useCategories from "@/hooks/use-categories";
 import { ChevronRight, Wine } from "lucide-react";
-import Link from "next/link";
-import { Button } from "../ui/button";
-import CategoryCard from "./CategoryCard";
 import { Skeleton } from "../ui/skeleton";
+import CategoryCard from "./CategoryCard";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const ExploreCategories = () => {
   const { categories, isPending } = useCategories();
@@ -28,11 +28,8 @@ const ExploreCategories = () => {
               curated for every occasion and palate.
             </p>
           </div>
-          <Button variant={'link'} asChild className="hidden md:flex ">
-            <Link
-              href="/product-categories"
-              className="flex items-center gap-1"
-            >
+          <Button variant={"link"} asChild className="hidden md:flex ">
+            <Link href="/category" className="flex items-center gap-1">
               View all categories <ChevronRight />
             </Link>
           </Button>
@@ -41,7 +38,7 @@ const ExploreCategories = () => {
         {isPending ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="aspect-square rounded-sm" />
+              <Skeleton key={i} className="aspect-video rounded-sm" />
             ))}
           </div>
         ) : categories.length > 0 ? (
