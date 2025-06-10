@@ -14,7 +14,7 @@ import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
+const SCROLL_THRESHOLD = 100; // Minimum pixels to scroll before hiding header
 
 const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
