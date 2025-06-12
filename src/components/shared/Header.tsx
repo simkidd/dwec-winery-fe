@@ -21,15 +21,19 @@ import { Input } from "../ui/input";
 import CartSheet from "./CartSheet";
 import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useAppSelector } from "@/store/hooks";
+import useLogout from "@/hooks/use-logout";
 
 const SCROLL_THRESHOLD = 100;
 
 const Header = () => {
+  const { user } = useAppSelector((state) => state.auth);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const isMobile = useIsMobile();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const isMobile = useIsMobile();
+  const { signOut } = useLogout();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -51,6 +55,8 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
+
+  console.log(">>>>", user);
 
   return (
     <div
@@ -153,40 +159,69 @@ const Header = () => {
               </HoverCard>
             )}
 
-            {!isMobile && (
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="gap-1.5 hover:bg-transparent rounded-sm dark:hover:bg-transparent"
-                  >
-                    <User2Icon className="h-5 w-5" />
-                    <span>Account</span>
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Account</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Sign in to view your orders, wishlist, and preferences.
-                    </p>
-                    <div className="flex flex-col gap-2 pt-2">
-                      <Button variant="outline" size="sm" className="w-full">
-                        Sign In
-                      </Button>
-                      <Button size="sm" className="w-full">
-                        Create Account
-                      </Button>
+            {!isMobile &&
+              (user ? (
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Button variant="ghost" className="gap-1.5 rounded-sm">
+                      <User2Icon className="h-5 w-5" />
+                      <span>{user.firstname || "My Account"}</span>
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">
+                        Welcome, {user.firstname}
+                      </h3>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="w-full"
+                          onClick={signOut}
+                        >
+                          Logout
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            )}
+                  </HoverCardContent>
+                </HoverCard>
+              ) : (
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Button variant="ghost" className="gap-1.5 rounded-sm">
+                      <User2Icon className="h-5 w-5" />
+                      <span>Account</span>
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent>
+                    <div className="space-y-2">
+                      <h3 className="font-semibold">Account</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Sign in to view your orders, wishlist, and preferences.
+                      </p>
+                      <div className="flex flex-col gap-2 pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          asChild
+                        >
+                          <Link href={"/login"}>Sign In</Link>
+                        </Button>
+                        <Button size="sm" className="w-full" asChild>
+                          <Link href={"/sign-up"}>Create Account</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              ))}
 
             <Button
               variant="ghost"
               size="icon"
-              className="relative hover:bg-transparent rounded-sm dark:hover:bg-transparent"
+              className="relative rounded-full cursor-pointer"
               onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCartIcon className="h-5 w-5" />

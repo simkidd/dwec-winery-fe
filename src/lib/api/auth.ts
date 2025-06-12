@@ -1,6 +1,92 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { LoginFormValues } from "@/components/auth/LoginForm";
+import { RegisterFormValues } from "@/components/auth/SignUpForm";
 import instance from "@/services/axios";
 
-export const getMe = async () => {
-  const res = await instance.get(`/auth/me`);
-  return res.data;
+// Handle responses and errors
+const handleResponse = (response: any) => {
+  if (response.status >= 200 && response.status < 300) {
+    return response.data;
+  }
+  throw new Error(response.data.message || "Request failed");
+};
+
+const handleError = (error: any) => {
+  if (error.response) {
+    throw new Error(error.response.data.error || "Request failed");
+  } else if (error.request) {
+    throw new Error("No response received from the server");
+  } else {
+    throw new Error(error.message || "Request failed");
+  }
+};
+
+export const loginUser = async (data: LoginFormValues) => {
+  try {
+    const response = await instance.post(`/auth/login`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const registerUser = async (data: RegisterFormValues) => {
+  try {
+    const response = await instance.post(`/auth/signup`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const userForgotPassword = async (data: RegisterFormValues) => {
+  try {
+    const response = await instance.post(`/auth/forgot-password`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const userResetPassword = async (data: RegisterFormValues) => {
+  try {
+    const response = await instance.put(`/auth/reset-password`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const userVerifyResetCode = async (code: string) => {
+  try {
+    const response = await instance.get(`/auth/verify-reset/${code}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const userVerify = async (data: string) => {
+  try {
+    const response = await instance.post(`/auth/verify-user`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const userRequestVerification = async (data: string) => {
+  try {
+    const response = await instance.post(`/auth/request-verification`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
 };
