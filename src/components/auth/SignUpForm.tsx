@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Google } from "iconsax-reactjs";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -100,7 +100,10 @@ const SignUpForm = () => {
 
   const onSubmit = async (values: RegisterFormValues) => {
     const data = {
-      ...values,
+      fullName: values.firstName + " " + values.lastName,
+      email: values.email,
+      password: values.password,
+      phoneNumber: values.phoneNumber,
     };
 
     // console.log(">>>>>>", data);
@@ -252,6 +255,7 @@ const SignUpForm = () => {
                           )}
                         </button>
                       </div>
+                       <PasswordRequirements password={field.value} />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -363,3 +367,52 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
+
+function PasswordRequirements({ password }: { password: string }) {
+  const requirements = [
+    {
+      text: "At least 8 characters",
+      valid: password.length >= 8,
+    },
+    {
+      text: "At least 1 uppercase letter",
+      valid: /[A-Z]/.test(password),
+    },
+    {
+      text: "At least 1 lowercase letter",
+      valid: /[a-z]/.test(password),
+    },
+    {
+      text: "At least 1 number",
+      valid: /[0-9]/.test(password),
+    },
+    {
+      text: "At least 1 special character",
+      valid: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
+
+  return (
+   <div className="mt-2 space-y-1">
+      <p className="text-sm text-muted-foreground">Password must contain:</p>
+      <ul className="grid grid-cols-2 gap-1">
+        {requirements.map((req, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {req.valid ? (
+              <Check className="h-3 w-3 text-green-500" />
+            ) : (
+              <X className="h-3 w-3 text-gray-300" />
+            )}
+            <span
+              className={`text-xs ${
+                req.valid ? "text-green-600" : "text-muted-foreground"
+              }`}
+            >
+              {req.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

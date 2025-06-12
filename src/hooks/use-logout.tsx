@@ -4,22 +4,17 @@ import { logout } from "@/store/features/auth/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
 
 const useLogout = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const signOut = useCallback(() => {
+  const signOut = () => {
     router.push("/login");
-    try {
-      cookies.remove(TOKEN_NAME);
-      cookies.remove(USER_DETAILS);
-      dispatch(logout());
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  }, [dispatch, router]);
+    cookies.remove(TOKEN_NAME);
+    cookies.remove(USER_DETAILS);
+    dispatch(logout());
+  };
 
   return { signOut };
 };

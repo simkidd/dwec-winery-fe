@@ -16,4 +16,5 @@ export interface IUser {
   updatedAt: string;
   isDeleted: boolean;
   isBanned: boolean;
+  jwtTokenVersion: number;
 }

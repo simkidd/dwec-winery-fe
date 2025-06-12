@@ -30,9 +30,10 @@ import { Card } from "../ui/card";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters." }),
+  password: z.string().min(3, { message: "Password is required" }),
+  // password: z
+  //   .string()
+  //   .min(8, { message: "Password must be at least 8 characters." }),
 });
 
 export type LoginFormValues = z.infer<typeof formSchema>;
