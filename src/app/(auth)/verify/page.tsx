@@ -11,11 +11,9 @@ export const metadata: Metadata = {
 const VerifyUser = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const email = Array.isArray(searchParams.email)
-    ? searchParams.email[0]
-    : searchParams.email;
+  const { email } = await searchParams;
 
   return (
     <div>
