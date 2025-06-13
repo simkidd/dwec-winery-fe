@@ -18,16 +18,17 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { Input } from "../ui/input";
-import CartSheet from "./CartSheet";
 import MenuNavigation from "./MenuNavigation";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppSelector } from "@/store/hooks";
 import useLogout from "@/hooks/use-logout";
+import CartSheet from "../cart/CartSheet";
 
 const SCROLL_THRESHOLD = 100;
 
 const Header = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const { items } = useAppSelector((state) => state.cart);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -56,7 +57,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  console.log(">>>>", user);
 
   return (
     <div
@@ -116,7 +116,7 @@ const Header = () => {
             {!isMobile && (
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" className="gap-2">
                     <DownloadIcon className="h-4 w-4" />
                     <span>Get App</span>
                   </Button>
@@ -227,7 +227,7 @@ const Header = () => {
               <ShoppingCartIcon className="h-5 w-5" />
               <span className="sr-only">Cart</span>
               <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                0
+                {items.length || 0}
               </span>
             </Button>
 

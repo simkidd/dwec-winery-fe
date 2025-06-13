@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IProduct } from "@/interfaces/product.interface";
@@ -6,8 +6,12 @@ import { formatCurrency } from "@/utils/helpers";
 import { Heart, Minus, Plus, Share2, Shield, Truck } from "lucide-react";
 import ProductImages from "./ProductImages";
 import { useState } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { addToCart } from "@/store/features/cart/cart.slice";
+import { toast } from "sonner";
 
 const ProductDetails = ({ product }: { product: IProduct }) => {
+  const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
 
   const hasDiscount =
@@ -24,12 +28,19 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
       )
     : product?.price;
 
+  const handleAddToCart = () => {
+    dispatch(addToCart({ product, quantity }));
+    toast.success(`${quantity} ${product.name} added to cart`);
+  };
+
   const handleIncrement = () => {
-    setQuantity((prev) => Math.min(prev + 1, 10)); // Limit to max 10
+    setQuantity(quantity + 1);
   };
 
   const handleDecrement = () => {
-    setQuantity((prev) => Math.max(prev - 1, 1)); // Minimum 1
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
   };
 
   return (
@@ -80,14 +91,13 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
               <p className="text-muted-foreground">{product.description}</p>
             </div>
 
-            {/* Quantity Selector */}
-            <div className="mb-6 flex items-center gap-4">
-              <h3 className="text-sm font-medium">Quantity:</h3>
-              <div className="flex items-center border rounded-sm">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center border rounded-sm px-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-none"
+                  className="h-8 w-8 rounded cursor-pointer"
                   onClick={handleDecrement}
                   disabled={quantity <= 1}
                 >
@@ -97,28 +107,33 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-none"
+                  className="h-8 w-8 rounded cursor-pointer"
                   onClick={handleIncrement}
-                  disabled={quantity >= 10}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3">
               <Button
                 size="lg"
                 className="flex-1 min-w-[200px] rounded-sm cursor-pointer"
+                onClick={handleAddToCart}
               >
-                Add to Cart 
+                Add to Cart
               </Button>
 
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full cursor-pointer"
+              >
                 <Heart className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full cursor-pointer"
+              >
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>

@@ -4,18 +4,20 @@ import storage from "redux-persist/lib/storage";
 import { PERSIST_STORE_NAME } from "@/constants/app.constant";
 import authReducer from "./features/auth/auth.slice";
 import productReducer from "./features/products/product.slice";
+import cartReducer from "./features/cart/cart.slice";
 
 // Configuration for persisting state
 const persistConfig = {
   key: PERSIST_STORE_NAME,
   storage,
-  whitelist: ["auth"], // Only persist these slices
+  whitelist: ["auth", "cart"], // Only persist these slices
 };
 
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
   product: productReducer,
+  cart: cartReducer,
 });
 
 // Wrap reducers with persistReducer

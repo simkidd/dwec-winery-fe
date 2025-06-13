@@ -1,63 +1,107 @@
-"use client";
-import { Button } from "../ui/button";
-import { XIcon } from "lucide-react";
+import { ICartItem } from "@/interfaces/cart.interface";
+import { formatCurrency } from "@/utils/helpers";
+import { Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
-import { Input } from "../ui/input";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { cn } from "@/lib/utils";
 
 interface CartItemProps {
-  item: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-  };
+  item: ICartItem;
   onRemove: () => void;
   onQuantityChange: (quantity: number) => void;
 }
 
 const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
+  const hasDiscount =
+    item.product.currentOffer?.isActive &&
+    item.product.currentOffer?.percentageOff;
+
+  const calculateDiscountPrice = (price: number, percentageOff: number) => {
+    return price - (price * percentageOff) / 100;
+  };
+
+  const discountedPrice = hasDiscount
+    ? calculateDiscountPrice(
+        item.product?.price,
+        item.product?.currentOffer?.percentageOff
+      )
+    : item.product?.price;
+
   return (
-    <div className="flex items-start gap-4 border-b pb-4">
-      <div className="relative h-16 w-16 rounded-md overflow-hidden">
-        <Image src={item.image} alt={item.name} fill className="object-cover" />
+    <div className="flex items-start gap-4">
+      <div className="w-24 h-24 aspect-square bg-muted/50 dark:bg-muted/30 py-2 rounded-sm overflow-hidden shrink-0">
+        <Image
+          src={item.product.images[0]}
+          alt={item.product.name}
+          width={300}
+          height={300}
+          className="w-full h-full object-contain"
+        />
       </div>
+
       <div className="flex-1">
         <div className="flex justify-between">
-          <h3 className="font-medium">{item.name}</h3>
+          <Link href={`/products/${item.product.slug}`} className="">
+            {item.product.name}
+          </Link>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-8 w-8"
             onClick={onRemove}
           >
-            <XIcon className="h-3 w-3" />
-            <span className="sr-only">Remove</span>
+            <X className="h-4 w-4" />
           </Button>
         </div>
-        <p className="text-muted-foreground">${item.price.toFixed(2)}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onQuantityChange(Math.max(1, item.quantity - 1))}
-          >
-            -
-          </Button>
-          <Input
-            type="number"
-            value={item.quantity}
-            onChange={(e) => onQuantityChange(Number(e.target.value))}
-            className="w-12 text-center"
-            min="1"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onQuantityChange(item.quantity + 1)}
-          >
-            +
-          </Button>
+
+        {/* active offer */}
+        <div></div>
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="font-medium">
+            {/* offer badge */}
+            {!hasDiscount && (
+              <Badge
+                className={cn(
+                  "bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full mr-2"
+                )}
+              >
+                -40{item.product?.currentOffer?.percentageOff}%
+              </Badge>
+            )}
+            {!hasDiscount && (
+              <span className="line-through text-gray-500 text-sm mr-1">
+                {formatCurrency(item.product?.price)}
+              </span>
+            )}
+            <span className="text-primary font-bold">
+              {formatCurrency(discountedPrice)}
+            </span>
+            {/* {formatCurrency(item.product.price * item.quantity)} */}
+          </div>
+
+          <div className="flex items-center border rounded-sm">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-none cursor-pointer"
+              onClick={() => onQuantityChange(Math.max(1, item.quantity - 1))}
+              disabled={item.quantity <= 1}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <div className="w-10 h-full text-center">{item.quantity}</div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-none cursor-pointer"
+              onClick={() => onQuantityChange(item.quantity + 1)}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

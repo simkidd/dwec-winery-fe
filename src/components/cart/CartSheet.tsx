@@ -1,8 +1,12 @@
 "use client";
-import { ICartItem } from "@/interfaces/cart.interface";
+import {
+  removeFromCart,
+  updateQuantity,
+} from "@/store/features/cart/cart.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
-import CartItem from "../cart/CartItem";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import {
@@ -14,7 +18,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
-import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/utils/helpers";
+import CartSheetItem from "./CartSheetItem";
 
 const CartSheet = ({
   isOpen,
@@ -24,27 +29,11 @@ const CartSheet = ({
   onChange: () => void;
 }) => {
   const router = useRouter();
-
-  // Example cart data for demonstration
-  const items: ICartItem[] = [
-    {
-      id: "1",
-      name: "Cabernet Sauvignon",
-      price: 29.99,
-      quantity: 2,
-      image: "/images/cabernet.jpg",
-    },
-    {
-      id: "2",
-      name: "Chardonnay",
-      price: 19.99,
-      quantity: 1,
-      image: "/images/chardonnay.jpg",
-    },
-  ];
+  const dispatch = useAppDispatch();
+  const { items } = useAppSelector((state) => state.cart);
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
   const itemCount = items.reduce((count, item) => count + item.quantity, 0);
@@ -63,9 +52,17 @@ const CartSheet = ({
     router.push("/cart");
   };
 
+  const handleRemoveItem = (productId: string) => {
+    dispatch(removeFromCart(productId));
+  };
+
+  const handleQuantityChange = (productId: string, quantity: number) => {
+    dispatch(updateQuantity({ productId, quantity }));
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onChange}>
-      <SheetContent>
+      <SheetContent className="w-full">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-xl">
             <ShoppingCartIcon className="h-5 w-5" />
@@ -79,16 +76,16 @@ const CartSheet = ({
           ) : null}
         </SheetHeader>
 
-        <ScrollArea className="flex-1 py-4">
+        <ScrollArea className="flex-1 py-2 min-h-60">
           {items.length > 0 ? (
-            <div className="space-y-4">
+            <div className="divide-y">
               {items.map((item) => (
-                <CartItem
-                  key={item.id}
+                <CartSheetItem
+                  key={item.product._id}
                   item={item}
-                  onRemove={() => console.log("Remove", item.id)}
+                  onRemove={() => handleRemoveItem(item.product._id)}
                   onQuantityChange={(qty) =>
-                    console.log("Update", item.id, qty)
+                    handleQuantityChange(item.product._id, qty)
                   }
                 />
               ))}
@@ -111,15 +108,12 @@ const CartSheet = ({
             <div className="w-full space-y-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">${subtotal.toFixed(2)}</span>
+                <span className="font-medium">{formatCurrency(subtotal)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span className="font-medium">Calculated at checkout</span>
-              </div>
+
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
 
               <div className="flex flex-col gap-2">
