@@ -10,10 +10,10 @@ const useLogout = () => {
   const dispatch = useAppDispatch();
 
   const signOut = () => {
-    router.push("/login");
     cookies.remove(TOKEN_NAME);
     cookies.remove(USER_DETAILS);
     dispatch(logout());
+    router.push("/login");
   };
 
   return { signOut };

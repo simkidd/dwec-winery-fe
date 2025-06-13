@@ -255,7 +255,7 @@ const SignUpForm = () => {
                           )}
                         </button>
                       </div>
-                       <PasswordRequirements password={field.value} />
+                      <PasswordRequirements password={field.value} />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -332,14 +332,15 @@ const SignUpForm = () => {
               </form>
             </Form>
 
-            <div className="w-full text-center text-[15px] leading-[1.375rem] mt-3 mb-3">
-              <span>Already have an account?</span>
-              <Link
-                href={"/login"}
-                className="text-primary ml-1 hover:underline hover:underline-offset-2"
+            <div className="w-full mt-3 mb-3 flex justify-center">
+              <Button
+                variant="link"
+                className="text-sm text-muted-foreground cursor-pointer"
+                type="button"
+                asChild
               >
-                Sign in instead
-              </Link>
+                <Link href={'/login'}>Already have an account? Sign in instead</Link>
+              </Button>
             </div>
             <div className="w-full flex items-center py-3">
               <Separator className="flex-1" />
@@ -393,8 +394,8 @@ function PasswordRequirements({ password }: { password: string }) {
   ];
 
   return (
-   <div className="mt-2 space-y-1">
-      <p className="text-sm text-muted-foreground">Password must contain:</p>
+    <div className="mt-2 space-y-1">
+      <p className="text-xs text-muted-foreground">Password must contain:</p>
       <ul className="grid grid-cols-2 gap-1">
         {requirements.map((req, i) => (
           <li key={i} className="flex items-center gap-2">
@@ -404,7 +405,7 @@ function PasswordRequirements({ password }: { password: string }) {
               <X className="h-3 w-3 text-gray-300" />
             )}
             <span
-              className={`text-xs ${
+              className={`text-[10px] ${
                 req.valid ? "text-green-600" : "text-muted-foreground"
               }`}
             >

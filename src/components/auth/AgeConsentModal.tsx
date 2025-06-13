@@ -19,7 +19,7 @@ const AgeConsentModal = ({
 }) => {
   return (
     <Dialog open={open}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle className="text-center">Age Verification</DialogTitle>
           <DialogDescription className="text-center">
@@ -33,9 +33,7 @@ const AgeConsentModal = ({
             className="w-full h-14 flex-col gap-1 hover:bg-green-50 hover:border-green-300 cursor-pointer"
             onClick={onConfirm}
           >
-            <span className="font-semibold">
-              I am 18 or older
-            </span>
+            <span className="font-semibold">I am 18 or older</span>
             <span className="text-sm font-normal text-muted-foreground">
               Continue to sign up
             </span>

@@ -12,7 +12,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {

@@ -118,7 +118,7 @@ const LoginForm = () => {
                   <div className="flex justify-between items-center">
                     <FormLabel>Password</FormLabel>
                     <Link
-                      href="/auth/forgot-password"
+                      href="/forgot-password"
                       className="text-sm text-primary hover:underline hover:underline-offset-2"
                     >
                       Forgot password?
@@ -166,14 +166,17 @@ const LoginForm = () => {
           </form>
         </Form>
 
-        <div className="w-full text-center text-[15px] leading-[1.375rem] mt-3 mb-3">
-          <span>New on our platform?</span>
-          <Link
-            href={"/sign-up"}
-            className="text-primary ml-1 hover:underline hover:underline-offset-2"
+        <div className="w-full flex justify-center mt-3 mb-3">
+          <Button
+            variant="link"
+            className="text-sm text-muted-foreground cursor-pointer"
+            type="button"
+            asChild
           >
-            Create an account
-          </Link>
+            <Link href={"/sign-up"}>
+              New on our platform? Create an account
+            </Link>
+          </Button>
         </div>
         <div className="w-full flex items-center py-3">
           <Separator className="flex-1" />

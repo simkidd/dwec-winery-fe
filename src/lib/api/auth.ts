@@ -14,7 +14,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {
@@ -42,7 +42,7 @@ export const registerUser = async (data: SignUpDTO) => {
   }
 };
 
-export const userForgotPassword = async (data: RegisterFormValues) => {
+export const userForgotPassword = async (data: { email: string }) => {
   try {
     const response = await instance.post(`/auth/forgot-password`, data);
 
@@ -72,7 +72,7 @@ export const userVerifyResetCode = async (code: string) => {
   }
 };
 
-export const userVerify = async (data: string) => {
+export const userVerify = async (data: { code: string }) => {
   try {
     const response = await instance.post(`/auth/verify-user`, data);
 
@@ -82,9 +82,11 @@ export const userVerify = async (data: string) => {
   }
 };
 
-export const userRequestVerification = async (data: string) => {
+export const userRequestVerification = async (email: string) => {
   try {
-    const response = await instance.post(`/auth/request-verification`, data);
+    const response = await instance.post(`/auth/request-verification`, {
+      email,
+    });
 
     return handleResponse(response);
   } catch (error) {
