@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Card } from "../ui/card";
 import { Loader2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   code: z.string().min(6, {
@@ -32,7 +33,12 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
+const RESEND_COOLDOWN = 30;
+
 const VerifyOtp = ({ email }: { email: string }) => {
+  const [cooldown, setCooldown] = useState(0);
+  const [isCooldownActive, setIsCooldownActive] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +50,7 @@ const VerifyOtp = ({ email }: { email: string }) => {
     mutationFn: userVerify,
     onSuccess: async (data) => {
       toast.success(data?.message || "Account verified successfully");
+      startCooldown();
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -55,6 +62,7 @@ const VerifyOtp = ({ email }: { email: string }) => {
     mutationFn: userRequestVerification,
     onSuccess: async (data) => {
       toast.success(data?.message || "Account verified successfully");
+      startCooldown();
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -62,7 +70,22 @@ const VerifyOtp = ({ email }: { email: string }) => {
     },
   });
 
-  console.log("email>>", email)
+  const startCooldown = () => {
+    setIsCooldownActive(true);
+    setCooldown(RESEND_COOLDOWN);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isCooldownActive && cooldown > 0) {
+      timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    } else if (cooldown === 0) {
+      setIsCooldownActive(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [cooldown, isCooldownActive]);
 
   const onSubmit = async (values: FormValues) => {
     verifyCodeMutation.mutate(values);
@@ -101,7 +124,7 @@ const VerifyOtp = ({ email }: { email: string }) => {
                           <InputOTPSlot
                             key={index}
                             index={index}
-                            className="h-12 w-12 text-lg border-2"
+                            className="h-12 w-12 text-lg border data-[active=true]:ring-0 data-[active=true]:border-primary"
                           />
                         ))}
                       </InputOTPGroup>
@@ -132,11 +155,20 @@ const VerifyOtp = ({ email }: { email: string }) => {
 
               <Button
                 variant="link"
-                className="text-sm text-muted-foreground cursor-pointer"
+                className="text-sm text-muted-foreground cursor-pointer disabled:text-gray-400"
                 type="button"
                 onClick={handleResend}
+                disabled={
+                  isCooldownActive || resendVerifyCodeMutation.isPending
+                }
               >
-                Didn&apos;t receive code? Resend
+                {resendVerifyCodeMutation.isPending ? (
+                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                ) : isCooldownActive ? (
+                  `Resend in ${cooldown}s`
+                ) : (
+                  "Didn't receive code? Resend"
+                )}
               </Button>
             </div>
           </form>
