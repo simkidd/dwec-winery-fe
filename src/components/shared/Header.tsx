@@ -1,6 +1,8 @@
 "use client";
+import useLogout from "@/hooks/use-logout";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
 import { Apple, GooglePlay } from "iconsax-reactjs";
 import {
   DownloadIcon,
@@ -11,19 +13,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import CartSheet from "../cart/CartSheet";
 import { Button } from "../ui/button";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { Input } from "../ui/input";
-import MenuNavigation from "./MenuNavigation";
-import ThemeSwitcher from "./ThemeSwitcher";
-import { useAppSelector } from "@/store/hooks";
-import useLogout from "@/hooks/use-logout";
-import CartSheet from "../cart/CartSheet";
 import { Separator } from "../ui/separator";
+import MenuNavigation from "./MenuNavigation";
+import SearchBar from "./SearchBar";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const SCROLL_THRESHOLD = 100;
 
@@ -77,24 +77,7 @@ const Header = () => {
           </div>
 
           {/* Search Input - Hidden on mobile */}
-          {!isMobile && (
-            <div className="flex-1 max-w-xl mx-4">
-              <div className="flex items-center relative">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  className="focus-visible:ring-0 shadow-none rounded-sm pl-10 w-full"
-                />
-                <Button
-                  type="submit"
-                  className="ml-2 rounded-sm cursor-pointer"
-                >
-                  Search
-                </Button>
-              </div>
-            </div>
-          )}
+          {!isMobile && <SearchBar />}
 
           {/* User & Cart */}
           <div className="flex items-center gap-2 sm:gap-4">
@@ -103,6 +86,7 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
+                className="rounded-full cursor-pointer"
                 onClick={() => setShowMobileSearch(!showMobileSearch)}
               >
                 {showMobileSearch ? (
@@ -269,20 +253,13 @@ const Header = () => {
         {isMobile && (
           <div
             className={cn(
-              "px-4 transition-all duration-300 ease-in-out overflow-hidden",
+              "px-4 transition-all duration-300 ease-in-out ",
               showMobileSearch
                 ? "pb-4 max-h-20 opacity-100"
                 : "max-h-0 opacity-0"
             )}
           >
-            <div className="flex items-center relative">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                className="focus-visible:ring-0 shadow-none rounded-sm pl-10 w-full"
-              />
-            </div>
+            <SearchBar mobileView showMobileSearch={showMobileSearch} />
           </div>
         )}
       </div>

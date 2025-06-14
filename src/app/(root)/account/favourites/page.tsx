@@ -1,3 +1,12 @@
+import React from 'react'
+
+const page = () => {
+  return (
+    <div>page</div>
+  )
+}
+
+export default page
 // "use client";
 // import { Heart, HeartOff, ShoppingCart } from "lucide-react";
 // import { Button } from "@/components/ui/button";

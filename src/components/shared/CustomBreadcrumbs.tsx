@@ -16,7 +16,7 @@ type BreadcrumbItem = {
   href: string;
 };
 
-type ProductHeaderProps = {
+type CustomBreadcrumbsProps = {
   product?: {
     name: string;
     category?: {
@@ -24,9 +24,13 @@ type ProductHeaderProps = {
       slug: string;
     };
   };
+  blogPost?: {
+    title: string;
+    // category?: string;
+  };
 };
 
-const CustomBreadcrumbs = ({ product }: ProductHeaderProps) => {
+const CustomBreadcrumbs = ({ product, blogPost }: CustomBreadcrumbsProps) => {
   const pathname = usePathname();
 
   // Generate breadcrumbs based on product data or path
@@ -34,6 +38,23 @@ const CustomBreadcrumbs = ({ product }: ProductHeaderProps) => {
     const breadcrumbs: BreadcrumbItem[] = [
       { name: "Home", href: "/" }, // Always include Home
     ];
+
+    // Handle blog post breadcrumbs
+    if (blogPost) {
+      breadcrumbs.push(
+        { name: "Blog", href: "/blog" },
+        // ...(blogPost.category
+        //   ? [
+        //       {
+        //         name: blogPost.category,
+        //         href: `/blog/category/${blogPost.category.toLowerCase()}`,
+        //       },
+        //     ]
+        //   : []),
+        { name: blogPost.title, href: pathname }
+      );
+      return breadcrumbs;
+    }
 
     // If we have product data with category, use that
     if (product?.category) {

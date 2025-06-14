@@ -1,0 +1,57 @@
+"use client"
+import { Facebook, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
+
+interface ShareButtonsProps {
+  title: string;
+  slug: string;
+}
+
+export default function ShareButtons({ title, slug }: ShareButtonsProps) {
+  const url = `https://yourdomain.com/blog/${slug}`;
+  const encodedTitle = encodeURIComponent(title);
+
+  return (
+    <div className="border-t pt-6">
+      <h4 className="mb-4 text-lg font-medium">Share this post</h4>
+      <div className="flex space-x-4">
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700"
+          aria-label="Share on Facebook"
+        >
+          <Facebook size={18} />
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${url}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-400 text-white hover:bg-blue-500"
+          aria-label="Share on Twitter"
+        >
+          <Twitter size={18} />
+        </a>
+        <a
+          href={`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${encodedTitle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-700 text-white hover:bg-blue-800"
+          aria-label="Share on LinkedIn"
+        >
+          <Linkedin size={18} />
+        </a>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(url);
+            alert("Link copied to clipboard!");
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          aria-label="Copy link"
+        >
+          <LinkIcon size={18} />
+        </button>
+      </div>
+    </div>
+  );
+}

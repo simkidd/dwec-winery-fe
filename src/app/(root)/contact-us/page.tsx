@@ -38,7 +38,7 @@ const ContactUs = () => {
   ];
 
   return (
-    <div >
+    <div>
       <CustomBreadcrumbs />
       <PageHeader
         title="Contact Us"
@@ -133,18 +133,13 @@ const ContactUs = () => {
                     <div className="mt-0.5">{method.icon}</div>
                     <div>
                       <h3 className="font-medium">{method.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {method.details}
-                      </p>
-                      {method.action && (
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="h-auto p-0 mt-2 text-primary"
-                          asChild
-                        >
-                          <a href={method.action}>Contact</a>
-                        </Button>
+
+                      {method.action ? (
+                        <a href={method.action} className="text-sm text-muted-foreground mt-1">{method.details}</a>
+                      ) : (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {method.details}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -166,7 +161,6 @@ const ContactUs = () => {
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-
       </div>
     </div>
   );

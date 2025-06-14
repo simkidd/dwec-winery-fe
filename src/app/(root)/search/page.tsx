@@ -1,9 +1,18 @@
-import React from 'react'
+import SearchResults from "@/components/product/SearchResults";
+import React from "react";
 
-const SearchResultPage = () => {
+const SearchResultPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const { q } = await searchParams;
+
   return (
-    <div>SearchResultPage</div>
-  )
-}
+    <div>
+      <SearchResults query={q as string} />
+    </div>
+  );
+};
 
-export default SearchResultPage
+export default SearchResultPage;
