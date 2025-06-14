@@ -4,7 +4,7 @@ import React from "react";
 const AboutUs = () => {
   return (
     <div>
-      <PageHeader />
+      <PageHeader title="About Us" />
       AboutUs
     </div>
   );
