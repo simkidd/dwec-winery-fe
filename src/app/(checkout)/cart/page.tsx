@@ -14,8 +14,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 // import EmptyCart from "./EmptyCart";
 import CartItem from "@/components/cart/CartItem";
-import PageHeader from "@/components/product/PageHeader";
+import PageHeader from "@/components/shared/PageHeader";
 import EmptyCart from "@/components/cart/EmptyCart";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 
 const CartPage = () => {
   const router = useRouter();
@@ -23,10 +24,10 @@ const CartPage = () => {
   const { items } = useAppSelector((state) => state.cart);
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.qty,
     0
   );
-  const itemCount = items.reduce((count, item) => count + item.quantity, 0);
+  const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {
     router.push("/checkout");
@@ -55,7 +56,8 @@ const CartPage = () => {
 
   return (
     <div>
-      <PageHeader />
+      <CustomBreadcrumbs />
+      <PageHeader title="Cart" />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items Section */}

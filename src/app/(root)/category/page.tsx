@@ -1,12 +1,11 @@
 import CategoriesGrid from "@/components/product/CategoriesGrid";
-import PageHeader from "@/components/product/PageHeader";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { Button } from "@/components/ui/button";
-import React from "react";
 
 const CategoriesPage = () => {
   return (
     <div className="">
-      <PageHeader />
+      <CustomBreadcrumbs />
 
       {/* Hero Section */}
       <section className="w-full bg-gradient-to-r from-primary/10 to-secondary/10 py-8 sm:py-16">

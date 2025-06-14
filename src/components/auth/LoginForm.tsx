@@ -101,7 +101,7 @@ const LoginForm = () => {
                     <Input
                       type="email"
                       placeholder="you@example.com"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
+                      className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                       {...field}
                     />
                   </FormControl>
@@ -129,7 +129,7 @@ const LoginForm = () => {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
-                        className="focus-visible:ring-0 shadow-none rounded-sm pr-10"
+                        className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
                         {...field}
                       />
                     </FormControl>

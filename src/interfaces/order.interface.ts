@@ -1,17 +1,17 @@
-import { IProduct } from "./product.interface";
+import { ICartItem } from "./cart.interface";
 import { ITracking } from "./tracking.interface";
 import { IUser } from "./user.interface";
 
-export interface IOrder {
+export interface IOrderDetails {
   _id: string;
   user: IUser;
   trackindId: ITracking;
-  products: IProduct[];
+  products: ICartItem[];
   deliveryMethod: "Pickup" | "Home Delivery";
   deliveryDetails: DeliveryDetails;
   totalAmountPaid: number;
-  paymentMethod: number;
-  paymentReference: number;
+  paymentMethod: "pay-on-delivery" | "paystack";
+  paymentReference: string;
   paymentData: string;
   trackingStatus: "Processing" | "Delivered" | "Received";
   trackingLevel: number;
@@ -28,7 +28,7 @@ export interface DeliveryDetails {
   area: string;
   phoneNumber: string;
   email: string;
-  note: string;
+  note?: string;
   suiteNumber: string;
   streetAddress: string;
   city: string;

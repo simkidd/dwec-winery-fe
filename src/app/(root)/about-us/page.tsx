@@ -1,4 +1,4 @@
-import PageHeader from "@/components/product/PageHeader";
+import PageHeader from "@/components/shared/PageHeader";
 import React from "react";
 
 const AboutUs = () => {

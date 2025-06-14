@@ -1,10 +1,9 @@
-import PageHeader from "@/components/product/PageHeader";
 import ProductDetails from "@/components/product/ProductDetails";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { IProduct } from "@/interfaces/product.interface";
 import { getAllProducts, getProductBySlug } from "@/lib/api/products";
 import { config } from "@/utils/config";
 import { notFound } from "next/navigation";
-import React from "react";
 
 export const generateMetadata = async ({
   params,
@@ -101,7 +100,7 @@ const ProductPage = async ({
 
   return (
     <div>
-      <PageHeader product={product} />
+      <CustomBreadcrumbs product={product} />
       <ProductDetails product={product} />
     </div>
   );

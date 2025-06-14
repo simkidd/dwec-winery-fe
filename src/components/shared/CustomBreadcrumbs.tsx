@@ -26,7 +26,7 @@ type ProductHeaderProps = {
   };
 };
 
-const PageHeader = ({ product }: ProductHeaderProps) => {
+const CustomBreadcrumbs = ({ product }: ProductHeaderProps) => {
   const pathname = usePathname();
 
   // Generate breadcrumbs based on product data or path
@@ -105,4 +105,4 @@ const PageHeader = ({ product }: ProductHeaderProps) => {
   );
 };
 
-export default PageHeader;
+export default CustomBreadcrumbs;

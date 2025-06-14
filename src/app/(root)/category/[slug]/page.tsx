@@ -1,11 +1,10 @@
 import CategoryProductGrid from "@/components/product/CategoryProductGrid";
-import PageHeader from "@/components/product/PageHeader";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { ICategory } from "@/interfaces/product.interface";
 import { getAllCategories, getCategoryBySlug } from "@/lib/api/products";
 import { cn } from "@/lib/utils";
 import { config } from "@/utils/config";
 import { notFound } from "next/navigation";
-import React from "react";
 
 export const generateMetadata = async ({
   params,
@@ -101,7 +100,7 @@ const CategoryProducts = async ({
 
   return (
     <div>
-      <PageHeader />
+      <CustomBreadcrumbs />
       <div
         className={cn(
           "w-full h-40 lg:h-60 relative flex items-center",

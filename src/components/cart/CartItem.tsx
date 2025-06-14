@@ -87,17 +87,17 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-none cursor-pointer"
-              onClick={() => onQuantityChange(Math.max(1, item.quantity - 1))}
-              disabled={item.quantity <= 1}
+              onClick={() => onQuantityChange(Math.max(1, item.qty - 1))}
+              disabled={item.qty <= 1}
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <div className="w-10 h-full text-center">{item.quantity}</div>
+            <div className="w-10 h-full text-center">{item.qty}</div>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-none cursor-pointer"
-              onClick={() => onQuantityChange(item.quantity + 1)}
+              onClick={() => onQuantityChange(item.qty + 1)}
             >
               <Plus className="h-4 w-4" />
             </Button>

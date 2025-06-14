@@ -33,10 +33,10 @@ const CartSheet = ({
   const { items } = useAppSelector((state) => state.cart);
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.qty,
     0
   );
-  const itemCount = items.reduce((count, item) => count + item.quantity, 0);
+  const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {
     // Close the sheet

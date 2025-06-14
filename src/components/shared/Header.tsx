@@ -23,6 +23,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import { useAppSelector } from "@/store/hooks";
 import useLogout from "@/hooks/use-logout";
 import CartSheet from "../cart/CartSheet";
+import { Separator } from "../ui/separator";
 
 const SCROLL_THRESHOLD = 100;
 
@@ -56,7 +57,6 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
-
 
   return (
     <div
@@ -163,35 +163,65 @@ const Header = () => {
               (user ? (
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <Button variant="ghost" className="gap-1.5 rounded-sm">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="rounded-full cursor-pointer"
+                    >
                       <User2Icon className="h-5 w-5" />
-                      <span>{user.firstname || "My Account"}</span>
                     </Button>
                   </HoverCardTrigger>
                   <HoverCardContent>
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">
-                        Welcome, {user.firstname}
-                      </h3>
-                      <div className="flex flex-col gap-2 pt-2">
+                    <div className="space-y-3">
+                      <div className="">
+                        <h3 className="font-semibold">
+                          Welcome, {user.firstname}
+                        </h3>
+                      </div>
+                      <Separator />
+                      <ul className="flex flex-col gap-2">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          asChild
+                        >
+                          <Link href="/account">My Account</Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          asChild
+                        >
+                          <Link href="/account/orders">My Orders</Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          asChild
+                        >
+                          <Link href="/account/favourites">Favourites</Link>
+                        </Button>
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="w-full"
+                          className="w-full cursor-pointer"
                           onClick={signOut}
                         >
                           Logout
                         </Button>
-                      </div>
+                      </ul>
                     </div>
                   </HoverCardContent>
                 </HoverCard>
               ) : (
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <Button variant="ghost" className="gap-1.5 rounded-sm">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="rounded-full cursor-pointer"
+                    >
                       <User2Icon className="h-5 w-5" />
-                      <span>Account</span>
                     </Button>
                   </HoverCardTrigger>
                   <HoverCardContent>

@@ -1,0 +1,24 @@
+import AccountNav from "@/components/account/AccountNav";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
+import PageHeader from "@/components/shared/PageHeader";
+
+export default function AccountLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="w-full">
+      <CustomBreadcrumbs />
+      <PageHeader
+        title="My Account"
+        // description="We'd love to hear from you! Get in touch with our team."
+      />
+
+      <div className="container mx-auto px-4 flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 py-16">
+        <AccountNav />
+        <main className="flex-1 lg:max-w-2xl">{children}</main>
+      </div>
+    </div>
+  );
+}

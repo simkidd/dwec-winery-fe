@@ -44,17 +44,17 @@ const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
             variant="ghost"
             size="icon"
             className="h-6 w-6 rounded-none"
-            onClick={() => onQuantityChange(Math.max(1, item.quantity - 1))}
-            disabled={item.quantity <= 1}
+            onClick={() => onQuantityChange(Math.max(1, item.qty - 1))}
+            disabled={item.qty <= 1}
           >
             <Minus className="h-4 w-4" />
           </Button>
-          <span className="w-10 text-center">{item.quantity}</span>
+          <span className="w-10 text-center">{item.qty}</span>
           <Button
             variant="ghost"
             size="icon"
             className="h-6 w-6 rounded-none"
-            onClick={() => onQuantityChange(item.quantity + 1)}
+            onClick={() => onQuantityChange(item.qty + 1)}
           >
             <Plus className="h-4 w-4" />
           </Button>

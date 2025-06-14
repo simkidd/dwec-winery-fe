@@ -1,11 +1,10 @@
-import PageHeader from '@/components/product/PageHeader'
 import ProductsGrid from '@/components/product/ProductsGrid'
-import React from 'react'
+import CustomBreadcrumbs from '@/components/shared/CustomBreadcrumbs'
 
 const Products = () => {
   return (
     <div>
-      <PageHeader />
+      <CustomBreadcrumbs />
       <ProductsGrid />
     </div>
   )

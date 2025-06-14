@@ -148,7 +148,7 @@ const SignUpForm = () => {
                         <FormControl>
                           <Input
                             placeholder="John"
-                            className="focus-visible:ring-0 shadow-none rounded-sm"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                             {...field}
                           />
                         </FormControl>
@@ -165,7 +165,7 @@ const SignUpForm = () => {
                         <FormControl>
                           <Input
                             placeholder="Doe"
-                            className="focus-visible:ring-0 shadow-none rounded-sm"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                             {...field}
                           />
                         </FormControl>
@@ -184,7 +184,7 @@ const SignUpForm = () => {
                       <FormControl>
                         <Input
                           placeholder="you@example.com"
-                          className="focus-visible:ring-0 shadow-none rounded-sm"
+                          className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                           {...field}
                         />
                       </FormControl>
@@ -199,7 +199,7 @@ const SignUpForm = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
-                      <FormControl className="focus-within:border-ring">
+                      <FormControl className="focus-within:border-primary">
                         <PhoneInput
                           international
                           countryCallingCodeEditable={false}
@@ -239,7 +239,7 @@ const SignUpForm = () => {
                           <Input
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
-                            className="focus-visible:ring-0 shadow-none rounded-sm pr-10"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
                             {...field}
                           />
                         </FormControl>
@@ -272,7 +272,7 @@ const SignUpForm = () => {
                           <Input
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder="••••••••"
-                            className="focus-visible:ring-0 shadow-none rounded-sm"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                             {...field}
                           />
                         </FormControl>
@@ -303,6 +303,7 @@ const SignUpForm = () => {
                       <FormControl>
                         <Checkbox
                           checked={field.value}
+                          className="focus-visible:border-primary focus-visible:ring-0"
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
@@ -339,7 +340,9 @@ const SignUpForm = () => {
                 type="button"
                 asChild
               >
-                <Link href={'/login'}>Already have an account? Sign in instead</Link>
+                <Link href={"/login"}>
+                  Already have an account? Sign in instead
+                </Link>
               </Button>
             </div>
             <div className="w-full flex items-center py-3">
