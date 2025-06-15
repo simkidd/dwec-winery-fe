@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import cookies from "js-cookie";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { Eye, EyeOff, Loader2Icon, Wine } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -78,7 +78,14 @@ const LoginForm = () => {
 
   return (
     <Card className="w-full rounded-[6px] md:p-6">
-      <div className="flex items-center justify-center p-6 font-bold">LOGO</div>
+      <div className="flex items-center justify-center p-6 font-bold">
+        <Link href={"/"}>
+          <div className="flex items-center space-x-2">
+            <Wine className="h-6 w-6 text-primary shrink-0" />
+            <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+          </div>
+        </Link>
+      </div>
       <div className="px-6 pb-6">
         <h4 className="font-medium leading-[2.375rem] text-2xl mb-1">
           Cheers, you&apos;re back

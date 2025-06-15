@@ -57,7 +57,7 @@ const MenuNavigation = ({ mobileView = false }: { mobileView?: boolean }) => {
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden">
+          <Button variant="ghost" size="icon" className="md:hidden cursor-pointer">
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>

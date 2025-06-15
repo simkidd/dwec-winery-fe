@@ -3,13 +3,12 @@ import useLogout from "@/hooks/use-logout";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
-import { Apple, GooglePlay } from "iconsax-reactjs";
 import {
-  DownloadIcon,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  X,
+  Wine,
+  X
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -67,13 +66,18 @@ const Header = () => {
     >
       {/* Top Header */}
       <div className="bg-background border-b">
-        <div className="w-full container mx-auto px-4 py-4 flex items-center justify-between">
-          {/* Mobile Menu Button */}
-          {isMobile && <MenuNavigation mobileView />}
+        <div className="w-full container mx-auto px-4 py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu Button */}
+            {isMobile && <MenuNavigation mobileView />}
 
-          {/* Logo */}
-          <div className="flex-shrink-0 font-bold text-lg text-primary">
-            Logo
+            {/* Logo */}
+            <div className=" flex font-bold text-lg">
+              <div className="flex items-center space-x-2">
+                <Wine className="h-6 w-6 text-primary shrink-0" />
+                <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+              </div>
+            </div>
           </div>
 
           {/* Search Input - Hidden on mobile */}
@@ -95,52 +99,6 @@ const Header = () => {
                   <SearchIcon className="h-5 w-5" />
                 )}
               </Button>
-            )}
-
-            {!isMobile && (
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button variant="ghost" className="gap-2">
-                    <DownloadIcon className="h-4 w-4" />
-                    <span>Get App</span>
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-fit">
-                  <div className="flex flex-col">
-                    <h3 className="font-semibold">Download the App</h3>
-                    <div className="flex items-center gap-2 mt-4">
-                      <Link
-                        href={"#"}
-                        className="flex items-center justify-center text-left border shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1"
-                      >
-                        <Apple size="32" variant="Bold" className="shrink-0" />
-                        <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-nowrap">
-                            Download on the
-                          </span>
-                          <p className="font-semibold leading-[1] text-nowrap">
-                            App Store
-                          </p>
-                        </div>
-                      </Link>
-                      <Link
-                        href={"#"}
-                        className="flex items-center justify-center text-left border shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1"
-                      >
-                        <GooglePlay size="32" variant="Bold" />
-                        <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-nowrap">
-                            Download on the
-                          </span>
-                          <p className="font-semibold leading-[1] text-nowrap">
-                            Play Store
-                          </p>
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
             )}
 
             {!isMobile &&

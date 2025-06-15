@@ -22,8 +22,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Card } from "../ui/card";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, Wine } from "lucide-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const formSchema = z.object({
   code: z.string().min(6, {
@@ -97,7 +98,14 @@ const VerifyOtp = ({ email }: { email: string }) => {
 
   return (
     <Card className="w-full rounded-[6px] md:p-6">
-      <div className="flex items-center justify-center p-6 font-bold">LOGO</div>
+      <div className="flex items-center justify-center p-6 font-bold">
+        <Link href={"/"}>
+          <div className="flex items-center space-x-2">
+            <Wine className="h-6 w-6 text-primary shrink-0" />
+            <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+          </div>
+        </Link>
+      </div>
       <div className="px-6 pb-6">
         <h4 className="font-medium leading-[2.375rem] text-2xl mb-1">
           Verify Your Account
