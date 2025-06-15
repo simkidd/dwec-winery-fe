@@ -1,4 +1,4 @@
-import { ChevronRight, Wine } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { blogPosts } from "../blog/blog-posts";
 import BlogCard from "../blog/BlogCard";
@@ -9,13 +9,17 @@ const BlogPreview = () => {
     <div className="bg-gray-50 dark:bg-gray-900 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-4">
-            <Wine className="h-8 w-8 text-amber-600 mr-2" />
-            <h2 className="text-3xl font-serif font-bold">From Our Cellar</h2>
+          <div className="flex items-center justify-center mb-6">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tight">
+                From Our Cellar
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Discover wine tips, cocktail recipes, and stories from our
+                vineyards
+              </p>
+            </div>
           </div>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Discover wine tips, cocktail recipes, and stories from our vineyards
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -133,7 +133,7 @@ const Footer = () => {
 
             <div className="flex flex-col">
               <h3 className="font-semibold">Download the App</h3>
-              <div className="flex items-center gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
                 <Link
                   href={"#"}
                   className="flex items-center justify-center border border-gray-700 bg-gray-800 shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1 hover:bg-gray-700 transition"
