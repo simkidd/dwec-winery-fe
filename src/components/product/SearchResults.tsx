@@ -14,7 +14,9 @@ const SearchResults = ({ query }: { query: string }) => {
 
   // Update filter with search query when it changes
   useEffect(() => {
-    dispatch(setFilter({ ...filter, search: query }));
+    if (filter.search !== query) {
+      dispatch(setFilter({ ...filter, search: query }));
+    }
   }, [query, dispatch, filter]);
 
   const {
