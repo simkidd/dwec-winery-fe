@@ -1,4 +1,6 @@
 import SearchResults from "@/components/product/SearchResults";
+import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
+import PageHeader from "@/components/shared/PageHeader";
 import React from "react";
 
 const SearchResultPage = async ({
@@ -10,7 +12,11 @@ const SearchResultPage = async ({
 
   return (
     <div>
-      <SearchResults query={q as string} />
+       <CustomBreadcrumbs />
+       <PageHeader title={`Search results for "${q}"`} />
+      <div className="container mx-auto px-4 py-16">
+        <SearchResults query={q as string} />
+      </div>
     </div>
   );
 };
