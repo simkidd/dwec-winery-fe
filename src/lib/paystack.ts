@@ -1,7 +1,7 @@
 // lib/paystack.ts
 export const loadPaystack = (): Promise<boolean> => {
   return new Promise((resolve, reject) => {
-    if (typeof window !== "undefined" && window.PaystackPop) {
+    if (typeof window !== "undefined" ) {
       resolve(true);
       return;
     }

@@ -15,7 +15,7 @@ const SearchResults = ({ query }: { query: string }) => {
   // Update filter with search query when it changes
   useEffect(() => {
     dispatch(setFilter({ ...filter, search: query }));
-  }, [query, dispatch]);
+  }, [query, dispatch, filter]);
 
   const {
     infiniteQuery: {
