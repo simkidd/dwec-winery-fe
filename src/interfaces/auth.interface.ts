@@ -3,4 +3,5 @@ export interface SignUpDTO {
   password: string;
   fullName: string;
   phoneNumber: string;
+  newsletter: boolean;
 }

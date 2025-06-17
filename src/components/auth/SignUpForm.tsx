@@ -45,6 +45,7 @@ const formSchema = z
         message: "Must contain at least one special character",
       }),
     confirmPassword: z.string().optional(),
+    newsletter: z.boolean(),
     tac: z.boolean().refine((val) => val, {
       message: "You must accept the terms and conditions",
     }),
@@ -83,6 +84,7 @@ const SignUpForm = () => {
       email: "",
       phoneNumber: "",
       password: "",
+      newsletter: false,
     },
   });
 
@@ -104,6 +106,7 @@ const SignUpForm = () => {
       email: values.email,
       password: values.password,
       phoneNumber: values.phoneNumber,
+      newsletter: values.newsletter,
     };
 
     // console.log(">>>>>>", data);
@@ -302,6 +305,29 @@ const SignUpForm = () => {
                   )}
                 />
 
+                {/* Newsletter Subscription */}
+                <FormField
+                  control={form.control}
+                  name="newsletter"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 rounded-md p-4 border">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          className="focus-visible:border-primary focus-visible:ring-0 cursor-pointer"
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="cursor-pointer">
+                          Subscribe to our newsletter for exclusive offers and
+                          updates
+                        </FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="tac"
@@ -310,12 +336,12 @@ const SignUpForm = () => {
                       <FormControl>
                         <Checkbox
                           checked={field.value}
-                          className="focus-visible:border-primary focus-visible:ring-0"
+                          className="focus-visible:border-primary focus-visible:ring-0 cursor-pointer"
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>
+                        <FormLabel className="cursor-pointer">
                           I agree to the Terms and Conditions
                         </FormLabel>
                         {/* <FormMessage /> */}
