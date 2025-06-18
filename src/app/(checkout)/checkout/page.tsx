@@ -13,182 +13,192 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { loadPaystack } from "@/lib/paystack";
+import { createOrder, initPayment } from "@/lib/api/order";
 import { useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 // import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { CreateOrderDTO } from "@/interfaces/order.interface";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import * as z from "zod";
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PaystackPop: any;
-  }
-}
+// Define base schema
+const baseSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  deliveryMethod: z.enum(["Home Delivery", "Pickup"]),
+  paymentMethod: z.enum(["paystack", "pay-on-delivery"]),
+  saveInfo: z.boolean(),
+  agreeTerms: z.literal(true, {
+    errorMap: () => ({ message: "You must agree to the terms and conditions" }),
+  }),
+});
+
+// Define conditional schema
+const formSchema = z.discriminatedUnion("deliveryMethod", [
+  // Home Delivery schema
+  baseSchema.extend({
+    deliveryMethod: z.literal("Home Delivery"),
+    deliveryDetails: z.object({
+      area: z.string().min(1, "Area is required"),
+      suiteNumber: z.string().optional(),
+      streetAddress: z.string().min(1, "Street address is required"),
+      city: z.string().min(1, "City is required"),
+      zipCode: z.string().min(1, "ZIP code is required"),
+      note: z.string().optional(),
+    }),
+  }),
+  // Pickup schema
+  baseSchema.extend({
+    deliveryMethod: z.literal("Pickup"),
+    deliveryDetails: z.object({}).optional(),
+  }),
+]);
+
+type CheckoutFormValues = z.infer<typeof formSchema>;
 
 const CheckoutPage = () => {
   // const router = useRouter();
   const { items } = useAppSelector((state) => state.cart);
   const { user } = useAppSelector((state) => state.auth);
-  const [isLoading, setIsLoading] = useState(false);
-  const [paystackLoaded, setPaystackLoaded] = useState(false);
-  const [formData, setFormData] = useState({
-    email: user?.email || "",
-    phoneNumber: "",
-    deliveryMethod: "Home Delivery",
-    deliveryDetails: {
-      area: "",
-      suiteNumber: "",
-      streetAddress: "",
-      city: "",
-      zipCode: "",
-      note: "",
+
+  const form = useForm<CheckoutFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: user?.email || "",
+      phoneNumber: "",
+      deliveryMethod: "Home Delivery",
+      deliveryDetails: {
+        area: "",
+        suiteNumber: "",
+        streetAddress: "",
+        city: "",
+        zipCode: "",
+        note: "",
+      },
+      paymentMethod: "paystack",
+      saveInfo: true,
+      agreeTerms: true,
     },
-    paymentMethod: "paystack",
-    saveInfo: true,
-    agreeTerms: false,
   });
 
-  // Load Paystack script when Paystack is selected
-  useEffect(() => {
-    if (formData.paymentMethod === "paystack") {
-      loadPaystack().then(() => setPaystackLoaded(true));
-    }
-  }, [formData.paymentMethod]);
+  const deliveryMethod = form.watch("deliveryMethod");
+  const paymentMethod = form.watch("paymentMethod");
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.product.price * item.qty,
     0
   );
-  const shippingFee = formData.deliveryMethod === "Home Delivery" ? 5 : 0;
+  const shippingFee = deliveryMethod === "Home Delivery" ? 5 : 0;
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + shippingFee + tax;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // Mutation: Initialize payment
+  const initPaymentMutation = useMutation({
+    mutationFn: initPayment,
+    onSuccess: async (data) => {
+      console.log("init>>", data);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
+    },
+  });
 
-  const handleDeliveryDetailsChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      deliveryDetails: {
-        ...prev.deliveryDetails,
-        [name]: value,
-      },
-    }));
-  };
+  // // Mutation: Verify payment
+  // const verifyPaymentMutation = useMutation({
+  //   mutationFn: verifyPayment,
+  //   onSuccess: (data) => {},
+  // });
 
-  // const initializePaystackPayment = async (orderId?: string) => {
-  //   if (!window.PaystackPop) {
-  //     toast.error("Payment processor not loaded. Please try again.");
-  //     return;
-  //   }
+  // Mutation: create order
+  const createOrderMutation = useMutation({
+    mutationFn: createOrder,
+    onSuccess: async (data) => {
+      console.log("createOrder>>", data);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
+    },
+  });
 
-  //   const handler = window.PaystackPop.setup({
-  //     key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
-  //     email: formData.email,
-  //     amount: total * 100, // Paystack expects amount in kobo
-  //     currency: "NGN",
-  //     ref: `ORDER-${orderId}-${Date.now()}`,
-  //     callback: (response: any) => {
-  //       // Verify payment on your server
-  //       handlePaymentVerification(orderId, response.reference);
-  //     },
-  //     onClose: () => {
-  //       toast.info(
-  //         "Payment window closed. Your order is still pending payment."
-  //       );
-  //     },
-  //   });
+  const onSubmit = async (values: CheckoutFormValues) => {
+    console.log("form values>>>", values);
+    try {
+      const orderData: CreateOrderDTO = {
+        products: items.map((item) => ({
+          product: item.product._id,
+          qty: item.qty,
+        })),
+        deliveryMethod: values.deliveryMethod,
+        deliveryDetails: {
+          area:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.area
+              : "",
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          note:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.note
+              : "",
+          suiteNumber:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.suiteNumber
+              : "",
+          streetAddress:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.streetAddress
+              : "",
+          city:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.city
+              : "",
+          zipCode:
+            values.deliveryMethod === "Home Delivery"
+              ? values.deliveryDetails.zipCode
+              : "",
+          fee: shippingFee,
+        },
+        paymentMethod:
+          values.paymentMethod === "paystack" ? "Paystack" : "Pay on Delivery",
+        paymentReference: "",
+        totalAmountPaid: 0,
+      };
 
-  //   handler.openIframe();
-  // };
+      if (values.paymentMethod === "paystack") {
+        // Paystack payment flow
+        const paymentResponse = await initPaymentMutation.mutateAsync({
+          email: values.email,
+          amount: total * 100,
+          orderData,
+        });
 
-  // const handlePaymentVerification = async (
-  //   orderId: string,
-  //   reference: string
-  // ) => {
-  //   try {
-  //     // In a real app, you would verify the payment with your backend
-  //     // await verifyPayment(orderId, reference);
-
-  //     toast.success("Payment verified successfully!");
-  //     router.push(`/order-confirmation/${orderId}`);
-  //   } catch (error) {
-  //     console.error("Payment verification failed:", error);
-  //     toast.error("Payment verification failed. Please contact support.");
-  //   }
-  // };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    if (!formData.agreeTerms) {
-      toast.error("Please agree to the terms and conditions");
-      setIsLoading(false);
-      return;
+        // Redirect to Paystack payment page
+        if (paymentResponse?.data?.authorization_url) {
+          window.location.href = paymentResponse.data.authorization_url;
+        }
+      } else {
+        // Pay on delivery flow
+        await createOrderMutation.mutateAsync(orderData);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
     }
-
-    // try {
-    //   // Create order first
-    //   const orderData = {
-    //     user: user?._id,
-    //     products: items.map((item) => ({
-    //       product: item.product._id,
-    //       qty: item.qty,
-    //     })),
-    //     deliveryMethod: formData.deliveryMethod,
-    //     deliveryDetails: {
-    //       ...formData.deliveryDetails,
-    //       phoneNumber: formData.phoneNumber,
-    //       email: formData.email,
-    //       fee: shippingFee,
-    //     },
-    //     totalAmountPaid: total,
-    //     paymentMethod:
-    //       formData.paymentMethod === "paystack"
-    //         ? "Paystack"
-    //         : "Pay on Delivery",
-    //     paymentReference:
-    //       formData.paymentMethod === "paystack" ? "" : "POD-" + Date.now(),
-    //     paymentData: "",
-    //     trackingStatus: "Processing",
-    //     trackingLevel: 1,
-    //     isCancelled: false,
-    //     isCompleted: false,
-    //     isResolved: false,
-    //   };
-
-    //   const order = await createOrder();
-
-    //   if (formData.paymentMethod === "paystack") {
-    //     const order = await createOrder();
-    //     await initializePaystackPayment(order._id);
-    //   } else {
-    //     // Pay on Delivery flow
-    //     const order = await createOrder();
-    //     toast.success(
-    //       "Order placed successfully! You'll pay when your order arrives."
-    //     );
-    //     router.push(`/order-confirmation/${order._id}`);
-    //   }
-    // } catch (error) {
-    //   console.error("Checkout error:", error);
-    //   toast.error("Failed to place order. Please try again.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
 
   if (items.length === 0) {
@@ -210,7 +220,7 @@ const CheckoutPage = () => {
   return (
     <div>
       <CustomBreadcrumbs />
-      <PageHeader title="Checkout" />
+      <PageHeader title="Checkout" className="hidden md:flex" />
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -224,211 +234,324 @@ const CheckoutPage = () => {
             </Button>
 
             <Card className=" mb-8 bg-transparent border-0 shadow-none">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <h2 className="text-xl font-bold">Contact Information</h2>
-                <Input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="rounded-sm"
-                />
-                <Input
-                  type="tel"
-                  name="phoneNumber"
-                  placeholder="Phone Number"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  required
-                  className="rounded-sm"
-                />
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="save-info"
-                    checked={formData.saveInfo}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, saveInfo: !!checked })
-                    }
-                  />
-                  <label htmlFor="save-info" className="text-sm">
-                    Save this information for next time
-                  </label>
-                </div>
-
-                <h2 className="text-xl font-bold pt-4 border-t">
-                  Delivery Method
-                </h2>
-                <Select
-                  value={formData.deliveryMethod}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, deliveryMethod: value })
-                  }
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
                 >
-                  <SelectTrigger className="rounded-sm">
-                    <SelectValue placeholder="Select delivery method" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Home Delivery">Home Delivery</SelectItem>
-                    <SelectItem value="Pickup">Store Pickup</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <h2 className="text-xl font-bold">Contact Information</h2>
 
-                {formData.deliveryMethod === "Home Delivery" && (
-                  <>
-                    <h2 className="text-xl font-bold pt-4 border-t">
-                      Shipping Address
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                      <div className="col-span-1 md:col-span-3">
-                        <Input
-                          name="streetAddress"
-                          placeholder="Street Address"
-                          value={formData.deliveryDetails.streetAddress}
-                          onChange={handleDeliveryDetailsChange}
-                          required
-                          className="rounded-sm"
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-3">
-                        <Input
-                          name="suiteNumber"
-                          placeholder="Apt, Suite, etc. (Optional)"
-                          value={formData.deliveryDetails.suiteNumber}
-                          onChange={handleDeliveryDetailsChange}
-                          className="rounded-sm"
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-2">
-                        <Input
-                          name="city"
-                          placeholder="City"
-                          value={formData.deliveryDetails.city}
-                          onChange={handleDeliveryDetailsChange}
-                          required
-                          className="rounded-sm"
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-2">
-                        <Input
-                          name="area"
-                          placeholder="State/Province"
-                          value={formData.deliveryDetails.area}
-                          onChange={handleDeliveryDetailsChange}
-                          required
-                          className="rounded-sm"
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-2">
-                        <Input
-                          name="zipCode"
-                          placeholder="ZIP/Postal Code"
-                          value={formData.deliveryDetails.zipCode}
-                          onChange={handleDeliveryDetailsChange}
-                          required
-                          className="rounded-sm"
-                        />
-                      </div>
-                      <div className="col-span-1 md:col-span-6">
-                        <Input
-                          name="note"
-                          placeholder="Delivery Notes (Optional)"
-                          value={formData.deliveryDetails.note}
-                          onChange={handleDeliveryDetailsChange}
-                          className="rounded-sm"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <h2 className="text-xl font-bold pt-4 border-t">
-                  Payment Method
-                </h2>
-                <RadioGroup
-                  value={formData.paymentMethod}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, paymentMethod: value })
-                  }
-                  className="space-y-2"
-                >
-                  {/* Paystack Option */}
-                  <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="paystack"
-                        id="paystack"
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="paystack" className="font-medium">
-                        Paystack (Cards, Bank Transfer, etc.)
-                      </label>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Pay securely with your card, bank account, or mobile
-                      money.
-                    </p>
-                  </div>
-
-                  {/* Pay on Delivery Option */}
-                  <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="pay-on-delivery"
-                        id="pay-on-delivery"
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="pay-on-delivery" className="font-medium">
-                        Pay on Delivery
-                      </label>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Pay cash when your order arrives. Additional ₦
-                      {shippingFee} delivery fee applies.
-                    </p>
-                  </div>
-                </RadioGroup>
-
-                <div className="pt-4 border-t">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="terms"
-                      checked={formData.agreeTerms}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, agreeTerms: !!checked })
-                      }
-                      required
-                    />
-                    <label htmlFor="terms" className="text-sm">
-                      I agree to the Terms and Conditions and Privacy Policy
-                    </label>
-                  </div>
-                </div>
-
-                <div className="pt-6">
-                  <Button
-                    type="submit"
-                    className="w-full rounded-sm"
-                    disabled={
-                      isLoading ||
-                      (formData.paymentMethod === "paystack" && !paystackLoaded)
-                    }
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Processing...
-                      </>
-                    ) : formData.paymentMethod === "pay-on-delivery" ? (
-                      `Place Order (Pay ${formatCurrency(total)} on Delivery)`
-                    ) : (
-                      `Pay ${formatCurrency(total)} Now`
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Email"
+                            className="rounded-sm"
+                            readOnly
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
-                </div>
-              </form>
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="Phone Number"
+                            className="rounded-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="saveInfo"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormLabel className="!mt-0">
+                          Save this information for next time
+                        </FormLabel>
+                      </FormItem>
+                    )}
+                  />
+
+                  <h2 className="text-xl font-bold pt-4 border-t">
+                    Delivery Method
+                  </h2>
+
+                  <FormField
+                    control={form.control}
+                    name="deliveryMethod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="rounded-sm">
+                              <SelectValue placeholder="Select delivery method" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Home Delivery">
+                              Home Delivery
+                            </SelectItem>
+                            <SelectItem value="Pickup">Store Pickup</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {deliveryMethod === "Home Delivery" && (
+                    <>
+                      <h2 className="text-xl font-bold pt-4 border-t">
+                        Shipping Address
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                        <div className="col-span-1 md:col-span-3">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.streetAddress"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Street Address"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 md:col-span-3">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.suiteNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Apt, Suite, etc. (Optional)"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 md:col-span-2">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.city"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="City"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 md:col-span-2">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.area"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="State/Province"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 md:col-span-2">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.zipCode"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="ZIP/Postal Code"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1 md:col-span-6">
+                          <FormField
+                            control={form.control}
+                            name="deliveryDetails.note"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Delivery Notes (Optional)"
+                                    className="rounded-sm"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <h2 className="text-xl font-bold pt-4 border-t">
+                    Payment Method
+                  </h2>
+
+                  <FormField
+                    control={form.control}
+                    name="paymentMethod"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="space-y-2"
+                          >
+                            <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem
+                                  value="paystack"
+                                  id="paystack"
+                                  className="h-4 w-4 cursor-pointer"
+                                />
+                                <FormLabel
+                                  htmlFor="paystack"
+                                  className="!mt-0 cursor-pointer"
+                                >
+                                  Paystack (Cards, Bank Transfer, etc.)
+                                </FormLabel>
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-2">
+                                Pay securely with your card, bank account, or
+                                mobile money.
+                              </p>
+                            </div>
+
+                            <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem
+                                  value="pay-on-delivery"
+                                  id="pay-on-delivery"
+                                  className="h-4 w-4 text-muted-foreground disabled:cursor-not-allowed"
+                                  disabled
+                                />
+                                <FormLabel
+                                  htmlFor="pay-on-delivery"
+                                  className="!mt-0 text-muted-foreground cursor-not-allowed"
+                                >
+                                  Pay on Delivery <span className="italic">(Currently Unavailable)</span>
+                                </FormLabel>
+                              </div>
+                              <p className="text-sm text-muted-foreground/70 mt-2">
+                                Pay cash when your order arrives.
+                                {/* Pay cash when your order arrives. Additional ₦
+                                {shippingFee} delivery fee applies. */}
+                              </p>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="pt-4 border-t">
+                    <FormField
+                      control={form.control}
+                      name="agreeTerms"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel className="!mt-0">
+                            I agree to the Terms and Conditions and Privacy
+                            Policy
+                          </FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="pt-6">
+                    <Button
+                      type="submit"
+                      className="w-full rounded-sm cursor-pointer"
+                      disabled={
+                        initPaymentMutation.isPending ||
+                        createOrderMutation.isPending
+                      }
+                    >
+                      {initPaymentMutation.isPending ||
+                      createOrderMutation.isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : paymentMethod === "pay-on-delivery" ? (
+                        `Place Order (Pay ${formatCurrency(total)} on Delivery)`
+                      ) : (
+                        `Pay ${formatCurrency(total)} Now`
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </Card>
           </div>
 

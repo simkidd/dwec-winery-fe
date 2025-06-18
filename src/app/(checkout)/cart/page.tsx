@@ -57,7 +57,7 @@ const CartPage = () => {
   return (
     <div>
       <CustomBreadcrumbs />
-      <PageHeader title="Cart" />
+      <PageHeader title="Cart" className="hidden md:flex" />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Cart Items Section */}

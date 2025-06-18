@@ -1,5 +1,4 @@
 import { ICartItem } from "./cart.interface";
-import { IProduct } from "./product.interface";
 import { ITracking } from "./tracking.interface";
 import { IUser } from "./user.interface";
 
@@ -44,7 +43,7 @@ export interface DeliveryDetails {
   phoneNumber: string;
   email: string;
   note?: string;
-  suiteNumber: string;
+  suiteNumber?: string;
   streetAddress: string;
   city: string;
   zipCode: string;
@@ -57,11 +56,13 @@ export interface PaymentDTO {
   orderData: CreateOrderDTO;
 }
 
+interface OrderedProducts {
+  product: string;
+  qty: number;
+}
+
 export interface CreateOrderDTO {
-  products: {
-    product: IProduct;
-    qty: number;
-  }[];
+  products: OrderedProducts[];
   paymentReference: string;
   paymentMethod: string;
   totalAmountPaid: number;
