@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const tabs = [
   { name: "Personal Information", href: "/account" },
   { name: "My Orders", href: "/account/orders" },
+  { name: "Saved Items", href: "/account/favourites" },
   // { name: "Manage Address", href: "/account/*" },
   { name: "Change Password", href: "/account/security" },
 ];
@@ -25,7 +26,7 @@ const AccountNav = () => {
   return (
     <aside className="lg:w-1/5">
       <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
-        <ul className="space-y-1">
+        <ul className="space-y-1 w-full">
           {tabs.map((tab) => (
             <li key={tab.name}>
               <Button

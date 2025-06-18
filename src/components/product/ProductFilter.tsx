@@ -24,12 +24,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
+import { usePathname } from "next/navigation";
 
 const ProductFilter = () => {
+  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
   const { categories, isPending: categoriesLoading } = useCategories();
   const isMobile = useIsMobile();
+
+  const isCategoryPage = pathname.includes("/category/");
 
   // Local filter state (only applied when clicking Apply)
   const [localFilters, setLocalFilters] = useState({
@@ -104,7 +108,7 @@ const ProductFilter = () => {
       <Drawer>
         <DrawerTrigger asChild>
           <Button variant={"outline"} className="rounded-sm">
-            <FilterX  />
+            <FilterX />
             Filters
           </Button>
         </DrawerTrigger>
@@ -115,61 +119,63 @@ const ProductFilter = () => {
           <ScrollArea className="h-[50vh] px-4">
             <div className={`w-full space-y-6`}>
               {/* Category Filter Section */}
-              <div className="space-y-4 border-b pb-4">
-                <button
-                  className="flex items-center justify-between w-full"
-                  onClick={() => toggleSection("category")}
-                >
-                  <h4 className="font-medium">Categories</h4>
-                  {expandedSections.category ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </button>
+              {!isCategoryPage && (
+                <div className="space-y-4 border-b pb-4">
+                  <button
+                    className="flex items-center justify-between w-full"
+                    onClick={() => toggleSection("category")}
+                  >
+                    <h4 className="font-medium">Categories</h4>
+                    {expandedSections.category ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
 
-                {expandedSections.category && (
-                  <ScrollArea className="h-32 w-full">
-                    <div className="space-y-3 pt-2">
-                      {categoriesLoading
-                        ? [...Array(5)].map((_, i) => (
-                            <div
-                              key={i}
-                              className="flex items-center space-x-2"
-                            >
-                              <Skeleton className="h-4 w-4 rounded-sm" />
-                              <Skeleton className="h-4 w-24" />
-                            </div>
-                          ))
-                        : categories.map((category) => (
-                            <div
-                              key={category._id}
-                              className="flex items-center space-x-2"
-                            >
-                              <Checkbox
-                                id={`cat-${category._id}`}
-                                checked={localFilters.category.includes(
-                                  category._id
-                                )}
-                                onCheckedChange={(checked) =>
-                                  handleCategoryChange(
-                                    category._id,
-                                    checked as boolean
-                                  )
-                                }
-                              />
-                              <Label
-                                htmlFor={`cat-${category._id}`}
-                                className="font-normal"
+                  {expandedSections.category && (
+                    <ScrollArea className="h-32 w-full">
+                      <div className="space-y-3 pt-2">
+                        {categoriesLoading
+                          ? [...Array(5)].map((_, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center space-x-2"
                               >
-                                {category.name}
-                              </Label>
-                            </div>
-                          ))}
-                    </div>
-                  </ScrollArea>
-                )}
-              </div>
+                                <Skeleton className="h-4 w-4 rounded-sm" />
+                                <Skeleton className="h-4 w-24" />
+                              </div>
+                            ))
+                          : categories.map((category) => (
+                              <div
+                                key={category._id}
+                                className="flex items-center space-x-2"
+                              >
+                                <Checkbox
+                                  id={`cat-${category._id}`}
+                                  checked={localFilters.category.includes(
+                                    category._id
+                                  )}
+                                  onCheckedChange={(checked) =>
+                                    handleCategoryChange(
+                                      category._id,
+                                      checked as boolean
+                                    )
+                                  }
+                                />
+                                <Label
+                                  htmlFor={`cat-${category._id}`}
+                                  className="font-normal"
+                                >
+                                  {category.name}
+                                </Label>
+                              </div>
+                            ))}
+                      </div>
+                    </ScrollArea>
+                  )}
+                </div>
+              )}
 
               {/* Brand Filter Section */}
               <div className="space-y-4 border-b pb-4">
@@ -290,56 +296,61 @@ const ProductFilter = () => {
       </div>
 
       {/* Category Filter Section */}
-      <div className="space-y-4 border-b pb-4">
-        <button
-          className="flex items-center justify-between w-full"
-          onClick={() => toggleSection("category")}
-        >
-          <h4 className="font-medium">Categories</h4>
-          {expandedSections.category ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </button>
+      {!isCategoryPage && (
+        <div className="space-y-4 border-b pb-4">
+          <button
+            className="flex items-center justify-between w-full"
+            onClick={() => toggleSection("category")}
+          >
+            <h4 className="font-medium">Categories</h4>
+            {expandedSections.category ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </button>
 
-        {expandedSections.category && (
-          <ScrollArea className="h-32  w-full">
-            <div className="space-y-3 pt-2">
-              {categoriesLoading
-                ? [...Array(5)].map((_, i) => (
-                    <div key={i} className="flex items-center space-x-2">
-                      <Skeleton className="h-4 w-4 rounded-sm" />
-                      <Skeleton className="h-4 w-24" />
-                    </div>
-                  ))
-                : categories.map((category) => (
-                    <div
-                      key={category._id}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={`cat-${category._id}`}
-                        checked={localFilters.category.includes(category._id)}
-                        onCheckedChange={(checked) =>
-                          handleCategoryChange(category._id, checked as boolean)
-                        }
-                      />
-                      <Label
-                        htmlFor={`cat-${category._id}`}
-                        className="font-normal"
+          {expandedSections.category && (
+            <ScrollArea className="h-32  w-full">
+              <div className="space-y-3 pt-2">
+                {categoriesLoading
+                  ? [...Array(5)].map((_, i) => (
+                      <div key={i} className="flex items-center space-x-2">
+                        <Skeleton className="h-4 w-4 rounded-sm" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    ))
+                  : categories.map((category) => (
+                      <div
+                        key={category._id}
+                        className="flex items-center space-x-2"
                       >
-                        {category.name}
-                      </Label>
-                    </div>
-                  ))}
-            </div>
-          </ScrollArea>
-        )}
-      </div>
+                        <Checkbox
+                          id={`cat-${category._id}`}
+                          checked={localFilters.category.includes(category._id)}
+                          onCheckedChange={(checked) =>
+                            handleCategoryChange(
+                              category._id,
+                              checked as boolean
+                            )
+                          }
+                        />
+                        <Label
+                          htmlFor={`cat-${category._id}`}
+                          className="font-normal"
+                        >
+                          {category.name}
+                        </Label>
+                      </div>
+                    ))}
+              </div>
+            </ScrollArea>
+          )}
+        </div>
+      )}
 
       {/* Brand Filter Section */}
-      <div className="space-y-4 border-b pb-4">
+      {/* <div className="space-y-4 border-b pb-4">
         <button
           className="flex items-center justify-between w-full"
           onClick={() => toggleSection("brand")}
@@ -357,7 +368,7 @@ const ProductFilter = () => {
             <span className="text-gray-500 italic">Coming soon</span>
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Price Filter Section */}
       <div className="space-y-4 border-b pb-4">

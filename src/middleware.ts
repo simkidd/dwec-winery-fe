@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
 
-const privateRoutes = ["/profile"];
+const privateRoutes = ["/account"];
 const authRoutes = ["/login", "/register"];
 
 export default async function middleware(req: NextRequest) {
@@ -41,7 +41,7 @@ export default async function middleware(req: NextRequest) {
   // Handle private routes
   if (privateRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
-      const loginUrl = new URL("/auth/login", req.url);
+      const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }

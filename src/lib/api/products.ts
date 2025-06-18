@@ -20,6 +20,45 @@ const handleError = (error: any) => {
   }
 };
 
+const handleFavError = (error: any) => {
+  if (error.response) {
+    console.log("from erro>>>", error);
+    const { status, data } = error.response;
+
+    if (status === 401) {
+      throw {
+        type: "AUTH_ERROR",
+        message: data?.message || "Please login to add favorites",
+        status,
+      };
+    } else if (status === 404) {
+      throw {
+        type: "NOT_FOUND",
+        message: data?.message || "Product not found",
+        status,
+      };
+    } else {
+      throw {
+        type: "API_ERROR",
+        message: data?.message || "Failed to update favorites",
+        status,
+      };
+    }
+  } else if (error.request) {
+    // Request was made but no response received
+    throw {
+      type: "NETWORK_ERROR",
+      message: "No response received from server",
+    };
+  } else {
+    // Other errors
+    throw {
+      type: "CLIENT_ERROR",
+      message: error.message || "Failed to make request",
+    };
+  }
+};
+
 export const getAllProducts = async (params?: ProductFilterInput) => {
   try {
     const response = await instance.get(`/products`, { params });
@@ -63,6 +102,28 @@ export const getCategoryBySlug = async (slug: string) => {
 export const getAds = async () => {
   try {
     const response = await instance.get(`/users/ads/get-ads`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const addToFavourites = async (productId: string) => {
+  try {
+    const response = await instance.patch(`/users/products/update-fav`, {
+      productId,
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleFavError(error);
+  }
+};
+
+export const getFavourites = async () => {
+  try {
+    const response = await instance.get(`/users/products/get-fav-products`);
 
     return handleResponse(response);
   } catch (error) {

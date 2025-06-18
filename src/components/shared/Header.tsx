@@ -4,11 +4,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
+  Heart,
+  LogOutIcon,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
   Wine,
-  X
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -75,7 +77,9 @@ const Header = () => {
             <div className=" flex font-bold text-lg">
               <div className="flex items-center space-x-2">
                 <Wine className="h-6 w-6 text-primary shrink-0" />
-                <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+                <span className="text-xl font-bold text-nowrap">
+                  DWEC Winery
+                </span>
               </div>
             </div>
           </div>
@@ -127,28 +131,37 @@ const Header = () => {
                           className="w-full justify-start"
                           asChild
                         >
-                          <Link href="/account">My Account</Link>
+                          <Link href="/account">
+                            <User2Icon />
+                            My Account
+                          </Link>
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
                           asChild
                         >
-                          <Link href="/account/orders">My Orders</Link>
+                          <Link href="/account/orders">
+                            <ShoppingCartIcon />
+                            My Orders
+                          </Link>
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
                           asChild
                         >
-                          <Link href="/account/favourites">Favourites</Link>
+                          <Link href="/account/favourites">
+                            <Heart />
+                            Saved Items
+                          </Link>
                         </Button>
                         <Button
                           variant="destructive"
-                          size="sm"
-                          className="w-full cursor-pointer"
+                          className="w-full cursor-pointer justify-start"
                           onClick={signOut}
                         >
+                          <LogOutIcon />
                           Logout
                         </Button>
                       </ul>

@@ -7,6 +7,10 @@ interface ProductState {
   selectedProduct: IProduct | null;
   error: string | null;
   filter: ProductFilterInput;
+  favourites: IProduct[];
+  favouritesLoading: boolean;
+  showAuthDialog: boolean;
+  authDialogMessage: string;
 }
 
 export const SLICE_NAME = "product";
@@ -14,7 +18,7 @@ export const SLICE_NAME = "product";
 export const initialFilterState: ProductFilterInput = {
   page: 1,
   limit: 12,
-  sort: 'highestPrice'
+  sort: "highestPrice",
 };
 
 const initialState: ProductState = {
@@ -23,6 +27,10 @@ const initialState: ProductState = {
   selectedProduct: null,
   error: null,
   filter: initialFilterState,
+  favourites: [],
+  favouritesLoading: false,
+  showAuthDialog: false,
+  authDialogMessage: "",
 };
 
 const productSlice = createSlice({
@@ -37,7 +45,7 @@ const productSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
-    setselectedProduct(state, action: PayloadAction<IProduct | null>) {
+    setSelectedProduct(state, action: PayloadAction<IProduct | null>) {
       state.selectedProduct = action.payload;
     },
     setFilter(state, action: PayloadAction<Partial<ProductFilterInput>>) {
@@ -50,6 +58,47 @@ const productSlice = createSlice({
     resetFilter(state) {
       state.filter = initialFilterState;
     },
+    // Favorites actions
+    setFavouritesLoading(state, action: PayloadAction<boolean>) {
+      state.favouritesLoading = action.payload;
+    },
+    setFavourites(state, action: PayloadAction<IProduct[]>) {
+      state.favourites = action.payload;
+      state.favouritesLoading = false;
+    },
+    addToFavorites(state, action: PayloadAction<IProduct>) {
+      if (!state.favourites.some((fav) => fav._id === action.payload._id)) {
+        state.favourites.push(action.payload);
+      }
+    },
+    removeFromFavorites(state, action: PayloadAction<string>) {
+      state.favourites = state.favourites.filter(
+        (fav) => fav._id !== action.payload
+      );
+    },
+    toggleFavorite(state, action: PayloadAction<IProduct>) {
+      const index = state.favourites.findIndex(
+        (fav) => fav._id === action.payload._id
+      );
+      if (index >= 0) {
+        state.favourites.splice(index, 1);
+      } else {
+        state.favourites.push(action.payload);
+      }
+    },
+    // Error handling
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    showAuthDialog(state, action: PayloadAction<string>) {
+      state.showAuthDialog = true;
+      state.authDialogMessage = action.payload;
+    },
+    hideAuthDialog(state) {
+      state.showAuthDialog = false;
+      state.authDialogMessage = "";
+    },
   },
 });
 
@@ -58,7 +107,14 @@ export const {
   setFilter,
   setLoading,
   setProducts,
-  setselectedProduct,
+  setSelectedProduct,
+  setFavourites,
+  setFavouritesLoading,
+  addToFavorites,
+  removeFromFavorites,
+  toggleFavorite,
+  showAuthDialog,
+  hideAuthDialog,
 } = productSlice.actions;
 
-export default productSlice.reducer
+export default productSlice.reducer;

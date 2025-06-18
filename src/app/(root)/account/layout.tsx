@@ -1,6 +1,7 @@
 import AccountNav from "@/components/account/AccountNav";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
+import { Separator } from "@/components/ui/separator";
 
 export default function AccountLayout({
   children,
@@ -17,7 +18,8 @@ export default function AccountLayout({
 
       <div className="container mx-auto px-4 flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 py-16">
         <AccountNav />
-        <main className="flex-1 lg:max-w-2xl">{children}</main>
+        <Separator className="md:hidden" />
+        <main className="flex-1 lg:max-w-3xl">{children}</main>
       </div>
     </div>
   );
