@@ -61,7 +61,7 @@ const MenuNavigation = ({ mobileView = false }: { mobileView?: boolean }) => {
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[300px]">
+        <SheetContent side="left" className="w-full py-12">
           <nav className="flex flex-col space-y-4 pt-6">
             <MobileNavItem href="/" isActive={isActive("/")}>
               Home

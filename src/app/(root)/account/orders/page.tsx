@@ -1,9 +1,14 @@
-import React from 'react'
+import OrdersList from "@/components/account/OrdersList";
+import React from "react";
 
 const OrdersPage = () => {
   return (
-    <div>OrdersPage</div>
-  )
-}
+    <div>
+      <div>
+        <OrdersList />
+      </div>
+    </div>
+  );
+};
 
-export default OrdersPage
+export default OrdersPage;

@@ -3,12 +3,13 @@ import { IProduct } from "@/interfaces/product.interface";
 import { addToFavourites, getFavourites } from "@/lib/api/products";
 import { showAuthDialog } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useFavourites = () => {
   const dispatch = useAppDispatch();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const queryClient = useQueryClient();
 
   // Fetch user's favorites on mount if authenticated
   const {
@@ -27,7 +28,7 @@ export const useFavourites = () => {
     mutationFn: addToFavourites,
     onSuccess: (data) => {
       toast.success(data?.message);
-      refetchFavourites();
+      queryClient.invalidateQueries({ queryKey: ["favourites"] });
     },
     onError: (error: { type?: string; message?: string }) => {
       if (error.type === "AUTH_ERROR") {

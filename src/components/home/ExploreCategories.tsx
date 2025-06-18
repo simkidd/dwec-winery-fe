@@ -50,8 +50,10 @@ const ExploreCategories = () => {
         ) : null}
 
         <div className="mt-8 flex justify-center md:hidden">
-          <Button variant="outline" className="gap-2">
-            View all <ChevronRight className="h-4 w-4" />
+          <Button variant="outline" className="gap-2" asChild>
+            <Link href={"/category"}>
+              View all categories <ChevronRight className="h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </div>

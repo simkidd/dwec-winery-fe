@@ -14,9 +14,10 @@ export default function AccountLayout({
       <PageHeader
         title="My Account"
         // description="We'd love to hear from you! Get in touch with our team."
+        className="hidden md:flex"
       />
 
-      <div className="container mx-auto px-4 flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 py-16">
+      <div className="container mx-auto px-4 flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 py-8 md:py-16">
         <AccountNav />
         <Separator className="md:hidden" />
         <main className="flex-1 lg:max-w-3xl">{children}</main>

@@ -15,15 +15,15 @@ const FeaturedProducts = () => {
         <div className="flex items-end justify-between mb-6">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">
-              Featured Wines
+              Featured Drinks
             </h2>
             <p className="text-muted-foreground max-w-2xl">
-              Discover our hand-selected premium wines from renowned vineyards
+              Discover our hand-selected premium drinks from renowned vineyards
             </p>
           </div>
-          <Button asChild variant={"link"}>
+          <Button asChild variant={"link"} className="hidden md:flex ">
             <Link href={"/products"} className="flex items-center gap-1">
-              View all wines <ChevronRight />
+              View all drinks <ChevronRight />
             </Link>
           </Button>
         </div>
@@ -55,6 +55,14 @@ const FeaturedProducts = () => {
             </Button>
           </div>
         )}
+
+        <div className="mt-8 flex justify-center md:hidden">
+          <Button variant="outline" className="gap-2" asChild>
+            <Link href={"/products"}>
+              View all drinks<ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

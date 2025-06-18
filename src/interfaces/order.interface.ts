@@ -1,6 +1,21 @@
 import { ICartItem } from "./cart.interface";
+import { IProduct } from "./product.interface";
 import { ITracking } from "./tracking.interface";
 import { IUser } from "./user.interface";
+
+export interface PaginatedOrderResponse<T> {
+  success: boolean;
+  message: string;
+  orders: T[];
+  currentPage: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface orderFilterInput {
+  page?: number;
+  limit?: number;
+}
 
 export interface IOrderDetails {
   _id: string;
@@ -34,4 +49,22 @@ export interface DeliveryDetails {
   city: string;
   zipCode: string;
   fee: number;
+}
+
+export interface PaymentDTO {
+  email: string;
+  amount: number;
+  orderData: CreateOrderDTO;
+}
+
+export interface CreateOrderDTO {
+  products: {
+    product: IProduct;
+    qty: number;
+  }[];
+  paymentReference: string;
+  paymentMethod: string;
+  totalAmountPaid: number;
+  deliveryMethod: "Pickup" | "Home Delivery";
+  deliveryDetails: DeliveryDetails;
 }
