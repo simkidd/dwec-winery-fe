@@ -405,7 +405,7 @@ const SignUpForm = () => {
 
 export default SignUpForm;
 
-function PasswordRequirements({ password }: { password: string }) {
+export function PasswordRequirements({ password }: { password: string }) {
   const requirements = [
     {
       text: "At least 8 characters",

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoginFormValues } from "@/components/auth/LoginForm";
-import { RegisterFormValues } from "@/components/auth/SignUpForm";
 import { SignUpDTO } from "@/interfaces/auth.interface";
 import instance from "@/services/axios";
 
@@ -52,9 +51,12 @@ export const userForgotPassword = async (data: { email: string }) => {
   }
 };
 
-export const userResetPassword = async (data: RegisterFormValues) => {
+export const userResetPassword = async (payload: {
+  resetCode: string;
+  password: string;
+}) => {
   try {
-    const response = await instance.put(`/auth/reset-password`, data);
+    const response = await instance.put(`/auth/reset-password`, payload);
 
     return handleResponse(response);
   } catch (error) {
@@ -64,7 +66,7 @@ export const userResetPassword = async (data: RegisterFormValues) => {
 
 export const userVerifyResetCode = async (code: string) => {
   try {
-    const response = await instance.get(`/auth/verify-reset/${code}`);
+    const response = await instance.get(`/auth/verify-reset-code/${code}`);
 
     return handleResponse(response);
   } catch (error) {

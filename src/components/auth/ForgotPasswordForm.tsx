@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -27,6 +28,8 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const ForgotPasswordForm = () => {
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,6 +41,7 @@ const ForgotPasswordForm = () => {
     mutationFn: userForgotPassword,
     onSuccess: async (data) => {
       toast.success(data?.message || "Password reset link sent to your email");
+      router.push("/reset-password");
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -81,7 +85,7 @@ const ForgotPasswordForm = () => {
                     <Input
                       type="email"
                       placeholder="you@example.com"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
+                      className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                       {...field}
                     />
                   </FormControl>
