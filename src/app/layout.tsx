@@ -6,6 +6,7 @@ import Providers from "@/providers/Providers";
 import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
+import Loading from "./loading";
 
 const { SITE_NAME, SITE_DESCRIPTION } = config;
 
@@ -41,7 +42,7 @@ export default function AppLayout({
       >
         <NextTopLoader color="var(--primary)" showSpinner={false} />
         <Providers>
-          <Suspense fallback={"Loading..."}>{children}</Suspense>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
         </Providers>
         <Toaster position="top-right" richColors expand={true} closeButton />
       </body>

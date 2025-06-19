@@ -1,11 +1,12 @@
 import React, { Suspense } from "react";
+import Loading from "../loading";
 
 export default async function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div>
-      <Suspense fallback={"Loaading..."}>
+      <Suspense fallback={<Loading />}>
         <div className="w-full min-h-dvh flex items-center justify-center p-4">
           <div className="relative lg:my-16 w-full md:w-fit flex items-center justify-center">
             <div

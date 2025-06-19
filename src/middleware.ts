@@ -4,7 +4,13 @@ import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
 
 const privateRoutes = ["/account"];
-const authRoutes = ["/login", "/register"];
+const authRoutes = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
+const checkoutRoutes = ["/checkout"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -43,6 +49,16 @@ export default async function middleware(req: NextRequest) {
     if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
+
+  // Handle checkout route specially
+  if (checkoutRoutes.some((route) => pathname.startsWith(route))) {
+    if (!token) {
+      const loginUrl = new URL("/login", req.url);
+      loginUrl.searchParams.set("redirect", "/checkout");
       return NextResponse.redirect(loginUrl);
     }
     return NextResponse.next();
