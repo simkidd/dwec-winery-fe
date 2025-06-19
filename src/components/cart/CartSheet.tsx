@@ -39,16 +39,12 @@ const CartSheet = ({
   const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {
-    // Close the sheet
     onChange();
-    // Navigate to checkout
     router.push("/checkout");
   };
 
   const handleViewCart = () => {
-    // Close the sheet
     onChange();
-    // Navigate to full cart page
     router.push("/cart");
   };
 
@@ -66,7 +62,8 @@ const CartSheet = ({
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-xl">
             <ShoppingCartIcon className="h-5 w-5" />
-            Your Cart ({itemCount})
+            {/* Your Cart ({itemCount}) */}
+            Your Cart
           </SheetTitle>
 
           {itemCount > 0 ? (
@@ -106,22 +103,19 @@ const CartSheet = ({
         {items.length > 0 && (
           <SheetFooter className="border-t pt-4">
             <div className="w-full space-y-4">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">{formatCurrency(subtotal)}</span>
-              </div>
-
               <div className="flex justify-between text-lg font-semibold">
-                <span>Total</span>
+                <span>Estimated Total</span>
                 <span>{formatCurrency(subtotal)}</span>
               </div>
+
+              <p className="text-sm text-muted-foreground">Discounts and shipping calculated at checkout</p>
 
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={handleCheckout}
                   className="w-full cursor-pointer"
                 >
-                  Proceed to Checkout
+                  Checkout
                 </Button>
 
                 <Button
