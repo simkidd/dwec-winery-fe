@@ -110,7 +110,7 @@ const CheckoutPage = () => {
   const initPaymentMutation = useMutation({
     mutationFn: initPayment,
     onSuccess: async (data) => {
-      console.log("init>>", data);
+      window.location.href = data.data.data.authorization_url;
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -137,7 +137,6 @@ const CheckoutPage = () => {
   });
 
   const onSubmit = async (values: CheckoutFormValues) => {
-    console.log("form values>>>", values);
     try {
       const orderData: CreateOrderDTO = {
         products: items.map((item) => ({
@@ -174,24 +173,18 @@ const CheckoutPage = () => {
               : "",
           fee: shippingFee,
         },
-        paymentMethod:
-          values.paymentMethod === "paystack" ? "Paystack" : "Pay on Delivery",
+        paymentMethod: values.paymentMethod,
         paymentReference: "",
-        totalAmountPaid: 0,
+        totalAmountPaid: total,
       };
 
       if (values.paymentMethod === "paystack") {
         // Paystack payment flow
-        const paymentResponse = await initPaymentMutation.mutateAsync({
+        initPaymentMutation.mutate({
           email: values.email,
           amount: total * 100,
           orderData,
         });
-
-        // Redirect to Paystack payment page
-        if (paymentResponse?.data?.authorization_url) {
-          window.location.href = paymentResponse.data.authorization_url;
-        }
       } else {
         // Pay on delivery flow
         await createOrderMutation.mutateAsync(orderData);
@@ -491,7 +484,10 @@ const CheckoutPage = () => {
                                   htmlFor="pay-on-delivery"
                                   className="!mt-0 text-muted-foreground cursor-not-allowed"
                                 >
-                                  Pay on Delivery <span className="italic">(Currently Unavailable)</span>
+                                  Pay on Delivery{" "}
+                                  <span className="italic">
+                                    (Currently Unavailable)
+                                  </span>
                                 </FormLabel>
                               </div>
                               <p className="text-sm text-muted-foreground/70 mt-2">

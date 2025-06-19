@@ -26,7 +26,7 @@ export const initPayment = async (data: PaymentDTO) => {
   try {
     const response = await instance.post(
       `/${ROUTE_PATH}/orders/initialize-paystack-payment`,
-      { data }
+      data
     );
 
     return handleResponse(response);
@@ -37,9 +37,10 @@ export const initPayment = async (data: PaymentDTO) => {
 
 export const createOrder = async (data: CreateOrderDTO) => {
   try {
-    const response = await instance.post(`/${ROUTE_PATH}/orders/create-order`, {
-      data,
-    });
+    const response = await instance.post(
+      `/${ROUTE_PATH}/orders/create-order`,
+      data
+    );
 
     return handleResponse(response);
   } catch (error) {

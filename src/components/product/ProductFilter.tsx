@@ -178,7 +178,7 @@ const ProductFilter = () => {
               )}
 
               {/* Brand Filter Section */}
-              <div className="space-y-4 border-b pb-4">
+              {/* <div className="space-y-4 border-b pb-4">
                 <button
                   className="flex items-center justify-between w-full"
                   onClick={() => toggleSection("brand")}
@@ -196,7 +196,7 @@ const ProductFilter = () => {
                     <span className="text-gray-500 italic">Coming soon</span>
                   </div>
                 )}
-              </div>
+              </div> */}
 
               {/* Price Filter Section */}
               <div className="space-y-4 border-b pb-4">
