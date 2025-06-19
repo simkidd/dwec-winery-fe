@@ -34,6 +34,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Define base schema
 const baseSchema = z.object({
@@ -218,7 +220,7 @@ const CheckoutPage = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Checkout Form */}
-          <div className="lg:w-2/3 lg:pr-8">
+          <div className="lg:w-3/5 lg:pr-8">
             <Button variant="ghost" className="mb-6 pl-0" asChild>
               <Link href="/cart" className="flex items-center">
                 <ChevronLeft className="h-5 w-5 mr-2" />
@@ -308,9 +310,7 @@ const CheckoutPage = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Home Delivery">
-                              Home Delivery
-                            </SelectItem>
+                            <SelectItem value="Home Delivery">Ship</SelectItem>
                             <SelectItem value="Pickup">Store Pickup</SelectItem>
                           </SelectContent>
                         </Select>
@@ -552,19 +552,36 @@ const CheckoutPage = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:w-1/3">
-            <Card className="p-6 sticky top-4">
-              <h2 className="text-xl font-bold mb-6">Order Summary</h2>
+          <div className="lg:w-2/5">
+            <Card className="p-4 sticky top-4 rounded-sm">
+              <div className="">
+                <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+                <ScrollArea className="">
+                  {items.map((item, i) => (
+                    <div key={i} className="flex items-start gap-4 py-3">
+                      <div className="relative h-14 w-16 rounded-md overflow-hidden shrink-0">
+                        <Image
+                          src={item.product.images[0]}
+                          alt={item.product.name}
+                          fill
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between gap-4">
+                          <h3 className="text-sm">{item.product.name}</h3>
 
-              <div className="space-y-4">
-                {items.map((item) => (
-                  <div key={item.product._id} className="flex justify-between">
-                    <span>
-                      {item.product.name} × {item.qty}
-                    </span>
-                    <span>{formatCurrency(item.product.price * item.qty)}</span>
-                  </div>
-                ))}
+                          <p className="text-muted-foreground pb-2">
+                            {formatCurrency(item.product?.price * item.qty)}
+                          </p>
+                        </div>
+                        <p className="text-muted-foreground pb-2">
+                          {formatCurrency(item.product?.price)} x {item.qty}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </ScrollArea>
 
                 <div className="border-t pt-4 space-y-2">
                   <div className="flex justify-between">
@@ -583,7 +600,7 @@ const CheckoutPage = () => {
                   </div>
                 </div>
 
-                <div className="border-t pt-4 flex justify-between text-lg font-bold">
+                <div className=" pt-4 flex justify-between text-lg font-bold">
                   <span>Total</span>
                   <span>{formatCurrency(total)}</span>
                 </div>

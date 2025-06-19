@@ -1,11 +1,11 @@
 import { ICartItem } from "@/interfaces/cart.interface";
+import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 interface CartItemProps {
   item: ICartItem;
@@ -49,10 +49,10 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-8 w-8 cursor-pointer"
             onClick={onRemove}
           >
-            <X className="h-4 w-4" />
+            <Trash2Icon className="h-4 w-4" />
           </Button>
         </div>
 

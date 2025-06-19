@@ -23,7 +23,7 @@ const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
         />
       </div>
       <div className="flex-1">
-        <div className="flex justify-between gap-6">
+        <div className="flex justify-between gap-4">
           <h3 className="text-sm">{item.product.name}</h3>
 
           <p className="text-muted-foreground pb-2">
