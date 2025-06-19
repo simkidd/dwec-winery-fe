@@ -6,19 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { createOrder, initPayment } from "@/lib/api/order";
 import { useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, StoreIcon, Truck } from "lucide-react";
 import Link from "next/link";
 // import { useRouter } from "next/navigation";
 import {
@@ -29,13 +22,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { CreateOrderDTO } from "@/interfaces/order.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import Image from "next/image";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Define base schema
 const baseSchema = z.object({
@@ -218,21 +211,22 @@ const CheckoutPage = () => {
       <PageHeader title="Checkout" className="hidden md:flex" />
 
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Checkout Form */}
-          <div className="lg:w-3/5 lg:pr-8">
-            <Button variant="ghost" className="mb-6 pl-0" asChild>
-              <Link href="/cart" className="flex items-center">
-                <ChevronLeft className="h-5 w-5 mr-2" />
-                Back to Cart
-              </Link>
-            </Button>
+        <Button variant="ghost" className="mb-6 pl-0" asChild>
+          <Link href="/cart" className="flex items-center">
+            <ChevronLeft className="h-5 w-5 mr-2" />
+            Back to Cart
+          </Link>
+        </Button>
 
-            <Card className=" mb-8 bg-transparent border-0 shadow-none">
+        <div className="flex flex-col lg:flex-row gap-2 lg:gap-8">
+          {/* Checkout Form */}
+          <div className="lg:w-3/5 lg:pr-8 ">
+            <Card className="py-4 lg:mb-8 bg-transparent border-0 shadow-none">
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-6"
+                  id="checkout-form"
                 >
                   <h2 className="text-xl font-bold">Contact Information</h2>
 
@@ -245,7 +239,7 @@ const CheckoutPage = () => {
                           <Input
                             type="email"
                             placeholder="Email"
-                            className="rounded-sm"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                             readOnly
                             {...field}
                           />
@@ -264,7 +258,7 @@ const CheckoutPage = () => {
                           <Input
                             type="tel"
                             placeholder="Phone Number"
-                            className="rounded-sm"
+                            className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                             {...field}
                           />
                         </FormControl>
@@ -299,21 +293,63 @@ const CheckoutPage = () => {
                     control={form.control}
                     name="deliveryMethod"
                     render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="rounded-sm">
-                              <SelectValue placeholder="Select delivery method" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="Home Delivery">Ship</SelectItem>
-                            <SelectItem value="Pickup">Store Pickup</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <FormItem className="space-y-2">
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="space-y-2"
+                          >
+                            <FormLabel
+                              htmlFor="home-delivery"
+                              className="!mt-0 cursor-pointer flex"
+                            >
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem
+                                    value="Home Delivery"
+                                    id="home-delivery"
+                                    className="h-4 w-4 cursor-pointer"
+                                  />
+                                  <div>
+                                    <p>Ship</p>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      Get your order delivered to your doorstep
+                                    </p>
+                                  </div>
+                                </div>
+                                <Truck className="h-5 w-5 text-muted-foreground" />
+                              </div>
+                            </FormLabel>
+
+                            <FormLabel
+                              htmlFor="pickup"
+                              className="!mt-0 cursor-pointer"
+                            >
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem
+                                    value="Pickup"
+                                    id="pickup"
+                                    className="h-4 w-4 cursor-pointer"
+                                  />
+                                  <div>
+                                    <FormLabel
+                                      htmlFor="pickup"
+                                      className="!mt-0 cursor-pointer"
+                                    >
+                                      Store Pickup
+                                    </FormLabel>
+                                    <p className="text-sm text-muted-foreground mt-1">
+                                      Pick up your order from our nearest store
+                                    </p>
+                                  </div>
+                                </div>
+                                <StoreIcon className="h-5 w-5 text-muted-foreground" />
+                              </div>
+                            </FormLabel>
+                          </RadioGroup>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -334,7 +370,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="Street Address"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -352,7 +388,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="Apt, Suite, etc. (Optional)"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -370,7 +406,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="City"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -388,7 +424,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="State/Province"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -406,7 +442,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="ZIP/Postal Code"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -424,7 +460,7 @@ const CheckoutPage = () => {
                                 <FormControl>
                                   <Input
                                     placeholder="Delivery Notes (Optional)"
-                                    className="rounded-sm"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                     {...field}
                                   />
                                 </FormControl>
@@ -452,50 +488,52 @@ const CheckoutPage = () => {
                             defaultValue={field.value}
                             className="space-y-2"
                           >
-                            <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem
-                                  value="paystack"
-                                  id="paystack"
-                                  className="h-4 w-4 cursor-pointer"
-                                />
-                                <FormLabel
-                                  htmlFor="paystack"
-                                  className="!mt-0 cursor-pointer"
-                                >
-                                  Paystack (Cards, Bank Transfer, etc.)
-                                </FormLabel>
+                            <FormLabel
+                              htmlFor="paystack"
+                              className="!mt-0 cursor-pointer"
+                            >
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem
+                                    value="paystack"
+                                    id="paystack"
+                                    className="h-4 w-4 cursor-pointer"
+                                  />
+                                  <p>Paystack (Cards, Bank Transfer, etc.)</p>
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-2">
+                                  Pay securely with your card, bank account, or
+                                  mobile money.
+                                </p>
                               </div>
-                              <p className="text-sm text-muted-foreground mt-2">
-                                Pay securely with your card, bank account, or
-                                mobile money.
-                              </p>
-                            </div>
+                            </FormLabel>
 
-                            <div className="p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem
-                                  value="pay-on-delivery"
-                                  id="pay-on-delivery"
-                                  className="h-4 w-4 text-muted-foreground disabled:cursor-not-allowed"
-                                  disabled
-                                />
-                                <FormLabel
-                                  htmlFor="pay-on-delivery"
-                                  className="!mt-0 text-muted-foreground cursor-not-allowed"
-                                >
-                                  Pay on Delivery{" "}
-                                  <span className="italic">
-                                    (Currently Unavailable)
-                                  </span>
-                                </FormLabel>
-                              </div>
-                              <p className="text-sm text-muted-foreground/70 mt-2">
-                                Pay cash when your order arrives.
-                                {/* Pay cash when your order arrives. Additional ₦
+                            <FormLabel
+                              htmlFor="pay-on-delivery"
+                              className="!mt-0 text-muted-foreground cursor-not-allowed"
+                            >
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem
+                                    value="pay-on-delivery"
+                                    id="pay-on-delivery"
+                                    className="h-4 w-4 text-muted-foreground disabled:cursor-not-allowed"
+                                    disabled
+                                  />
+                                  <p>
+                                    Pay on Delivery{" "}
+                                    <span className="italic">
+                                      (Currently Unavailable)
+                                    </span>
+                                  </p>
+                                </div>
+                                <p className="text-sm text-muted-foreground/70 mt-2">
+                                  Pay cash when your order arrives.
+                                  {/* Pay cash when your order arrives. Additional ₦
                                 {shippingFee} delivery fee applies. */}
-                              </p>
-                            </div>
+                                </p>
+                              </div>
+                            </FormLabel>
                           </RadioGroup>
                         </FormControl>
                         <FormMessage />
@@ -524,7 +562,8 @@ const CheckoutPage = () => {
                     />
                   </div>
 
-                  <div className="pt-6">
+                  {/* Keep payment button for desktop */}
+                  <div className="pt-6 hidden lg:block">
                     <Button
                       type="submit"
                       className="w-full rounded-sm cursor-pointer"
@@ -552,14 +591,14 @@ const CheckoutPage = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:w-2/5">
+          <div className="lg:w-2/5 ">
             <Card className="p-4 sticky top-4 rounded-sm">
               <div className="">
                 <h2 className="text-xl font-bold mb-4">Order Summary</h2>
                 <ScrollArea className="">
                   {items.map((item, i) => (
                     <div key={i} className="flex items-start gap-4 py-3">
-                      <div className="relative h-14 w-16 rounded-md overflow-hidden shrink-0">
+                      <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0 border">
                         <Image
                           src={item.product.images[0]}
                           alt={item.product.name}
@@ -589,7 +628,11 @@ const CheckoutPage = () => {
                     <span>{formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Shipping</span>
+                    <span>
+                      {deliveryMethod === "Pickup"
+                        ? "Pickup in store"
+                        : "Shipping"}
+                    </span>
                     <span>
                       {shippingFee > 0 ? formatCurrency(shippingFee) : "Free"}
                     </span>
@@ -604,6 +647,30 @@ const CheckoutPage = () => {
                   <span>Total</span>
                   <span>{formatCurrency(total)}</span>
                 </div>
+              </div>
+
+              <div className="pt-6 lg:hidden">
+                <Button
+                  type="submit"
+                  form="checkout-form"
+                  className="w-full rounded-sm cursor-pointer"
+                  disabled={
+                    initPaymentMutation.isPending ||
+                    createOrderMutation.isPending
+                  }
+                >
+                  {initPaymentMutation.isPending ||
+                  createOrderMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : paymentMethod === "pay-on-delivery" ? (
+                    `Place Order (Pay ${formatCurrency(total)} on Delivery)`
+                  ) : (
+                    `Pay ${formatCurrency(total)} Now`
+                  )}
+                </Button>
               </div>
             </Card>
           </div>
