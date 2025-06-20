@@ -54,6 +54,8 @@ export interface PaymentDTO {
   email: string;
   amount: number;
   orderData: CreateOrderDTO;
+  callback_url: string;
+  cancel_url: string;
 }
 
 interface OrderedProducts {

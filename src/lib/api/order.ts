@@ -67,7 +67,7 @@ export const getOrderById = async (id: string) => {
   }
 };
 
-export const verifyPayment = async (params: string) => {
+export const verifyPayment = async (params: { ref: string }) => {
   try {
     const response = await instance.get(
       `/${ROUTE_PATH}/orders/verify-paystack-payment`,
