@@ -24,7 +24,7 @@ const OrderConfirmationComp = ({ reference }: { reference: string }) => {
     setVerificationState("error");
   };
 
-  if (!orderData && !reference) {
+  if (!orderData || !reference) {
     return (
       <PaymentVerificationError
         message="Missing payment reference"
