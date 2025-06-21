@@ -25,7 +25,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <div className="bg-primary text-white">
+    <div className="bg-primary dark:bg-background text-white">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {features.map((feature, index) => {
@@ -36,10 +36,10 @@ const FeaturesSection = () => {
                 className="flex flex-col items-center text-center"
               >
                 <div className="w-14 h-14 flex items-center justify-center mb-3">
-                  <Icon size={48} />
+                  <Icon size={40} />
                 </div>
                 <h3 className="font-medium text-lg leading-[1.5rem]">{feature.title}</h3>
-                <p className="">{feature.description}</p>
+                <p className="dark:text-muted-foreground">{feature.description}</p>
               </div>
             );
           })}

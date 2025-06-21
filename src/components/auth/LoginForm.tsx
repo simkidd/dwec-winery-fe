@@ -6,8 +6,11 @@ import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { Google } from "iconsax-reactjs";
 import cookies from "js-cookie";
-import { Eye, EyeOff, Loader2Icon, Wine } from "lucide-react";
+import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import {
   Form,
   FormControl,
@@ -25,8 +29,6 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
-import { Google } from "iconsax-reactjs";
-import { Card } from "../ui/card";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -42,6 +44,7 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
 
   const callbackUrl = searchParams.get("redirect") || "/";
@@ -80,9 +83,18 @@ const LoginForm = () => {
     <Card className="w-full rounded-[6px] md:p-6">
       <div className="flex items-center justify-center p-6 font-bold">
         <Link href={"/"}>
-          <div className="flex items-center space-x-2">
-            <Wine className="h-6 w-6 text-primary shrink-0" />
-            <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+          <div className="h-10">
+            <Image
+              src={
+                theme === "light"
+                  ? "/logo/logo-red.png"
+                  : "/logo/logo-white.png"
+              }
+              alt=""
+              width={300}
+              height={150}
+              className="object-contain w-full h-full"
+            />
           </div>
         </Link>
       </div>

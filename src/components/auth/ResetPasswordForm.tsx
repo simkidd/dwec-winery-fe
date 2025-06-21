@@ -17,8 +17,10 @@ import { userResetPassword, userVerifyResetCode } from "@/lib/api/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Eye, EyeOff, Loader2, Wine } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,7 +28,7 @@ import { z } from "zod";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { PasswordRequirements } from "./SignUpForm";
-import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 // Code Verification Form Component
 const CodeVerificationForm = ({
@@ -54,9 +56,7 @@ const CodeVerificationForm = ({
       onVerified(data.resetCode);
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(
-        error?.response?.data?.message || error?.message
-      );
+      toast.error(error?.response?.data?.message || error?.message);
       form.resetField("resetCode");
     },
   });
@@ -264,6 +264,7 @@ const PasswordResetForm = ({ verifiedCode }: { verifiedCode: string }) => {
 
 // Main Component
 const ResetPasswordForm = () => {
+  const { theme } = useTheme();
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [verifiedCode, setVerifiedCode] = useState("");
 
@@ -275,9 +276,20 @@ const ResetPasswordForm = () => {
   return (
     <Card className="w-full max-w-md rounded-lg">
       <div className="flex flex-col items-center p-6 space-y-6">
-        <Link href="/" className="flex items-center space-x-2">
-          <Wine className="h-8 w-8 text-primary" />
-          <span className="text-2xl font-bold">DWEC Winery</span>
+        <Link href="/" className="flex items-center justify-center">
+          <div className="h-10">
+            <Image
+              src={
+                theme === "light"
+                  ? "/logo/logo-red.png"
+                  : "/logo/logo-white.png"
+              }
+              alt=""
+              width={300}
+              height={150}
+              className="object-contain w-full h-full"
+            />
+          </div>
         </Link>
 
         <div className="text-center space-y-2">

@@ -8,7 +8,7 @@ import { AnimatedLink } from "./AnimatedLink";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-white pt-12 pb-8">
+    <footer className="bg-primary dark:bg-background text-white pt-12 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Info */}
@@ -16,9 +16,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2 mb-4">
               <div className="h-14">
                 <Image
-                  src={
-                    "/logo/WhatsApp_Image_2025-06-08_at_10.56.17_95b6e345-removebg-preview.png"
-                  }
+                  src={"/logo/logo-white.png"}
                   alt=""
                   width={300}
                   height={300}
@@ -154,11 +152,7 @@ const Footer = () => {
                   className="border rounded-sm focus-visible:border-white/90 focus-visible:ring-0 placeholder:text-white/80"
                   required
                 />
-                <Button
-                  type="submit"
-                  variant={"secondary"}
-                  className="cursor-pointer "
-                >
+                <Button type="submit" className="cursor-pointer border">
                   Subscribe
                 </Button>
               </form>
