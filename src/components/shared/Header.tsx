@@ -9,9 +9,9 @@ import {
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  Wine,
-  X,
+  X
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import CartSheet from "../cart/CartSheet";
@@ -75,11 +75,16 @@ const Header = () => {
 
             {/* Logo */}
             <div className=" flex font-bold text-lg">
-              <div className="flex items-center space-x-2">
-                <Wine className="h-6 w-6 text-primary shrink-0" />
-                <span className="text-xl font-bold text-nowrap">
-                  DWEC Winery
-                </span>
+              <div className="h-8 md:h-10">
+                <Image
+                  src={
+                    "/logo/WhatsApp_Image_2025-06-08_at_10.56.17_d88b6574-removebg-preview.png"
+                  }
+                  alt=""
+                  width={300}
+                  height={150}
+                  className="object-contain w-full h-full"
+                />
               </div>
             </div>
           </div>

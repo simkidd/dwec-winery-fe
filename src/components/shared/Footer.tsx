@@ -1,6 +1,6 @@
-import React from "react";
-import { MapPin, Phone, Mail, Clock, Wine } from "lucide-react";
 import { Apple, Facebook, GooglePlay, Heart, Instagram } from "iconsax-reactjs";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -13,20 +13,37 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Wine className="h-8 w-8 " />
-              <span className="text-2xl font-bold">DWEC Drinks</span>
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="h-14">
+                <Image
+                  src={
+                    "/logo/WhatsApp_Image_2025-06-08_at_10.56.17_95b6e345-removebg-preview.png"
+                  }
+                  alt=""
+                  width={300}
+                  height={300}
+                  className="object-contain w-full h-full"
+                />
+              </div>
             </div>
             <p>
-              Your premium destination for cocktails, wines, and spirits.
-              Bringing you the finest selection since 1985.
+              We’ve mastered the business of sale and distribution of drinks in
+              Nigeria, this enables us to serve you better, we are affiliated
+              with major drink companies inside and outside Nigeria to guarantee
+              quality product that is been delivered to you.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-primary transition">
+              <a
+                href="#"
+                className="hover:text-white/80 transition duration-300 ease-in-out"
+              >
                 <span className="sr-only">Facebook</span>
                 <Facebook variant="Bold" />
               </a>
-              <a href="#" className="hover:text-primary transition">
+              <a
+                href="#"
+                className="hover:text-white/80 transition duration-300 ease-in-out"
+              >
                 <span className="sr-only">Instagram</span>
                 <Instagram variant="Bold" />
               </a>
@@ -87,33 +104,35 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5  mt-0.5" />
                 <AnimatedLink
-                  href="tel:+647474"
+                  href="https://www.google.com/maps/place/86A+Woji+Road,+Elechi,+Port+Harcourt+500271,+Rivers"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <span>456 Beverage Blvd, New York, NY 10001</span>
+                  <span>86A Woji Road, GRA Phase 2</span>
                 </AnimatedLink>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 " />
                 <AnimatedLink
-                  href="tel:+647474"
+                  href="tel:+234 703 625 4646"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
                 >
-                  <span>+1 (212) 555-0199</span>
+                  <span>+234 703 625 4646</span>
                 </AnimatedLink>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 " />
                 <AnimatedLink
-                  href="mailto:suport@gmail.com"
+                  href="mailto:dwecwinery@gmail.com"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
                 >
-                  <span>support@dwecdrinks.com</span>
+                  <span>dwecwinery@gmail.com</span>
                 </AnimatedLink>
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="h-5 w-5 " />
-                <p>Mon-Sun: 9AM - 10PM</p>
+                <p>Open 24 Hours</p>
               </div>
             </div>
           </div>
