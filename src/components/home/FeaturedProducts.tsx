@@ -2,8 +2,8 @@
 import useProducts from "@/hooks/use-products";
 import { ChevronRight, Star } from "lucide-react";
 import Link from "next/link";
-import ProductCard from "./ProductCard";
-import { Skeleton } from "../ui/skeleton";
+import ProductCard from "../product/ProductCard";
+import ProductCardSkeleton from "../product/ProductCardSkeleton";
 import { Button } from "../ui/button";
 
 const FeaturedProducts = () => {
@@ -31,11 +31,7 @@ const FeaturedProducts = () => {
         {isPending ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="flex flex-col gap-2">
-                <Skeleton className="aspect-square" />
-                <Skeleton className="h-4 w-3/4 mx-auto" />
-                <Skeleton className="h-4 w-1/2 mx-auto" />
-              </div>
+              <ProductCardSkeleton key={i} />
             ))}
           </div>
         ) : products.length > 0 ? (
@@ -59,7 +55,8 @@ const FeaturedProducts = () => {
         <div className="mt-8 flex justify-center md:hidden">
           <Button variant="outline" className="gap-2" asChild>
             <Link href={"/products"}>
-              View all drinks<ChevronRight className="h-4 w-4" />
+              View all drinks
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </Button>
         </div>

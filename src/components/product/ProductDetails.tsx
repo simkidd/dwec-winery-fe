@@ -1,6 +1,8 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import useCategories from "@/hooks/use-categories";
+import useProducts from "@/hooks/use-products";
 import { IProduct } from "@/interfaces/product.interface";
 import { addToCart } from "@/store/features/cart/cart.slice";
 import { useAppDispatch } from "@/store/hooks";
@@ -9,12 +11,16 @@ import { Minus, Plus, Share2, Shield, Truck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import FavouriteButton from "../shared/FavouriteButton";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 import ProductImages from "./ProductImages";
-import ProductCard from "../home/ProductCard";
-import useCategories from "@/hooks/use-categories";
-import useProducts from "@/hooks/use-products";
-import { Skeleton } from "../ui/skeleton";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 
 const ProductDetails = ({ product }: { product: IProduct }) => {
   const dispatch = useAppDispatch();
@@ -184,11 +190,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
             <h2 className="text-2xl font-bold mb-6">You may also like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-2">
-                  <Skeleton className="aspect-square rounded-sm" />
-                  <Skeleton className="h-4 w-3/4 mx-auto" />
-                  <Skeleton className="h-4 w-1/2 mx-auto" />
-                </div>
+                <ProductCardSkeleton key={i} />
               ))}
             </div>
           </div>

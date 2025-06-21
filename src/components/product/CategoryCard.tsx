@@ -17,12 +17,6 @@ const CategoryCard = ({ category }: { category: ICategory }) => {
             width={400}
             height={400}
             className="w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              if (target.src !== window.location.origin + PLACEHOLDER_IMAGE) {
-                target.src = PLACEHOLDER_IMAGE;
-              }
-            }}
           />
 
           {/* Gradient overlay */}

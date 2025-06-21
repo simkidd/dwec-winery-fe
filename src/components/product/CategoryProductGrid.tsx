@@ -1,20 +1,20 @@
 "use client";
+import useProducts from "@/hooks/use-products";
 import { ICategory } from "@/interfaces/product.interface";
+import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import React, { useEffect } from "react";
-import ProductFilter from "./ProductFilter";
+import { ChevronDown, Frown, Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { ChevronDown, Frown, Loader2 } from "lucide-react";
-import { Skeleton } from "../ui/skeleton";
-import useProducts from "@/hooks/use-products";
-import { setFilter } from "@/store/features/products/product.slice";
-import ProductCard from "../home/ProductCard";
+import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
+import ProductFilter from "./ProductFilter";
 
 type SortOption =
   | "desc"
@@ -143,11 +143,7 @@ const CategoryProductGrid = ({ category }: { category: ICategory }) => {
             ) : isLoadingInfinite ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {[...Array(12)].map((_, i) => (
-                  <div key={i} className="flex flex-col gap-2">
-                    <Skeleton className="aspect-square rounded-sm" />
-                    <Skeleton className="h-4 w-3/4 mx-auto" />
-                    <Skeleton className="h-4 w-1/2 mx-auto" />
-                  </div>
+                  <ProductCardSkeleton key={i} />
                 ))}
               </div>
             ) : products.length > 0 ? (

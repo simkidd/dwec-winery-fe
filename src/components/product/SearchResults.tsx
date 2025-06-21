@@ -2,11 +2,11 @@
 import useProducts from "@/hooks/use-products";
 import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import React, { useEffect } from "react";
-import { Skeleton } from "../ui/skeleton";
 import { Frown, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { Button } from "../ui/button";
-import ProductCard from "../home/ProductCard";
+import ProductCard from "./ProductCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 
 const SearchResults = ({ query }: { query: string }) => {
   const dispatch = useAppDispatch();
@@ -35,11 +35,7 @@ const SearchResults = ({ query }: { query: string }) => {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {[...Array(12)].map((_, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            <Skeleton className="aspect-square rounded-sm" />
-            <Skeleton className="h-4 w-3/4 mx-auto" />
-            <Skeleton className="h-4 w-1/2 mx-auto" />
-          </div>
+          <ProductCardSkeleton key={i} />
         ))}
       </div>
     );

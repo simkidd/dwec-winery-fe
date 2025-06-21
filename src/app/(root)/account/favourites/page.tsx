@@ -1,5 +1,5 @@
 "use client";
-import ProductCard from "@/components/home/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

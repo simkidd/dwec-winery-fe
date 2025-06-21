@@ -3,10 +3,10 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import React from "react";
 
-const Logo = () => {
+const Logo = ({ ...props }: React.ComponentProps<"div">) => {
   const { theme } = useTheme();
   return (
-    <div className="h-8 md:h-10">
+    <div className="h-8 md:h-10" {...props}>
       <Image
         src={theme === "light" ? "/logo/logo-red.png" : "/logo/logo-white.png"}
         alt="logo"
