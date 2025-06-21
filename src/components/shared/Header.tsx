@@ -26,6 +26,7 @@ import MenuNavigation from "./MenuNavigation";
 import SearchBar from "./SearchBar";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useTheme } from "next-themes";
+import { IUser } from "@/interfaces/user.interface";
 
 const SCROLL_THRESHOLD = 100;
 
@@ -73,7 +74,7 @@ const Header = () => {
         <div className="w-full container mx-auto px-4 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-4">
             {/* Mobile Menu Button */}
-            {isMobile && <MenuNavigation mobileView />}
+            {isMobile && <MenuNavigation mobileView user={user as IUser} />}
 
             {/* Logo */}
             <div className=" flex font-bold text-lg">
@@ -250,7 +251,7 @@ const Header = () => {
       {!isMobile && (
         <div className=" bg-gray-50 dark:bg-gray-900 border-b">
           <div className="container mx-auto px-4 flex">
-            <MenuNavigation />
+            <MenuNavigation user={user as IUser} />
           </div>
         </div>
       )}
