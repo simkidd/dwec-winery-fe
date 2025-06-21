@@ -9,7 +9,7 @@ import {
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  X
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +25,7 @@ import { Separator } from "../ui/separator";
 import MenuNavigation from "./MenuNavigation";
 import SearchBar from "./SearchBar";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { useTheme } from "next-themes";
 
 const SCROLL_THRESHOLD = 100;
 
@@ -37,6 +38,7 @@ const Header = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const isMobile = useIsMobile();
   const { signOut } = useLogout();
+  const { theme } = useTheme();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -75,17 +77,21 @@ const Header = () => {
 
             {/* Logo */}
             <div className=" flex font-bold text-lg">
-              <div className="h-8 md:h-10">
-                <Image
-                  src={
-                    "/logo/WhatsApp_Image_2025-06-08_at_10.56.17_d88b6574-removebg-preview.png"
-                  }
-                  alt=""
-                  width={300}
-                  height={150}
-                  className="object-contain w-full h-full"
-                />
-              </div>
+              <Link href={"/"}>
+                <div className="h-8 md:h-10">
+                  <Image
+                    src={
+                      theme === "light"
+                        ? "/logo/logo-red.png"
+                        : "/logo/logo-white.png"
+                    }
+                    alt="logo"
+                    width={300}
+                    height={150}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+              </Link>
             </div>
           </div>
 

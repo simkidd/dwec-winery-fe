@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Google } from "iconsax-reactjs";
-import { Check, Eye, EyeOff, Loader2Icon, Wine, X } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -14,6 +16,7 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
   Form,
@@ -26,7 +29,6 @@ import {
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import AgeConsentModal from "./AgeConsentModal";
-import { Card } from "../ui/card";
 
 // Base schema for all users
 const formSchema = z
@@ -60,6 +62,7 @@ export type RegisterFormValues = z.infer<typeof formSchema>;
 const SignUpForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(true);
@@ -125,11 +128,18 @@ const SignUpForm = () => {
         <Card className="w-full rounded-[6px] md:p-6">
           <div className="flex items-center justify-center p-6 font-bold">
             <Link href={"/"}>
-              <div className="flex items-center space-x-2">
-                <Wine className="h-6 w-6 text-primary shrink-0" />
-                <span className="text-xl font-bold text-nowrap">
-                  DWEC Winery
-                </span>
+              <div className="h-10">
+                <Image
+                  src={
+                    theme === "light"
+                      ? "/logo/logo-red.png"
+                      : "/logo/logo-white.png"
+                  }
+                  alt=""
+                  width={300}
+                  height={150}
+                  className="object-contain w-full h-full"
+                />
               </div>
             </Link>
           </div>

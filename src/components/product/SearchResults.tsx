@@ -64,7 +64,10 @@ const SearchResults = ({ query }: { query: string }) => {
 
   if (!products || products.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="flex flex-col items-center justify-center py-16 space-y-6 text-center">
+        <div className="bg-muted/50 p-6 rounded-full">
+          <Frown className="h-12 w-12 text-muted-foreground" />
+        </div>
         <h2 className="text-xl font-medium mb-2">
           No products found for &quot;{query}&quot;
         </h2>
@@ -77,7 +80,7 @@ const SearchResults = ({ query }: { query: string }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}

@@ -16,7 +16,7 @@ export const generateMetadata = async ({
     const product = data.product as IProduct;
 
     if (!product) {
-      throw new Error("Product not found");
+      notFound();
     }
 
     return {
@@ -44,26 +44,8 @@ export const generateMetadata = async ({
       },
     };
   } catch (error) {
-    console.error("Failed to fetch product metadata:", error);
-
-    return {
-      title: "Product Not Found",
-      description: "The requested product could not be found.",
-      canonical: `${config.SITE_URL}/product-not-found`,
-      openGraph: {
-        type: "website",
-        url: `${config.SITE_URL}/product-not-found`,
-        title: "Product Not Found",
-        description: "The requested product could not be found.",
-        images: [],
-      },
-      twitter: {
-        cardType: "summary",
-        title: "Product Not Found",
-        description: "The requested product could not be found.",
-        image: "",
-      },
-    };
+    console.log(error);
+    notFound();
   }
 };
 

@@ -3,8 +3,11 @@ import { userForgotPassword } from "@/lib/api/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Loader2Icon, Wine } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -19,7 +22,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -29,6 +31,7 @@ export type FormValues = z.infer<typeof formSchema>;
 
 const ForgotPasswordForm = () => {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,9 +60,18 @@ const ForgotPasswordForm = () => {
     <Card className="w-full rounded-[6px] md:p-6">
       <div className="flex items-center justify-center p-6 font-bold">
         <Link href={"/"}>
-          <div className="flex items-center space-x-2">
-            <Wine className="h-6 w-6 text-primary shrink-0" />
-            <span className="text-xl font-bold text-nowrap">DWEC Winery</span>
+          <div className="h-10">
+            <Image
+              src={
+                theme === "light"
+                  ? "/logo/logo-red.png"
+                  : "/logo/logo-white.png"
+              }
+              alt=""
+              width={300}
+              height={150}
+              className="object-contain w-full h-full"
+            />
           </div>
         </Link>
       </div>
