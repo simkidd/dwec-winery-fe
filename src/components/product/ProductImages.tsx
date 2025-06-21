@@ -61,8 +61,8 @@ const ProductImages = ({ images, altText }: ProductImagesProps) => {
         </CarouselContent>
         {images.length > 1 && (
           <>
-            <CarouselPrevious className="left-2 h-8 w-8" />
-            <CarouselNext className="right-2 h-8 w-8" />
+            <CarouselPrevious className="left-2 h-8 w-8 cursor-pointer" />
+            <CarouselNext className="right-2 h-8 w-8 cursor-pointer" />
           </>
         )}
       </Carousel>

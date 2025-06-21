@@ -2,34 +2,37 @@
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { Button } from "../ui/button";
+import { useFavourites } from "@/hooks/use-favourites";
+import { IProduct } from "@/interfaces/product.interface";
 
 interface FavouriteButtonProps {
-  isHovered: boolean;
-  isFavorite: boolean;
+  product: IProduct;
   className?: string;
-  onClick: (e: React.MouseEvent) => void;
 }
 
-const FavouriteButton = ({
-  isHovered,
-  isFavorite,
-  className,
-  onClick,
-}: FavouriteButtonProps) => {
+const FavouriteButton = ({ product, className }: FavouriteButtonProps) => {
+  const { toggleFavorite, fetchedFavourites } = useFavourites();
+
+  const isFavorite = (productId: string) => {
+    return fetchedFavourites?.some((fav) => fav._id === productId);
+  };
+
   return (
     <Button
       variant="ghost"
       size="icon"
       className={cn(
-        "absolute top-2 right-2 rounded-full bg-background/80 backdrop-blur-sm transition-all duration-500 ease-in-out cursor-pointer z-[2]",
-        isHovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2",
+        " rounded-full bg-background/80 backdrop-blur-sm transition-all duration-500 ease-in-out cursor-pointer z-[2]",
         className
       )}
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        toggleFavorite(product._id);
+      }}
     >
       <Heart
         className={`h-4 w-4 ${
-          isFavorite ? "fill-primary text-primary" : "text-muted-foreground"
+          isFavorite(product._id) ? "fill-primary text-primary" : ""
         }`}
       />
     </Button>

@@ -1,5 +1,4 @@
 "use client";
-import { useFavourites } from "@/hooks/use-favourites";
 import { IProduct } from "@/interfaces/product.interface";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
@@ -7,18 +6,13 @@ import { Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { AuthDialog } from "../shared/AuthDialog";
 import FavouriteButton from "../shared/FavouriteButton";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
-import { AuthDialog } from "../shared/AuthDialog";
 
 const ProductCard = ({ product }: { product: IProduct }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { toggleFavorite, fetchedFavourites } = useFavourites();
-
-  const isFavorite = (productId: string) => {
-    return fetchedFavourites?.some((fav) => fav._id === productId);
-  };
 
   const hasDiscount =
     product.currentOffer?.isActive && product.currentOffer?.percentageOff;
@@ -34,6 +28,8 @@ const ProductCard = ({ product }: { product: IProduct }) => {
       )
     : product?.price;
 
+  const isOutOfStock = product.quantityInStock <= 0;
+
   return (
     <>
       <Card className="shadow-none rounded-sm p-0 border-0 bg-transparent group">
@@ -46,26 +42,28 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           >
             {/* Product image with hover transition */}
             <div className="relative w-full h-full">
-              <Image
-                src={product.images[0]}
-                alt={product.name}
-                fill
-                className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
-                  isHovered && product.images[1] ? "opacity-0" : "opacity-100"
-                }`}
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              />
-              {product.images[1] && (
+              <Link href={`/products/${product.slug}`}>
                 <Image
-                  src={product.images[1]}
-                  alt={`${product.name} - alternate view`}
+                  src={product.images[0]}
+                  alt={product.name}
                   fill
                   className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
-                    isHovered ? "opacity-100" : "opacity-0"
+                    isHovered && product.images[1] ? "opacity-0" : "opacity-100"
                   }`}
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
-              )}
+                {product.images[1] && (
+                  <Image
+                    src={product.images[1]}
+                    alt={`${product.name} - alternate view`}
+                    fill
+                    className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
+                      isHovered ? "opacity-100" : "opacity-0"
+                    }`}
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  />
+                )}
+              </Link>
             </div>
 
             {/* offer badge */}
@@ -78,19 +76,29 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                     : "opacity-100 translate-x-0"
                 )}
               >
-                -{product?.currentOffer?.percentageOff}%
+                -2{product?.currentOffer?.percentageOff}%
               </Badge>
             )}
 
             {/* Favorite button */}
             <FavouriteButton
-              isHovered={isHovered}
-              isFavorite={isFavorite(product._id) as boolean}
-              onClick={(e) => {
-                e.preventDefault();
-                toggleFavorite(product._id);
-              }}
+              product={product}
+              className={cn(
+                "absolute bottom-2 lg:top-2 right-2",
+                isHovered
+                  ? "opacity-100 translate-x-0"
+                  : "lg:opacity-0 lg:translate-x-2"
+              )}
             />
+
+            {/* Out of stock badge */}
+            {isOutOfStock && (
+              <div className="absolute w-full h-full bg-white/50 dark:bg-black/50 flex items-center justify-center pointer-events-none">
+                <span className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
+                  Out of stock
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Product info */}
