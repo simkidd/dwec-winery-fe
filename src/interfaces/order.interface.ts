@@ -58,9 +58,17 @@ export interface PaymentDTO {
   cancel_url: string;
 }
 
+interface OrderedProductVariant {
+  id: string;
+  qty: number;
+  price: number;
+  name: string;
+}
+
 interface OrderedProducts {
   product: string;
   qty: number;
+  variant?: OrderedProductVariant;
 }
 
 export interface CreateOrderDTO {
