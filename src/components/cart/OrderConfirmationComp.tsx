@@ -24,15 +24,6 @@ const OrderConfirmationComp = ({ reference }: { reference: string }) => {
     setVerificationState("error");
   };
 
-  if (!orderData || !reference) {
-    return (
-      <PaymentVerificationError
-        message="Missing payment reference"
-        onRetry={() => (window.location.href = "/checkout")}
-      />
-    );
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       {verificationState === "pending" && (

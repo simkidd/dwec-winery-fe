@@ -113,7 +113,8 @@ const CheckoutComp = () => {
   const paymentMethod = form.watch("paymentMethod");
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.qty,
+    (sum, item) =>
+      sum + (item.selectedVariant?.price || item.product.price) * item.qty,
     0
   );
   const shippingFee = deliveryMethod === "Home Delivery" ? 5 : 0;
@@ -151,6 +152,14 @@ const CheckoutComp = () => {
         products: items.map((item) => ({
           product: item.product._id,
           qty: item.qty,
+          variant: item.selectedVariant
+            ? {
+                id: item.selectedVariant._id,
+                qty: item.qty,
+                price: item.selectedVariant.price,
+                name: item.selectedVariant.name,
+              }
+            : undefined,
         })),
         deliveryMethod: values.deliveryMethod,
         deliveryDetails: {
@@ -616,7 +625,10 @@ const CheckoutComp = () => {
                     <div key={i} className="flex items-start gap-4 py-3">
                       <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0 border">
                         <Image
-                          src={item.product.images[0]}
+                          src={
+                            item.selectedVariant?.images?.[0] ||
+                            item.product.images[0]
+                          }
                           alt={item.product.name}
                           fill
                           className="w-full h-full object-contain"
@@ -624,14 +636,27 @@ const CheckoutComp = () => {
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between gap-4">
-                          <h3 className="text-sm">{item.product.name}</h3>
+                          <div>
+                            <h3 className="text-sm">{item.product.name}</h3>
+                            {item.selectedVariant && (
+                              <p className="text-xs text-muted-foreground">
+                                Variant: {item.selectedVariant.name}
+                              </p>
+                            )}
+                          </div>
 
                           <p className="text-muted-foreground pb-2">
-                            {formatCurrency(item.product?.price * item.qty)}
+                            {formatCurrency(
+                              (item.selectedVariant?.price ||
+                                item.product.price) * item.qty
+                            )}
                           </p>
                         </div>
                         <p className="text-muted-foreground pb-2">
-                          {formatCurrency(item.product?.price)} x {item.qty}
+                          {formatCurrency(
+                            item.selectedVariant?.price || item.product.price
+                          )}{" "}
+                          x {item.qty}
                         </p>
                       </div>
                     </div>
