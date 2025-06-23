@@ -32,10 +32,12 @@ const CartSheet = ({
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.qty,
-    0
-  );
+  // Calculate subtotal using variant price if available
+  const subtotal = items.reduce((sum, item) => {
+    const price = item.selectedVariant?.price || item.product.price;
+    return sum + price * item.qty;
+  }, 0);
+  
   const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {
@@ -52,8 +54,8 @@ const CartSheet = ({
     dispatch(removeFromCart(productId));
   };
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    dispatch(updateQuantity({ productId, quantity }));
+  const handleQuantityChange = (itemId: string, quantity: number) => {
+    dispatch(updateQuantity({ itemId, quantity }));
   };
 
   return (
@@ -78,12 +80,10 @@ const CartSheet = ({
             <div className="divide-y">
               {items.map((item) => (
                 <CartSheetItem
-                  key={item.product._id}
+                  key={item.id}
                   item={item}
-                  onRemove={() => handleRemoveItem(item.product._id)}
-                  onQuantityChange={(qty) =>
-                    handleQuantityChange(item.product._id, qty)
-                  }
+                  onRemove={() => handleRemoveItem(item.id)}
+                  onQuantityChange={(qty) => handleQuantityChange(item.id, qty)}
                 />
               ))}
             </div>
@@ -108,7 +108,9 @@ const CartSheet = ({
                 <span>{formatCurrency(subtotal)}</span>
               </div>
 
-              <p className="text-sm text-muted-foreground">Discounts and shipping calculated at checkout</p>
+              <p className="text-sm text-muted-foreground">
+                Discounts and shipping calculated at checkout
+              </p>
 
               <div className="flex flex-col gap-2">
                 <Button

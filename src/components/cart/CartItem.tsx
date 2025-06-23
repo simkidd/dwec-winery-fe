@@ -14,6 +14,13 @@ interface CartItemProps {
 }
 
 const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
+  // Use variant price if available, otherwise use product price
+  const basePrice = item.selectedVariant?.price || item.product.price;
+
+  // Use variant stock if available, otherwise use product stock
+  const maxQuantity =
+    item.selectedVariant?.quantityInStock || item.product.quantityInStock;
+
   const hasDiscount =
     item.product.currentOffer?.isActive &&
     item.product.currentOffer?.percentageOff;
@@ -23,17 +30,18 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
   };
 
   const discountedPrice = hasDiscount
-    ? calculateDiscountPrice(
-        item.product?.price,
-        item.product?.currentOffer?.percentageOff
-      )
-    : item.product?.price;
+    ? calculateDiscountPrice(basePrice, item.product.currentOffer.percentageOff)
+    : basePrice;
+
+  // Get the first available image - prefer variant image if available
+  const primaryImage =
+    item.selectedVariant?.images?.[0] || item.product.images[0];
 
   return (
     <div className="flex items-start gap-4">
       <div className="w-24 h-24 aspect-square bg-muted/50 dark:bg-muted/30 py-2 rounded-sm overflow-hidden shrink-0">
         <Image
-          src={item.product.images[0]}
+          src={primaryImage}
           alt={item.product.name}
           width={300}
           height={300}
@@ -43,9 +51,16 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
 
       <div className="flex-1">
         <div className="flex justify-between">
-          <Link href={`/products/${item.product.slug}`} className="">
-            {item.product.name}
-          </Link>
+          <div>
+            <Link href={`/products/${item.product.slug}`} className="">
+              {item.product.name}
+            </Link>
+            {item.selectedVariant && (
+              <p className="text-sm text-muted-foreground">
+                Variant: {item.selectedVariant.name}
+              </p>
+            )}
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -62,7 +77,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
         <div className="mt-4 flex items-center justify-between">
           <div className="font-medium">
             {/* offer badge */}
-            {!hasDiscount && (
+            {hasDiscount && (
               <Badge
                 className={cn(
                   "bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full mr-2"
@@ -71,9 +86,9 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
                 -40{item.product?.currentOffer?.percentageOff}%
               </Badge>
             )}
-            {!hasDiscount && (
+            {hasDiscount && (
               <span className="line-through text-gray-500 text-sm mr-1">
-                {formatCurrency(item.product?.price)}
+                {formatCurrency(basePrice)}
               </span>
             )}
             <span className="text-primary font-bold">
@@ -98,6 +113,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
               size="icon"
               className="h-8 w-8 rounded-none cursor-pointer"
               onClick={() => onQuantityChange(item.qty + 1)}
+              disabled={item.qty >= maxQuantity}
             >
               <Plus className="h-4 w-4" />
             </Button>

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useCategories from "@/hooks/use-categories";
 import useProducts from "@/hooks/use-products";
-import { IProduct } from "@/interfaces/product.interface";
+import { IProduct, ProductVariant } from "@/interfaces/product.interface";
 import { addToCart } from "@/store/features/cart/cart.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
@@ -21,10 +21,14 @@ import {
 import ProductCard from "./ProductCard";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 import ProductImages from "./ProductImages";
+import { cn } from "@/lib/utils";
 
 const ProductDetails = ({ product }: { product: IProduct }) => {
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null
+  );
   const { categories } = useCategories();
 
   const productCategory = categories.find(
@@ -44,16 +48,57 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
     return price - (price * percentageOff) / 100;
   };
 
+  // Combine all images (main + variants)
+  const allImages = [
+    ...product.images,
+    ...(product.variants?.flatMap((variant) => variant.images) || []),
+  ].filter((img, index, self) => index === self.findIndex((t) => t === img));
+
+  const currentPrice = selectedVariant?.price || product.price;
+  const currentStock =
+    selectedVariant?.quantityInStock || product.quantityInStock;
+
   const discountedPrice = hasDiscount
-    ? calculateDiscountPrice(
-        product?.price,
-        product?.currentOffer?.percentageOff
-      )
-    : product?.price;
+    ? calculateDiscountPrice(currentPrice, product?.currentOffer?.percentageOff)
+    : currentPrice;
 
   const handleAddToCart = () => {
-    dispatch(addToCart({ product, quantity }));
-    toast.success(`${quantity} ${product.name} added to cart`);
+    const productToAdd = {
+      ...product,
+      price: selectedVariant?.price || product.price,
+      quantityInStock:
+        selectedVariant?.quantityInStock || product.quantityInStock,
+    };
+
+    dispatch(
+      addToCart({
+        product: productToAdd,
+        quantity,
+        selectedVariant: selectedVariant
+          ? {
+              _id: selectedVariant._id,
+              name:
+                product.variants?.find((v) => v._id === selectedVariant._id)
+                  ?.name || "",
+              price: selectedVariant.price,
+              quantityInStock: selectedVariant.quantityInStock,
+              images:
+                product.variants?.find((v) => v._id === selectedVariant._id)
+                  ?.images ?? [],
+              quantity: selectedVariant.quantity,
+            }
+          : undefined,
+      })
+    );
+    toast.success(
+      `${quantity} ${product.name} ${
+        selectedVariant
+          ? `(${
+              product.variants?.find((v) => v._id === selectedVariant._id)?.name
+            })`
+          : ""
+      } added to cart`
+    );
   };
 
   const handleIncrement = () => {
@@ -66,6 +111,17 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
     }
   };
 
+  const toggleVariantSelection = (variant: ProductVariant) => {
+    if (selectedVariant?._id === variant._id) {
+      // Deselect if clicking the same variant
+      setSelectedVariant(null);
+    } else {
+      // Select new variant
+      setSelectedVariant(variant);
+    }
+    setQuantity(1); // Reset quantity when variant changes
+  };
+
   return (
     <section>
       <div className="container mx-auto px-4 py-8 pb-16">
@@ -73,7 +129,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
           {/* Image Gallery Section */}
           {/* <div className="lg:sticky lg:top-20 lg:self-start"> */}
           <div className="">
-            <ProductImages images={product.images} altText={product.name} />
+            <ProductImages images={allImages} altText={product.name} />
           </div>
 
           {/* Product Info Section */}
@@ -104,10 +160,10 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
               </div>
               <div className="mt-2 flex items-center gap-2 text-sm ">
                 <Truck className="h-4 w-4" />
-                {product.quantityInStock > 0 ? (
+                {currentStock > 0 ? (
                   <span className="text-green-600">
-                    {product.quantityInStock < 5
-                      ? `In Stock (${product.quantityInStock} available)`
+                    {currentStock < 5
+                      ? `In Stock (${currentStock} available)`
                       : "In Stock (Ready to ship)"}
                   </span>
                 ) : (
@@ -115,6 +171,35 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 )}
               </div>
             </div>
+
+            {/* Variants */}
+            {product.variants?.length > 0 && (
+              <div className="mb-4">
+                <h3 className="mb-2 text-sm font-medium">Variants</h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((variant) => (
+                    <Button
+                      key={variant._id}
+                      size="sm"
+                      variant={
+                        selectedVariant?._id === variant._id
+                          ? "default"
+                          : "outline"
+                      }
+                      onClick={() => toggleVariantSelection(variant)}
+                      className={cn(
+                        "rounded-sm cursor-pointer border",
+                        selectedVariant?._id === variant._id
+                          ? "border-primary"
+                          : " bg-transparent text-foreground"
+                      )}
+                    >
+                      {variant.name} x {variant.quantity}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Description */}
             <div className="mb-6">

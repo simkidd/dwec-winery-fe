@@ -15,6 +15,7 @@ export interface IProduct {
   currentOffer: IOffer;
   createdAt: string;
   updatedAt: string;
+  variants: ProductVariant[];
 }
 
 export interface ICategory {
@@ -44,4 +45,13 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalDocs: number;
   totalPages: number;
+}
+
+export interface ProductVariant {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  quantityInStock: number;
+  images: string[];
 }

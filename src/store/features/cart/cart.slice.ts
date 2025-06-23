@@ -1,5 +1,5 @@
 import { ICartItem } from "@/interfaces/cart.interface";
-import { IProduct } from "@/interfaces/product.interface";
+import { IProduct, ProductVariant } from "@/interfaces/product.interface";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface CartState {
@@ -18,32 +18,40 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (
       state,
-      action: PayloadAction<{ product: IProduct; quantity?: number }>
+      action: PayloadAction<{
+        product: IProduct;
+        quantity?: number;
+        selectedVariant?: ProductVariant;
+      }>
     ) => {
-      const { product, quantity: qty = 1 } = action.payload;
+      const { product, quantity: qty = 1, selectedVariant } = action.payload;
+
+      // Create a unique identifier for the cart item
+      const cartItemId = selectedVariant
+        ? `${product._id}-${selectedVariant._id}`
+        : product._id;
+
       const existingItem = state.items.find(
-        (item) => item.product._id === product._id
+        (item) => item.id === cartItemId
       );
 
       if (existingItem) {
         existingItem.qty += qty;
       } else {
-        state.items.push({ product, qty });
+        state.items.push({ id: cartItemId, product, qty, selectedVariant });
       }
     },
 
     removeFromCart: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(
-        (item) => item.product._id !== action.payload
-      );
+      state.items = state.items.filter((item) => item.id !== action.payload);
     },
 
     updateQuantity: (
       state,
-      action: PayloadAction<{ productId: string; quantity: number }>
+      action: PayloadAction<{ itemId: string; quantity: number }>
     ) => {
-      const { productId, quantity } = action.payload;
-      const item = state.items.find((item) => item.product._id === productId);
+      const { itemId, quantity } = action.payload;
+      const item = state.items.find((item) => item.id === itemId);
 
       if (item) {
         item.qty = quantity > 0 ? quantity : 1;
@@ -51,18 +59,14 @@ export const cartSlice = createSlice({
     },
 
     incrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.items.find(
-        (item) => item.product._id === action.payload
-      );
+      const item = state.items.find((item) => item.id === action.payload);
       if (item) {
         item.qty += 1;
       }
     },
 
     decrementQuantity: (state, action: PayloadAction<string>) => {
-      const item = state.items.find(
-        (item) => item.product._id === action.payload
-      );
+      const item = state.items.find((item) => item.id === action.payload);
       if (item) {
         item.qty = Math.max(1, item.qty - 1);
       }

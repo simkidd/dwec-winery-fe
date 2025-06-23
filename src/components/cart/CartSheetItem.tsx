@@ -12,11 +12,22 @@ interface CartItemProps {
 }
 
 const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
+  // Use variant price if available, otherwise use product price
+  const basePrice = item.selectedVariant?.price || item.product.price;
+
+  // Use variant stock if available, otherwise use product stock
+  const maxQuantity =
+    item.selectedVariant?.quantityInStock || item.product.quantityInStock;
+
+  // Get the first available image - prefer variant image if available
+  const primaryImage =
+    item.selectedVariant?.images?.[0] || item.product.images[0];
+
   return (
     <div className="flex items-start gap-4 p-2 py-3">
       <div className="relative h-14 w-16 rounded-md overflow-hidden shrink-0">
         <Image
-          src={item.product.images[0]}
+          src={primaryImage}
           alt={item.product.name}
           fill
           className="w-full h-full object-contain"
@@ -24,14 +35,21 @@ const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
       </div>
       <div className="flex-1">
         <div className="flex justify-between gap-4">
-          <h3 className="text-sm">{item.product.name}</h3>
+          <div>
+            <h3 className="text-sm">{item.product.name}</h3>
+            {item.selectedVariant && (
+              <p className="text-sm text-muted-foreground">
+                {item.selectedVariant.name}
+              </p>
+            )}
+          </div>
 
           <p className="text-muted-foreground pb-2">
-            {formatCurrency(item.product?.price * item.qty)}
+            {formatCurrency(basePrice * item.qty)}
           </p>
         </div>
         <p className="text-muted-foreground pb-2">
-          {formatCurrency(item.product?.price)}
+          {formatCurrency(basePrice)}
         </p>
 
         <div className="flex items-center justify-between">
@@ -51,6 +69,7 @@ const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
               size="icon"
               className="h-6 w-6 rounded-none cursor-pointer"
               onClick={() => onQuantityChange(item.qty + 1)}
+              disabled={item.qty >= maxQuantity}
             >
               <Plus className="h-4 w-4" />
             </Button>

@@ -23,10 +23,12 @@ const CartPage = () => {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.qty,
-    0
-  );
+  // Calculate subtotal using variant price if available
+  const subtotal = items.reduce((sum, item) => {
+    const price = item.selectedVariant?.price || item.product.price;
+    return sum + price * item.qty;
+  }, 0);
+
   const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {
@@ -50,8 +52,8 @@ const CartPage = () => {
     dispatch(removeFromCart(productId));
   };
 
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    dispatch(updateQuantity({ productId, quantity }));
+  const handleQuantityChange = (itemId: string, quantity: number) => {
+    dispatch(updateQuantity({ itemId, quantity }));
   };
 
   return (
@@ -80,12 +82,12 @@ const CartPage = () => {
             <ScrollArea className="">
               <div className="space-y-2 divide-y">
                 {items.map((item) => (
-                  <div key={item.product._id} className="p-4 ">
+                  <div key={item.id} className="p-4 ">
                     <CartItem
                       item={item}
-                      onRemove={() => handleRemoveItem(item.product._id)}
+                      onRemove={() => handleRemoveItem(item.id)}
                       onQuantityChange={(qty) =>
-                        handleQuantityChange(item.product._id, qty)
+                        handleQuantityChange(item.id, qty)
                       }
                     />
                   </div>
