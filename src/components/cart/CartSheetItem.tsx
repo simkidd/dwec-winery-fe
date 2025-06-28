@@ -12,16 +12,20 @@ interface CartItemProps {
 }
 
 const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
-  // Use variant price if available, otherwise use product price
-  const basePrice = item.selectedVariant?.price || item.product.price;
+  // Type-safe way to determine if this is a variant item
+  const isVariantItem = "variant" in item && item.variant !== undefined;
 
-  // Use variant stock if available, otherwise use product stock
-  const maxQuantity =
-    item.selectedVariant?.quantityInStock || item.product.quantityInStock;
+  // Price and stock logic
+  const price = isVariantItem ? item.variant.price : item.product.price;
+  const maxQuantity = isVariantItem
+    ? item.variant.quantityInStock
+    : item.product.quantityInStock;
 
-  // Get the first available image - prefer variant image if available
+  // Image handling - prefer variant image if available
   const primaryImage =
-    item.selectedVariant?.images?.[0] || item.product.images[0];
+    isVariantItem && item.variant.images?.length > 0
+      ? item.variant.images[0]
+      : item.product.images[0];
 
   return (
     <div className="flex items-start gap-4 p-2 py-3">
@@ -37,19 +41,19 @@ const CartSheetItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
         <div className="flex justify-between gap-4">
           <div>
             <h3 className="text-sm">{item.product.name}</h3>
-            {item.selectedVariant && (
+            {item.variant && (
               <p className="text-sm text-muted-foreground">
-                {item.selectedVariant.name}
+                {item.variant.name}
               </p>
             )}
           </div>
 
           <p className="text-muted-foreground pb-2">
-            {formatCurrency(basePrice * item.qty)}
+            {formatCurrency(price * item.qty)}
           </p>
         </div>
         <p className="text-muted-foreground pb-2">
-          {formatCurrency(basePrice)}
+          {formatCurrency(price)}
         </p>
 
         <div className="flex items-center justify-between">

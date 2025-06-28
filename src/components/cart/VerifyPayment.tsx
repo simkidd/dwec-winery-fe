@@ -24,6 +24,13 @@ export interface PaymentVerificationResponse {
         products: Array<{
           product: string;
           qty: string;
+          variant: {
+            id: string;
+            qty: string;
+            price: string;
+            name: string;
+            images: string[];
+          };
         }>;
         deliveryMethod: string;
         deliveryDetails: {
@@ -100,6 +107,15 @@ const VerifyPayment = ({
         products: res.data.data.metadata.products.map((item) => ({
           product: item.product,
           qty: parseInt(item.qty),
+          ...(item.variant && {
+            variant: {
+              id: item.variant.id,
+              qty: Number(item.variant.qty) || 1,
+              price: Number(item.variant.price),
+              name: item.variant.name,
+              images: item.variant.images,
+            },
+          }),
         })),
       };
 

@@ -32,12 +32,17 @@ const CartSheet = ({
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
+  console.log("cart items>>>>", items);
+
   // Calculate subtotal using variant price if available
   const subtotal = items.reduce((sum, item) => {
-    const price = item.selectedVariant?.price || item.product.price;
+    const price =
+      "variant" in item && item.variant
+        ? item.variant.price
+        : item.product.price;
     return sum + price * item.qty;
   }, 0);
-  
+
   const itemCount = items.reduce((count, item) => count + item.qty, 0);
 
   const handleCheckout = () => {

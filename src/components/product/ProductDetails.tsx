@@ -63,40 +63,20 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
     : currentPrice;
 
   const handleAddToCart = () => {
-    const productToAdd = {
-      ...product,
-      price: selectedVariant?.price || product.price,
-      quantityInStock:
-        selectedVariant?.quantityInStock || product.quantityInStock,
+    const payload = {
+      product: {
+        ...product,
+        // Clear variants array to avoid data duplication
+        variants: [],
+      },
+      quantity: quantity,
+      ...(selectedVariant && { selectedVariant }),
     };
 
-    dispatch(
-      addToCart({
-        product: productToAdd,
-        quantity,
-        selectedVariant: selectedVariant
-          ? {
-              _id: selectedVariant._id,
-              name:
-                product.variants?.find((v) => v._id === selectedVariant._id)
-                  ?.name || "",
-              price: selectedVariant.price,
-              quantityInStock: selectedVariant.quantityInStock,
-              images:
-                product.variants?.find((v) => v._id === selectedVariant._id)
-                  ?.images ?? [],
-              quantity: selectedVariant.quantity,
-            }
-          : undefined,
-      })
-    );
+    dispatch(addToCart(payload));
     toast.success(
       `${quantity} ${product.name} ${
-        selectedVariant
-          ? `(${
-              product.variants?.find((v) => v._id === selectedVariant._id)?.name
-            })`
-          : ""
+        selectedVariant ? `(${selectedVariant.name})` : ""
       } added to cart`
     );
   };
@@ -163,7 +143,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 {currentStock > 0 ? (
                   <span className="text-green-600">
                     {currentStock < 5
-                      ? `In Stock (${currentStock} available)`
+                      ? `Only (${currentStock} left)`
                       : "In Stock (Ready to ship)"}
                   </span>
                 ) : (
@@ -180,7 +160,6 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                   {product.variants.map((variant) => (
                     <Button
                       key={variant._id}
-                      size="sm"
                       variant={
                         selectedVariant?._id === variant._id
                           ? "default"
@@ -227,7 +206,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                       size="icon"
                       className="h-8 w-8 rounded cursor-pointer"
                       onClick={handleIncrement}
-                      disabled={quantity >= product.quantityInStock}
+                      disabled={quantity >= currentStock}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>

@@ -59,7 +59,7 @@ export const getOrders = async () => {
 
 export const getOrderById = async (id: string) => {
   try {
-    const response = await instance.post(`/${ROUTE_PATH}/orders/${id}`);
+    const response = await instance.get(`/${ROUTE_PATH}/orders/${id}`);
 
     return handleResponse(response);
   } catch (error) {

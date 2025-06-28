@@ -1,8 +1,26 @@
-import { IProduct, ProductVariant } from "./product.interface";
+import { IProduct } from "./product.interface";
 
-export interface ICartItem {
-  id: string;
-  product: IProduct;
+export interface ICartItemBase {
+  id: string; // Unique cart item ID (productId or productId-variantId)
   qty: number;
-  selectedVariant?: ProductVariant;
 }
+
+export interface ICartItemProduct extends ICartItemBase {
+  product: IProduct;
+  variant?: never; // Explicitly no variant
+}
+
+export interface ICartItemVariant extends ICartItemBase {
+  product: IProduct; // Always contains the base product
+  variant: {
+    id: string; // Variant ID
+    name: string;
+    price: number;
+    quantityInStock: number;
+    images: string[];
+    qty: number; // Mirrors root qty or custom quantity
+  };
+}
+
+// Discriminated union type
+export type ICartItem = ICartItemProduct | ICartItemVariant;

@@ -1,3 +1,5 @@
+import { ICartItem, ICartItemVariant } from "@/interfaces/cart.interface";
+
 export const formatCurrency = (
   amount: number,
   currency = "NGN",
@@ -20,4 +22,8 @@ export const formatUnderscoreText = (text: string) => {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+export const isVariantItem = (item: ICartItem): item is ICartItemVariant => {
+  return "variant" in item && item.variant !== undefined;
 };

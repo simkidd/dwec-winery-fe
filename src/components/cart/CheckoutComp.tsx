@@ -26,11 +26,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { CreateOrderDTO } from "@/interfaces/order.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 // Define base schema
 const baseSchema = z.object({
@@ -77,6 +77,8 @@ const CheckoutComp = () => {
 
   const effectRan = useRef(false);
 
+  console.log("cart items>>>>", items);
+
   useEffect(() => {
     if (effectRan.current) return; // Skip if already ran
     if (status === "cancelled") {
@@ -113,8 +115,7 @@ const CheckoutComp = () => {
   const paymentMethod = form.watch("paymentMethod");
 
   const subtotal = items.reduce(
-    (sum, item) =>
-      sum + (item.selectedVariant?.price || item.product.price) * item.qty,
+    (sum, item) => sum + (item.variant?.price || item.product.price) * item.qty,
     0
   );
   const shippingFee = deliveryMethod === "Home Delivery" ? 5 : 0;
@@ -148,19 +149,23 @@ const CheckoutComp = () => {
 
   const onSubmit = async (values: CheckoutFormValues) => {
     try {
+      // Transform cart items to match backend order format
+      const products = items.map((item) => ({
+        product: item.product._id,
+        qty: item.qty,
+        ...(item.variant && {
+          variant: {
+            id: item.variant.id,
+            qty: item.variant.qty,
+            price: item.variant.price,
+            name: item.variant.name,
+            images: item.variant.images,
+          },
+        }),
+      }));
+
       const orderData: CreateOrderDTO = {
-        products: items.map((item) => ({
-          product: item.product._id,
-          qty: item.qty,
-          variant: item.selectedVariant
-            ? {
-                id: item.selectedVariant._id,
-                qty: item.qty,
-                price: item.selectedVariant.price,
-                name: item.selectedVariant.name,
-              }
-            : undefined,
-        })),
+        products,
         deliveryMethod: values.deliveryMethod,
         deliveryDetails: {
           area:
@@ -626,8 +631,7 @@ const CheckoutComp = () => {
                       <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0 border">
                         <Image
                           src={
-                            item.selectedVariant?.images?.[0] ||
-                            item.product.images[0]
+                            item.variant?.images?.[0] || item.product.images[0]
                           }
                           alt={item.product.name}
                           fill
@@ -638,23 +642,23 @@ const CheckoutComp = () => {
                         <div className="flex justify-between gap-4">
                           <div>
                             <h3 className="text-sm">{item.product.name}</h3>
-                            {item.selectedVariant && (
+                            {item.variant && (
                               <p className="text-xs text-muted-foreground">
-                                Variant: {item.selectedVariant.name}
+                                Variant: {item.variant.name}
                               </p>
                             )}
                           </div>
 
                           <p className="text-muted-foreground pb-2">
                             {formatCurrency(
-                              (item.selectedVariant?.price ||
-                                item.product.price) * item.qty
+                              (item.variant?.price || item.product.price) *
+                                item.qty
                             )}
                           </p>
                         </div>
                         <p className="text-muted-foreground pb-2">
                           {formatCurrency(
-                            item.selectedVariant?.price || item.product.price
+                            item.variant?.price || item.product.price
                           )}{" "}
                           x {item.qty}
                         </p>

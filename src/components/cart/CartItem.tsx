@@ -14,12 +14,20 @@ interface CartItemProps {
 }
 
 const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
-  // Use variant price if available, otherwise use product price
-  const basePrice = item.selectedVariant?.price || item.product.price;
+  // Type-safe way to determine if this is a variant item
+  const isVariantItem = "variant" in item && item.variant !== undefined;
 
-  // Use variant stock if available, otherwise use product stock
-  const maxQuantity =
-    item.selectedVariant?.quantityInStock || item.product.quantityInStock;
+  // Price and stock logic
+  const basePrice = isVariantItem ? item.variant.price : item.product.price;
+  const maxQuantity = isVariantItem
+    ? item.variant.quantityInStock
+    : item.product.quantityInStock;
+
+  // Image handling - prefer variant image if available
+  const primaryImage =
+    isVariantItem && item.variant.images?.length > 0
+      ? item.variant.images[0]
+      : item.product.images[0];
 
   const hasDiscount =
     item.product.currentOffer?.isActive &&
@@ -32,10 +40,6 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
   const discountedPrice = hasDiscount
     ? calculateDiscountPrice(basePrice, item.product.currentOffer.percentageOff)
     : basePrice;
-
-  // Get the first available image - prefer variant image if available
-  const primaryImage =
-    item.selectedVariant?.images?.[0] || item.product.images[0];
 
   return (
     <div className="flex items-start gap-4">
@@ -55,9 +59,9 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
             <Link href={`/products/${item.product.slug}`} className="">
               {item.product.name}
             </Link>
-            {item.selectedVariant && (
+            {item.variant && (
               <p className="text-sm text-muted-foreground">
-                Variant: {item.selectedVariant.name}
+                Variant: {item.variant.name}
               </p>
             )}
           </div>

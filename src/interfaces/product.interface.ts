@@ -18,6 +18,15 @@ export interface IProduct {
   variants: ProductVariant[];
 }
 
+export interface ProductVariant {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  quantityInStock: number;
+  images: string[];
+}
+
 export interface ICategory {
   _id: string;
   name: string;
@@ -45,13 +54,4 @@ export interface PaginatedResponse<T> {
   limit: number;
   totalDocs: number;
   totalPages: number;
-}
-
-export interface ProductVariant {
-  _id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  quantityInStock: number;
-  images: string[];
 }

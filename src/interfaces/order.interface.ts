@@ -1,6 +1,14 @@
-import { ICartItem } from "./cart.interface";
+import { IProduct } from "./product.interface";
 import { ITracking } from "./tracking.interface";
 import { IUser } from "./user.interface";
+
+export interface PaymentDTO {
+  email: string;
+  amount: number;
+  orderData: CreateOrderDTO;
+  callback_url: string;
+  cancel_url: string;
+}
 
 export interface PaginatedOrderResponse<T> {
   success: boolean;
@@ -19,8 +27,8 @@ export interface orderFilterInput {
 export interface IOrderDetails {
   _id: string;
   user: IUser;
-  trackindId: ITracking;
-  products: ICartItem[];
+  trackingId: ITracking;
+  products: Product[];
   deliveryMethod: "Pickup" | "Home Delivery";
   deliveryDetails: DeliveryDetails;
   totalAmountPaid: number;
@@ -50,19 +58,27 @@ export interface DeliveryDetails {
   fee: number;
 }
 
-export interface PaymentDTO {
-  email: string;
-  amount: number;
-  orderData: CreateOrderDTO;
-  callback_url: string;
-  cancel_url: string;
+export interface Product {
+  _id: string;
+  qty: number;
+  product: IProduct;
+  variantUsed: VariantUsed;
 }
 
-interface OrderedProductVariant {
+export interface VariantUsed {
+  id: string;
+  name: string;
+  price: number;
+  images: string[];
+  quantityOrdered: number;
+}
+
+export interface OrderedProductVariant {
   id: string;
   qty: number;
   price: number;
   name: string;
+  images: string[];
 }
 
 interface OrderedProducts {
