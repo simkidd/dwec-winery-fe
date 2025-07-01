@@ -143,11 +143,7 @@ const MenuNavigation = ({
         )}
       </div>
 
-      <MobileNavItem
-        href="/"
-        isActive={isActive("/")}
-        onClick={closeMenu}
-      >
+      <MobileNavItem href="/" isActive={isActive("/")} onClick={closeMenu}>
         Home
       </MobileNavItem>
 
@@ -346,7 +342,7 @@ const MenuNavigation = ({
             <div className="grid w-[500px] gap-3 p-4 md:w-[600px] md:grid-cols-2 lg:w-[700px]">
               <div>
                 <h3 className="text-lg font-semibold mb-2">Featured</h3>
-                <ul className="space-y-2">
+                <ul className="">
                   {featuredProducts.map((item) => (
                     <ListItem
                       key={item.title}
@@ -361,7 +357,7 @@ const MenuNavigation = ({
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Categories</h3>
-                <ul className="space-y-2">
+                <ul className="">
                   {categories?.map((category) => (
                     <ListItem
                       key={category._id}
@@ -433,10 +429,10 @@ function ListItem({
 }) {
   return (
     <li {...props}>
-      <NavigationMenuLink asChild>
+      <NavigationMenuLink asChild className="hover:bg-transparent hover:text-primary">
         <Link
           href={href}
-          className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+          className="block select-none space-y-1 rounded-md p-2 leading-none w-fit"
         >
           <div
             className={cn(

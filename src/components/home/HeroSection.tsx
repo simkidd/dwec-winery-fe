@@ -47,7 +47,7 @@ const HeroSection = () => {
   // Empty state
   if (!ads.length) {
     return (
-      <div className="w-full relative aspect-video md:aspect-[3/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
+      <div className="w-full relative aspect-video md:aspect-[2.4/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
         <div className="text-center p-6">
           <h2 className="text-3xl font-bold mb-4">Welcome to Our Store</h2>
           <p className="text-xl mb-6">Discover our amazing products</p>
