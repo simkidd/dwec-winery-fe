@@ -157,13 +157,13 @@ const MenuNavigation = ({
         </span>
       </div>
 
-      <MobileNavItem
+      {/* <MobileNavItem
         href="/about-us"
         isActive={isActive("/about-us")}
         onClick={closeMenu}
       >
         About Us
-      </MobileNavItem>
+      </MobileNavItem> */}
 
       <MobileNavItem
         href="/blog"
@@ -372,7 +372,7 @@ const MenuNavigation = ({
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
+        {/* <NavigationMenuItem>
           <NavigationMenuLink
             asChild
             className={cn(
@@ -383,7 +383,7 @@ const MenuNavigation = ({
           >
             <Link href="/about-us">About Us</Link>
           </NavigationMenuLink>
-        </NavigationMenuItem>
+        </NavigationMenuItem> */}
 
         <NavigationMenuItem>
           <NavigationMenuLink
