@@ -1,6 +1,7 @@
 "use client";
 import useLogout from "@/hooks/use-logout";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { IUser } from "@/interfaces/user.interface";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
@@ -11,6 +12,7 @@ import {
   User2Icon,
   X,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -25,8 +27,6 @@ import { Separator } from "../ui/separator";
 import MenuNavigation from "./MenuNavigation";
 import SearchBar from "./SearchBar";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useTheme } from "next-themes";
-import { IUser } from "@/interfaces/user.interface";
 
 const SCROLL_THRESHOLD = 100;
 

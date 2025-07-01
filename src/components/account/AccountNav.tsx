@@ -10,7 +10,7 @@ const tabs = [
   { name: "My Orders", href: "/account/orders" },
   { name: "Saved Items", href: "/account/favourites" },
   // { name: "Manage Address", href: "/account/*" },
-  { name: "Change Password", href: "/account/security" },
+  // { name: "Change Password", href: "/account/security" },
 ];
 
 const AccountNav = () => {

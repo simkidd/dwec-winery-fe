@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import * as React from "react";
-
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,7 +23,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
-// import useCategories from "@/hooks/use-categories";
+import useCategories from "@/hooks/use-categories";
 
 const featuredProducts = [
   {
@@ -44,7 +43,7 @@ const featuredProducts = [
   },
 ];
 
-type MenuState = "main" | "products";
+type MenuState = "main" | "products" | "categories";
 
 const MenuNavigation = ({
   mobileView = false,
@@ -56,12 +55,12 @@ const MenuNavigation = ({
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { signOut } = useLogout();
+  const { categories } = useCategories();
+
   const [isOpen, setIsOpen] = useState(false);
   const [menuState, setMenuState] = useState<MenuState>("main");
   const [menuHistory, setMenuHistory] = useState<MenuState[]>(["main"]);
-  const [direction, setDirection] = useState(1); // 1 for forward, -1 for back
-
-  // const { categories, isPending } = useCategories();
+  const [direction, setDirection] = useState(1);
 
   const isActive = (href: string) => {
     return (
@@ -96,6 +95,13 @@ const MenuNavigation = ({
     setIsOpen(open);
   };
 
+  const closeMenu = () => {
+    setIsOpen(false);
+    setDirection(1);
+    setMenuState("main");
+    setMenuHistory(["main"]);
+  };
+
   const renderMainMenu = () => (
     <motion.div
       key="main"
@@ -117,7 +123,7 @@ const MenuNavigation = ({
               <Link
                 href="/account"
                 className="text-xs text-muted-foreground hover:text-primary"
-                onClick={() => setIsOpen(false)}
+                onClick={closeMenu}
               >
                 View Account
               </Link>
@@ -128,7 +134,7 @@ const MenuNavigation = ({
             <Link
               href="/login"
               className="flex items-center space-x-2 text-sm font-medium text-muted-foreground"
-              onClick={() => setIsOpen(false)}
+              onClick={closeMenu}
             >
               <LogIn className="h-4 w-4" />
               <span>Sign In / Register</span>
@@ -140,7 +146,7 @@ const MenuNavigation = ({
       <MobileNavItem
         href="/"
         isActive={isActive("/")}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
       >
         Home
       </MobileNavItem>
@@ -158,7 +164,7 @@ const MenuNavigation = ({
       <MobileNavItem
         href="/about-us"
         isActive={isActive("/about-us")}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
       >
         About Us
       </MobileNavItem>
@@ -166,7 +172,7 @@ const MenuNavigation = ({
       <MobileNavItem
         href="/blog"
         isActive={isActive("/blog")}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
       >
         Blog
       </MobileNavItem>
@@ -174,7 +180,7 @@ const MenuNavigation = ({
       <MobileNavItem
         href="/contact-us"
         isActive={isActive("/contact-us")}
-        onClick={() => setIsOpen(false)}
+        onClick={closeMenu}
       >
         Contact Us
       </MobileNavItem>
@@ -184,14 +190,14 @@ const MenuNavigation = ({
           <MobileNavItem
             href="/account/orders"
             isActive={isActive("/account/orders")}
-            onClick={() => setIsOpen(false)}
+            onClick={closeMenu}
           >
             My Orders
           </MobileNavItem>
           <MobileNavItem
             href="/account/favourites"
             isActive={isActive("/account/favourites")}
-            onClick={() => setIsOpen(false)}
+            onClick={closeMenu}
           >
             Saved items
           </MobileNavItem>
@@ -229,6 +235,7 @@ const MenuNavigation = ({
         >
           <ChevronLeft />
         </Button>
+        <span className="ml-2 font-medium">Products</span>
       </div>
 
       {featuredProducts.map((item) => (
@@ -236,9 +243,53 @@ const MenuNavigation = ({
           key={item.href}
           href={item.href}
           isActive={isActive(item.href)}
-          onClick={() => setIsOpen(false)}
+          onClick={closeMenu}
         >
           {item.title}
+        </MobileNavItem>
+      ))}
+
+      <div
+        className="flex items-center px-4 py-2 text-sm font-medium text-muted-foreground cursor-pointer hover:text-primary"
+        onClick={() => navigateTo("categories")}
+      >
+        All Categories
+        <span className="ml-auto">
+          <ChevronRight className="h-5 w-5" />
+        </span>
+      </div>
+    </motion.div>
+  );
+
+  const renderCategoriesMenu = () => (
+    <motion.div
+      key="categories"
+      initial={{ x: 100 * direction, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -100 * direction, opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="absolute inset-0 space-y-4"
+    >
+      <div className="flex items-center px-4 py-2 mt-1 border-b">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="cursor-pointer rounded-full"
+          onClick={goBack}
+        >
+          <ChevronLeft />
+        </Button>
+        <span className="ml-2 font-medium">All Categories</span>
+      </div>
+
+      {categories?.map((category) => (
+        <MobileNavItem
+          key={category._id}
+          href={`/category/${category.slug}`}
+          isActive={pathname.includes(`/category/${category.slug}`)}
+          onClick={closeMenu}
+        >
+          {category.name}
         </MobileNavItem>
       ))}
     </motion.div>
@@ -259,7 +310,9 @@ const MenuNavigation = ({
         <SheetContent side="left" className="w-full">
           <div className="relative h-full overflow-hidden">
             <AnimatePresence initial={false} custom={direction}>
-              {menuState === "main" ? renderMainMenu() : renderProductsMenu()}
+              {menuState === "main" && renderMainMenu()}
+              {menuState === "products" && renderProductsMenu()}
+              {menuState === "categories" && renderCategoriesMenu()}
             </AnimatePresence>
           </div>
 
@@ -286,22 +339,43 @@ const MenuNavigation = ({
             <Link href="/">Home</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+
         <NavigationMenuItem>
           <NavigationMenuTrigger>All Products</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {featuredProducts.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
+            <div className="grid w-[500px] gap-3 p-4 md:w-[600px] md:grid-cols-2 lg:w-[700px]">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Featured</h3>
+                <ul className="space-y-2">
+                  {featuredProducts.map((item) => (
+                    <ListItem
+                      key={item.title}
+                      title={item.title}
+                      href={item.href}
+                    >
+                      {item.description}
+                    </ListItem>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Categories</h3>
+                <ul className="space-y-2">
+                  {categories?.map((category) => (
+                    <ListItem
+                      key={category._id}
+                      title={category.name}
+                      href={`/category/${category.slug}`}
+                      isCategory
+                    ></ListItem>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
+
         <NavigationMenuItem>
           <NavigationMenuLink
             asChild
@@ -351,16 +425,32 @@ function ListItem({
   title,
   children,
   href,
+  isCategory = false,
   ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+}: React.ComponentPropsWithoutRef<"li"> & {
+  href: string;
+  isCategory?: boolean;
+}) {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
-        <Link href={href}>
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
+        <Link
+          href={href}
+          className="block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+        >
+          <div
+            className={cn(
+              "text-sm font-medium leading-none",
+              isCategory && "font-normal"
+            )}
+          >
+            {title}
+          </div>
+          {!isCategory && (
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              {children}
+            </p>
+          )}
         </Link>
       </NavigationMenuLink>
     </li>
