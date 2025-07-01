@@ -89,7 +89,7 @@ interface OrderedProducts {
 
 export interface CreateOrderDTO {
   products: OrderedProducts[];
-  paymentReference: string;
+  paymentReference?: string;
   paymentMethod: string;
   totalAmountPaid: number;
   deliveryMethod: "Pickup" | "Home Delivery";

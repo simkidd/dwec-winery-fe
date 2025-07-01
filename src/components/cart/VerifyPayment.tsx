@@ -1,6 +1,5 @@
 "use client";
-import { IOrderDetails } from "@/interfaces/order.interface";
-import { createOrder, verifyPayment } from "@/lib/api/order";
+import { verifyPayment } from "@/lib/api/order";
 import { clearCart } from "@/store/features/cart/cart.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { useMutation } from "@tanstack/react-query";
@@ -9,61 +8,9 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-export interface PaymentVerificationResponse {
-  success: boolean;
-  data: {
-    status: boolean;
-    message: string;
-    data: {
-      id: number;
-      reference: string;
-      amount: number;
-      status: string;
-      paid_at: string;
-      metadata: {
-        products: Array<{
-          product: string;
-          qty: string;
-          variant: {
-            id: string;
-            qty: string;
-            price: string;
-            name: string;
-            images: string[];
-          };
-        }>;
-        deliveryMethod: string;
-        deliveryDetails: {
-          area: string;
-          phoneNumber: string;
-          email: string;
-          note: string;
-          suiteNumber: string;
-          streetAddress: string;
-          city: string;
-          zipCode: string;
-          fee: string;
-        };
-        paymentMethod: string;
-        totalAmountPaid: string;
-        user: string;
-      };
-      authorization: {
-        authorization_code: string;
-        last4: string;
-        card_type: string;
-        bank: string;
-      };
-      customer: {
-        email: string;
-      };
-    };
-  };
-}
-
 interface VerifyPaymentProps {
   reference: string;
-  onSuccess: (data: IOrderDetails) => void;
+  onSuccess: () => void;
   onError: (message: string) => void;
 }
 
@@ -89,49 +36,40 @@ const VerifyPayment = ({
   // Mutation: Verify payment
   const verifyPaymentMutation = useMutation({
     mutationFn: verifyPayment,
-    onSuccess: (res: PaymentVerificationResponse) => {
+    onSuccess: (data) => {
+      console.log("on success>>>>", data);
+      onSuccessData();
       // clean the url params
       router.replace("/checkout/order-confirmation", undefined);
 
-      const orderData = {
-        paymentReference: res.data.data.reference,
-        paymentMethod: res.data.data.metadata.paymentMethod,
-        deliveryDetails: {
-          ...res.data.data.metadata.deliveryDetails,
-          fee: parseInt(res.data.data.metadata.deliveryDetails.fee),
-        },
-        deliveryMethod: res.data.data.metadata.deliveryMethod as
-          | "Pickup"
-          | "Home Delivery",
-        totalAmountPaid: parseInt(res.data.data.metadata.totalAmountPaid),
-        products: res.data.data.metadata.products.map((item) => ({
-          product: item.product,
-          qty: parseInt(item.qty),
-          ...(item.variant && {
-            variant: {
-              id: item.variant.id,
-              qty: Number(item.variant.qty) || 1,
-              price: Number(item.variant.price),
-              name: item.variant.name,
-              images: item.variant.images,
-            },
-          }),
-        })),
-      };
-
-      createOrderMutation.mutate(orderData);
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      console.log("error", error?.response?.data?.message);
-      onErrorMsg(error?.response?.data?.message || error?.message);
-    },
-  });
-
-  const createOrderMutation = useMutation({
-    mutationFn: createOrder,
-    onSuccess: (res) => {
-      onSuccessData(res.order);
       dispatch(clearCart());
+      // const orderData = {
+      //   paymentReference: res.data.data.reference,
+      //   paymentMethod: res.data.data.metadata.paymentMethod,
+      //   deliveryDetails: {
+      //     ...res.data.data.metadata.deliveryDetails,
+      //     fee: parseInt(res.data.data.metadata.deliveryDetails.fee),
+      //   },
+      //   deliveryMethod: res.data.data.metadata.deliveryMethod as
+      //     | "Pickup"
+      //     | "Home Delivery",
+      //   totalAmountPaid: parseInt(res.data.data.metadata.totalAmountPaid),
+      //   products: res.data.data.metadata.products.map((item) => ({
+      //     product: item.product,
+      //     qty: parseInt(item.qty),
+      //     ...(item.variant && {
+      //       variant: {
+      //         id: item.variant.id,
+      //         qty: Number(item.variant.qty) || 1,
+      //         price: Number(item.variant.price),
+      //         name: item.variant.name,
+      //         images: item.variant.images,
+      //       },
+      //     }),
+      //   })),
+      // };
+
+      // createOrderMutation.mutate(orderData);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -139,11 +77,20 @@ const VerifyPayment = ({
     },
   });
 
-  const isLoading =
-    verifyPaymentMutation.isPending || createOrderMutation.isPending;
-  const currentStatus = createOrderMutation.isPending
-    ? "Creating your order..."
-    : "Verifying payment...";
+  // const createOrderMutation = useMutation({
+  //   mutationFn: createOrder,
+  //   onSuccess: (res) => {
+  //     onSuccessData(res.order);
+  //     dispatch(clearCart());
+  //   },
+  //   onError: (error: AxiosError<{ message: string }>) => {
+  //     console.log("error", error?.response?.data?.message);
+  //     onErrorMsg(error?.response?.data?.message || error?.message);
+  //   },
+  // });
+
+  const isLoading = verifyPaymentMutation.isPending;
+  const currentStatus = "Verifying payment...";
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] px-4 text-center">
@@ -152,9 +99,8 @@ const VerifyPayment = ({
 
       <div className="max-w-md space-y-2">
         <p className="text-muted-foreground">
-          {createOrderMutation.isPending
-            ? "We're finalizing your order details"
-            : "Please wait while we confirm your payment details"}
+          {verifyPaymentMutation.isPending &&
+            "Please wait while we confirm your payment details"}
         </p>
 
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-4">
@@ -187,10 +133,9 @@ const VerifyPayment = ({
           </p>
         )}
 
-        {(verifyPaymentMutation.error || createOrderMutation.error) && (
+        {verifyPaymentMutation.error && (
           <p className="text-sm text-red-500 mt-4">
-            {verifyPaymentMutation.error?.message ||
-              createOrderMutation.error?.message}
+            {verifyPaymentMutation.error?.message}
           </p>
         )}
       </div>

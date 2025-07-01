@@ -36,7 +36,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
         <CardContent className="p-0 relative">
           {/* Image container with hover effects */}
           <div
-            className="aspect-square bg-muted/50 dark:bg-muted/30 rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
+            className="aspect-square bg-primary/10 dark:bg-muted/30 rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >

@@ -23,7 +23,7 @@ const HeroSection = () => {
   // Loading state
   if (isPending) {
     return (
-      <div className="w-full relative aspect-video md:aspect-[3/1]">
+      <div className="w-full relative aspect-video md:aspect-[2.4/1]">
         <Skeleton className="w-full h-full rounded-none" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.95 }}
@@ -80,7 +80,7 @@ const HeroSection = () => {
             <CarouselItem key={slide._id} className="pl-0">
               <div className="p-0">
                 <Card className="border-0 p-0 rounded-none overflow-hidden">
-                  <CardContent className="relative p-0 aspect-video md:aspect-[3/1]">
+                  <CardContent className="relative p-0 aspect-video md:aspect-[2.4/1]">
                     {/* Background Image with overlay */}
                     <div
                       className="w-full h-full bg-cover bg-center relative"

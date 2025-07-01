@@ -1,14 +1,9 @@
 "use client";
-import { IOrderDetails } from "@/interfaces/order.interface";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-const PaymentVerificationSuccess = ({
-  orderData,
-}: {
-  orderData: IOrderDetails;
-}) => {
+const PaymentVerificationSuccess = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
       <div className="bg-green-100 rounded-full p-4 mb-4">
@@ -21,9 +16,7 @@ const PaymentVerificationSuccess = ({
 
       <div className="flex gap-4">
         <Button asChild>
-          <Link href={`/account/orders/${orderData._id}`}>
-            View Order Details
-          </Link>
+          <Link href={`/account/orders`}>View Orders</Link>
         </Button>
         <Button variant="outline" asChild>
           <Link href="/products">Continue Shopping</Link>

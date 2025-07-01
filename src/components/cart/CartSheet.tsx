@@ -32,8 +32,6 @@ const CartSheet = ({
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
-  console.log("cart items>>>>", items);
-
   // Calculate subtotal using variant price if available
   const subtotal = items.reduce((sum, item) => {
     const price =

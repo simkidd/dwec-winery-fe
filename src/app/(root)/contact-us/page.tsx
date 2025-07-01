@@ -11,28 +11,29 @@ const ContactUs = () => {
       icon: <Mail className="h-6 w-6 text-primary" />,
       title: "Email Us",
       description: "Our friendly team is here to help.",
-      details: "hello@yourcompany.com",
-      action: "mailto:hello@yourcompany.com",
+      details: "dwecwinery@gmail.com",
+      action: "mailto:dwecwinery@gmail.com",
     },
     {
       icon: <Phone className="h-6 w-6 text-primary" />,
       title: "Call Us",
       description: "Mon-Fri from 9am to 5pm",
-      details: "+1 (555) 123-4567",
-      action: "tel:+15551234567",
+      details: "+234 703 625 4646",
+      action: "tel:+2347036254646",
     },
     {
       icon: <MapPin className="h-6 w-6 text-primary" />,
       title: "Visit Us",
       description: "Come say hello at our office",
-      details: "123 Business Ave, Suite 100, San Francisco, CA 94107",
-      action: "https://maps.google.com",
+      details: "86A Woji Road, GRA Phase 2",
+      action:
+        "https://www.google.com/maps/place/86A+Woji+Road,+Elechi,+Port+Harcourt+500271,+Rivers",
     },
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
       title: "Hours",
       description: "Our operating hours",
-      details: "Monday - Friday: 9:00 AM - 5:00 PM",
+      details: "Open 24 Hours",
       action: null,
     },
   ];
@@ -135,7 +136,12 @@ const ContactUs = () => {
                       <h3 className="font-medium">{method.title}</h3>
 
                       {method.action ? (
-                        <a href={method.action} className="text-sm text-muted-foreground mt-1">{method.details}</a>
+                        <a
+                          href={method.action}
+                          className="text-sm text-muted-foreground mt-1"
+                        >
+                          {method.details}
+                        </a>
                       ) : (
                         <p className="text-sm text-muted-foreground mt-1">
                           {method.details}
@@ -152,7 +158,7 @@ const ContactUs = () => {
         {/* Full Width Map */}
         <div className="rounded-lg overflow-hidden border">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.325538729985!2d-122.4194159242278!3d37.7749294718605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA%2C%20USA!5e0!3m2!1sen!2s!4v1710000000000!5m2!1sen!2s"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d810.4440184632929!2d6.997560380069398!3d4.813401132989646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1069ce864a8a37b3%3A0xe0c5f14018e217c0!2s86A%20Woji%20Road%2C%20Elechi%2C%20Port%20Harcourt%20500271%2C%20Rivers!5e0!3m2!1sen!2sng!4v1751326610135!5m2!1sen!2sng"
             width="100%"
             height="400"
             style={{ border: 0 }}

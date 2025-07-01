@@ -6,7 +6,6 @@ import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Google } from "iconsax-reactjs";
 import cookies from "js-cookie";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -28,7 +27,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -197,7 +195,7 @@ const LoginForm = () => {
             </Link>
           </Button>
         </div>
-        <div className="w-full flex items-center py-3">
+        {/* <div className="w-full flex items-center py-3">
           <Separator className="flex-1" />
           <span className="mx-4 text-neutral-400 dark:text-gray-500">or</span>
           <Separator className="flex-1" />
@@ -212,7 +210,7 @@ const LoginForm = () => {
               <Google color="var(--primary)" variant="Bold" />
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </Card>
   );

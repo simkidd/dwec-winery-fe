@@ -60,7 +60,11 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
                     {order.trackingStatus}
                   </Badge>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Ordered on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
+                    Ordered on{" "}
+                    {format(
+                      new Date(order.createdAt),
+                      "MMMM d, yyyy 'at' h:mm a"
+                    )}
                   </p>
                 </div>
                 {order.trackingStatus === "Processing" && (
@@ -74,15 +78,20 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">
-                {order.deliveryMethod === "Pickup" ? "Pickup" : "Delivery"} Information
+                {order.deliveryMethod === "Pickup" ? "Pickup" : "Delivery"}{" "}
+                Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {order.deliveryMethod === "Pickup" ? (
-                <p className="text-sm">You&apos;ll pick up your order at our store location</p>
+                <p className="text-sm">
+                  You&apos;ll pick up your order at our store location
+                </p>
               ) : (
                 <div className="text-sm space-y-1">
-                  <p className="font-medium">{order.deliveryDetails.streetAddress}</p>
+                  <p className="font-medium">
+                    {order.deliveryDetails.streetAddress}
+                  </p>
                   <p>
                     {order.deliveryDetails.city}, {order.deliveryDetails.area}
                   </p>
@@ -104,7 +113,9 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
                 <>
                   <Separator className="my-3" />
                   <div>
-                    <p className="text-muted-foreground text-sm">Delivery Note</p>
+                    <p className="text-muted-foreground text-sm">
+                      Delivery Note
+                    </p>
                     <p className="text-sm">{order.deliveryDetails.note}</p>
                   </div>
                 </>
@@ -124,7 +135,11 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
                     <div className="relative w-20 h-20 rounded-md overflow-hidden border">
                       {item.product.images.length > 0 ? (
                         <Image
-                          src={item.product.images[0]}
+                          src={
+                            item.variantUsed
+                              ? item.variantUsed.images[0]
+                              : item.product.images[0]
+                          }
                           alt={item.product.name}
                           fill
                           className="object-cover"
@@ -141,17 +156,27 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
                           <h3 className="font-medium">{item.product.name}</h3>
                           {item.variantUsed && (
                             <p className="text-sm text-muted-foreground">
-                              {item.variantUsed.name}
+                              Variation: {item.variantUsed.name}
                             </p>
                           )}
                         </div>
                         <p className="font-medium">
-                          {formatPrice(item.product.price * item.qty)}
+                          {item.variantUsed ? (
+                            <p>
+                              {formatPrice(item.variantUsed.price * item.qty)}
+                            </p>
+                          ) : (
+                            <p>{formatPrice(item.product.price * item.qty)}</p>
+                          )}
                         </p>
                       </div>
                       <div className="flex justify-between mt-2 text-sm text-muted-foreground">
                         <p>Qty: {item.qty}</p>
-                        <p>{formatPrice(item.product.price)} each</p>
+                        {item.variantUsed ? (
+                          <p>{formatPrice(item.variantUsed.price)} each</p>
+                        ) : (
+                          <p>{formatPrice(item.product.price)} each</p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -163,7 +188,7 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
 
         {/* Order Summary */}
         <div className="space-y-6">
-          <Card className="sticky top-6">
+          <Card className="">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Order Summary</CardTitle>
             </CardHeader>
@@ -171,7 +196,11 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatPrice(order.totalAmountPaid - order.deliveryDetails.fee)}</span>
+                  <span>
+                    {formatPrice(
+                      order.totalAmountPaid - order.deliveryDetails.fee
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Delivery Fee</span>
@@ -193,23 +222,6 @@ const OrderDetails = ({ order }: { order: IOrderDetails }) => {
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Help</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full">
-                Contact Support
-              </Button>
-              <Button variant="outline" className="w-full">
-                Request Return
-              </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/products">Continue Shopping</Link>
-              </Button>
             </CardContent>
           </Card>
         </div>

@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import VerifyPayment from "./VerifyPayment";
-import PaymentVerificationSuccess from "./PaymentVerificationSuccess ";
+import { useState } from "react";
 import PaymentVerificationError from "./PaymentVerificationError ";
-import { IOrderDetails } from "@/interfaces/order.interface";
+import PaymentVerificationSuccess from "./PaymentVerificationSuccess ";
+import VerifyPayment from "./VerifyPayment";
 
 type VerificationState = "pending" | "success" | "error";
 
@@ -11,11 +10,9 @@ const OrderConfirmationComp = ({ reference }: { reference: string }) => {
   const [verificationState, setVerificationState] =
     useState<VerificationState>("pending");
 
-  const [orderData, setOrderData] = useState<IOrderDetails | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleVerificationSuccess = (data: IOrderDetails) => {
-    setOrderData(data);
+  const handleVerificationSuccess = () => {
     setVerificationState("success");
   };
 
@@ -34,9 +31,7 @@ const OrderConfirmationComp = ({ reference }: { reference: string }) => {
         />
       )}
 
-      {verificationState === "success" && orderData && (
-        <PaymentVerificationSuccess orderData={orderData} />
-      )}
+      {verificationState === "success" && <PaymentVerificationSuccess />}
 
       {verificationState === "error" && (
         <PaymentVerificationError

@@ -77,8 +77,6 @@ const CheckoutComp = () => {
 
   const effectRan = useRef(false);
 
-  console.log("cart items>>>>", items);
-
   useEffect(() => {
     if (effectRan.current) return; // Skip if already ran
     if (status === "cancelled") {
@@ -138,7 +136,7 @@ const CheckoutComp = () => {
   const createOrderMutation = useMutation({
     mutationFn: createOrder,
     onSuccess: async (data) => {
-      console.log("createOrder>>", data);
+      // console.log("createOrder>>", data);
       router.push(`/checkout/order-confirmation/${data.order?._id}`);
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -197,7 +195,6 @@ const CheckoutComp = () => {
           fee: shippingFee,
         },
         paymentMethod: values.paymentMethod,
-        paymentReference: "",
         totalAmountPaid: total,
       };
 
@@ -644,7 +641,7 @@ const CheckoutComp = () => {
                             <h3 className="text-sm">{item.product.name}</h3>
                             {item.variant && (
                               <p className="text-xs text-muted-foreground">
-                                Variant: {item.variant.name}
+                                Variation: {item.variant.name}
                               </p>
                             )}
                           </div>

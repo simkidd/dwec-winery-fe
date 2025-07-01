@@ -1,16 +1,33 @@
 "use client";
 import useOrders from "@/hooks/use-orders";
 import { format } from "date-fns";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Link from "next/link";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { IOrderDetails } from "@/interfaces/order.interface";
 
 const OrdersList = () => {
   const { orders, isFetchingOrders } = useOrders();
+  const isMobile = useIsMobile();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -34,13 +51,173 @@ const OrdersList = () => {
     }
   };
 
+  const OrderDetails = ({ order }: { order: IOrderDetails }) => {
+    return (
+      <div className="space-y-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h3 className="font-medium mb-3">Delivery Information</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              {order.deliveryMethod === "Pickup" ? (
+                <p>Store Pickup</p>
+              ) : (
+                <>
+                  {order.deliveryDetails.streetAddress && (
+                    <p>{order.deliveryDetails.streetAddress}</p>
+                  )}
+                  <p>
+                    {order.deliveryDetails.city &&
+                      `${order.deliveryDetails.city}, `}
+                    {order.deliveryDetails.area}
+                  </p>
+                  {order.deliveryDetails.zipCode && (
+                    <p>{order.deliveryDetails.zipCode}</p>
+                  )}
+                </>
+              )}
+              <p>Phone: {order.deliveryDetails?.phoneNumber}</p>
+              <p>Email: {order.deliveryDetails?.email}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-medium mb-3">Payment</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p className="capitalize">{order?.paymentMethod}</p>
+              <p>Ref: {order?.paymentReference}</p>
+              <p>Paid: {formatPrice(order?.totalAmountPaid)}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-medium mb-3">Order Summary</h3>
+            <div className="text-sm space-y-1">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal:</span>
+                <span>
+                  {formatPrice(
+                    order?.totalAmountPaid - order.deliveryDetails?.fee
+                  )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Delivery:</span>
+                <span>{formatPrice(order.deliveryDetails?.fee)}</span>
+              </div>
+              <Separator className="my-2" />
+              <div className="flex justify-between font-medium">
+                <span>Total:</span>
+                <span>{formatPrice(order?.totalAmountPaid)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="font-medium mb-3">Items ({order.products.length})</h3>
+          <div className="space-y-4">
+            {order.products.map((item) => (
+              <div key={item._id} className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  {item.product.images.length > 0 ? (
+                    <Image
+                      src={
+                        item.variantUsed
+                          ? item.variantUsed.images[0]
+                          : item.product.images[0]
+                      }
+                      alt={item.product.name}
+                      className="w-full h-full object-cover"
+                      width={64}
+                      height={64}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium truncate">{item.product.name}</h4>
+                  {item.variantUsed && (
+                    <p className="text-sm text-gray-500 truncate">
+                      Variation: {item.variantUsed.name}
+                    </p>
+                  )}
+                  <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                </div>
+                <div className="text-right">
+                  {item.variantUsed ? (
+                    <p>{formatPrice(item.variantUsed.price * item.qty)}</p>
+                  ) : (
+                    <p>{formatPrice(item.product.price * item.qty)}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const OrderDialog = ({ order }: { order: IOrderDetails }) => {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="link"
+            className="text-primary p-0 h-auto cursor-pointer"
+          >
+            View full order details
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Order #{order.trackingId.tracking_id} Details
+            </DialogTitle>
+          </DialogHeader>
+          <OrderDetails order={order} />
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const OrderSheet = ({ order }: { order: IOrderDetails }) => {
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            variant="link"
+            className="text-primary p-0 h-auto cursor-pointer"
+          >
+            View full order details
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>
+              Order #{order.trackingId.tracking_id} Details
+            </SheetTitle>
+          </SheetHeader>
+          <div className="px-4">
+            <OrderDetails order={order} />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="w-full">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Your Orders</h1>
-        <Link href="/products">
-          <Button variant="outline">Continue Shopping</Button>
-        </Link>
+        <Button variant="outline" asChild>
+          <Link href="/products">Continue Shopping</Link>
+        </Button>
       </div>
 
       {isFetchingOrders ? (
@@ -53,15 +230,15 @@ const OrdersList = () => {
             <p className="text-gray-500 mb-4">
               You haven&apos;t placed any orders yet.
             </p>
-            <Link href="/products">
-              <Button>Browse Products</Button>
-            </Link>
+            <Button asChild>
+              <Link href="/products">Browse Products</Link>
+            </Button>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card key={order._id} className="overflow-hidden">
+            <Card key={order._id} className="overflow-hidden py-0">
               <CardHeader className="bg-gray-50 px-6 py-4 border-b flex flex-row justify-between items-center">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">
@@ -82,7 +259,7 @@ const OrdersList = () => {
                 </Badge>
               </CardHeader>
 
-              <CardContent className="p-6">
+              <CardContent className="">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <div>
                     <h3 className="font-medium mb-3">Delivery Information</h3>
@@ -149,14 +326,11 @@ const OrdersList = () => {
                     <h3 className="font-medium">
                       Items ({order.products.length})
                     </h3>
-                    <Link href={`/account/orders/${order._id}`}>
-                      <Button
-                        variant="link"
-                        className="text-primary p-0 h-auto"
-                      >
-                        View full order details
-                      </Button>
-                    </Link>
+                    {!isMobile ? (
+                      <OrderDialog order={order} />
+                    ) : (
+                      <OrderSheet order={order} />
+                    )}
                   </div>
                   <div className="space-y-4">
                     {order.products.slice(0, 2).map((item) => (
@@ -164,7 +338,11 @@ const OrdersList = () => {
                         <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                           {item.product.images.length > 0 ? (
                             <Image
-                              src={item.product.images[0]}
+                              src={
+                                item.variantUsed
+                                  ? item.variantUsed.images[0]
+                                  : item.product.images[0]
+                              }
                               alt={item.product.name}
                               className="w-full h-full object-cover"
                               width={64}
@@ -180,9 +358,9 @@ const OrdersList = () => {
                           <h4 className="font-medium truncate">
                             {item.product.name}
                           </h4>
-                          {item.variantUsed?.name && (
+                          {item.variantUsed && (
                             <p className="text-sm text-gray-500 truncate">
-                              Variant: {item.variantUsed.name}
+                              Variation: {item.variantUsed.name}
                             </p>
                           )}
                           <p className="text-sm text-gray-500">
@@ -190,7 +368,13 @@ const OrdersList = () => {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p>{formatPrice(item.product.price * item.qty)}</p>
+                          {item.variantUsed ? (
+                            <p>
+                              {formatPrice(item.variantUsed.price * item.qty)}
+                            </p>
+                          ) : (
+                            <p>{formatPrice(item.product.price * item.qty)}</p>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -200,22 +384,6 @@ const OrdersList = () => {
                       </p>
                     )}
                   </div>
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                  <Button variant="outline" asChild>
-                    <Link href={`/account/orders/${order._id}`}>
-                      View Details
-                    </Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <a href="#" target="_blank" rel="noopener noreferrer">
-                      View Invoice
-                    </a>
-                  </Button>
-                  {order.trackingStatus === "Processing" && (
-                    <Button variant="destructive">Cancel Order</Button>
-                  )}
                 </div>
               </CardContent>
             </Card>

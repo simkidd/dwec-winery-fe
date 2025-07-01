@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Google } from "iconsax-reactjs";
 import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -27,7 +26,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
 import AgeConsentModal from "./AgeConsentModal";
 
 // Base schema for all users
@@ -388,7 +386,7 @@ const SignUpForm = () => {
                 </Link>
               </Button>
             </div>
-            <div className="w-full flex items-center py-3">
+            {/* <div className="w-full flex items-center py-3">
               <Separator className="flex-1" />
               <span className="mx-4 text-neutral-400 dark:text-gray-500">
                 or
@@ -405,7 +403,7 @@ const SignUpForm = () => {
                   <Google color="var(--primary)" variant="Bold" />
                 </Button>
               </div>
-            </div>
+            </div> */}
           </div>
         </Card>
       )}

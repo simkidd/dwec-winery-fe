@@ -144,7 +144,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                   <span className="text-green-600">
                     {currentStock < 5
                       ? `Only (${currentStock} left)`
-                      : "In Stock (Ready to ship)"}
+                      : "In Stock"}
                   </span>
                 ) : (
                   <span className="text-red-500">Out of stock</span>
