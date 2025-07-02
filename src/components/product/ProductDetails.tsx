@@ -139,7 +139,6 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 )}
               </div>
               <div className="mt-2 flex items-center gap-2 text-sm ">
-                <Truck className="h-4 w-4" />
                 {currentStock > 0 ? (
                   <span className="text-green-600">
                     {currentStock < 5

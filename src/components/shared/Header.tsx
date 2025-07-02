@@ -132,15 +132,15 @@ const Header = () => {
                   <HoverCardContent>
                     <div className="space-y-3">
                       <div className="">
-                        <h3 className="font-semibold">
+                        <h3 className="text-sm text-muted-foreground">
                           Welcome, {user.firstname}
                         </h3>
                       </div>
                       <Separator />
-                      <ul className="flex flex-col gap-2">
+                      <ul className="flex flex-col gap-2 ">
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className="w-full justify-start font-normal"
                           asChild
                         >
                           <Link href="/account">
@@ -150,7 +150,7 @@ const Header = () => {
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className="w-full justify-start font-normal"
                           asChild
                         >
                           <Link href="/account/orders">
@@ -160,7 +160,7 @@ const Header = () => {
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className="w-full justify-start font-normal"
                           asChild
                         >
                           <Link href="/account/favourites">
@@ -170,7 +170,7 @@ const Header = () => {
                         </Button>
                         <Button
                           variant="destructive"
-                          className="w-full cursor-pointer justify-start"
+                          className="w-full cursor-pointer justify-start font-normal"
                           onClick={signOut}
                         >
                           <LogOutIcon />

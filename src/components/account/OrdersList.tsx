@@ -239,7 +239,7 @@ const OrdersList = () => {
         <div className="space-y-4">
           {orders.map((order) => (
             <Card key={order._id} className="overflow-hidden py-0">
-              <CardHeader className="bg-gray-50 px-6 py-4 border-b flex flex-row justify-between items-center">
+              <CardHeader className="bg-gray-50 dark:bg-transparent px-6 py-4 border-b flex flex-row justify-between items-center">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">
                     Order #{order.trackingId.tracking_id}
