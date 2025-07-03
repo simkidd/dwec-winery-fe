@@ -279,8 +279,8 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className=" disabled:hidden cursor-pointer" />
-              <CarouselNext className=" disabled:hidden cursor-pointer" />
+              <CarouselPrevious className=" disabled:hidden cursor-pointer hidden lg:flex" />
+              <CarouselNext className=" disabled:hidden cursor-pointer hidden lg:flex" />
             </Carousel>
           </div>
         ) : null}
