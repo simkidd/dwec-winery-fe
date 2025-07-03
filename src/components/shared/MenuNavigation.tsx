@@ -52,23 +52,24 @@ const MenuNavigation = ({
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  // Set initial filter (optional - fetch some products by default)
+  // Prefetch all products on initial load
   useEffect(() => {
-    if (categories?.length && !activeCategory) {
+    if (categories?.length) {
       setFilter({
-        category: [categories[0]._id], // Default to first category
-        limit: 10,
+        category: categories.map((c) => c._id), // Get all category IDs at once
+        limit: 20,
       });
     }
   }, [categories]);
 
+  // Filter products client-side based on active category
+  const filteredProducts = activeCategory
+    ? products?.filter((p) => p.category._id === activeCategory)
+    : products;
+
   // Handle category hover
   const handleCategoryHover = (categoryId: string) => {
     setActiveCategory(categoryId);
-    setFilter({
-      category: [categoryId],
-      limit: 10,
-    });
   };
 
   const isActive = (href: string) => {
@@ -412,9 +413,9 @@ const MenuNavigation = ({
                         </li>
                       ))}
                     </ul>
-                  ) : products?.length ? (
+                  ) : filteredProducts?.length ? (
                     <ul className="grid grid-cols-5 gap-4">
-                      {products.map((product) => (
+                      {filteredProducts.map((product) => (
                         <li key={product._id}>
                           <Link
                             href={`/products/${product.slug}`}
