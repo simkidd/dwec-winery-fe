@@ -2,8 +2,6 @@ import { Apple, Facebook, GooglePlay, Heart, Instagram } from "iconsax-reactjs";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { AnimatedLink } from "./AnimatedLink";
 
 const Footer = () => {
@@ -137,7 +135,7 @@ const Footer = () => {
 
           {/* Newsletter & App Download */}
           <div className="space-y-6">
-            <div>
+            {/* <div>
               <h3 className="text-lg font-semibold mb-4">
                 Get Exclusive Deals
               </h3>
@@ -156,7 +154,7 @@ const Footer = () => {
                   Subscribe
                 </Button>
               </form>
-            </div>
+            </div> */}
 
             <div className="flex flex-col">
               <h3 className="font-semibold">Download Our App</h3>

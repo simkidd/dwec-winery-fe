@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import * as React from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,36 +10,24 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import useCategories from "@/hooks/use-categories";
 import useLogout from "@/hooks/use-logout";
 import { useIsMobile } from "@/hooks/use-mobile";
+import useProducts from "@/hooks/use-products";
 import { IUser } from "@/interfaces/user.interface";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { User } from "iconsax-reactjs";
 import { ChevronLeft, ChevronRight, LogIn, Menu } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
-import useCategories from "@/hooks/use-categories";
-
-const featuredProducts = [
-  {
-    title: "New Arrivals",
-    href: "/products/new",
-    description: "Discover our latest products",
-  },
-  {
-    title: "Best Sellers",
-    href: "/products/bestsellers",
-    description: "Our most popular items",
-  },
-  {
-    title: "Sale Items",
-    href: "/products/sale",
-    description: "Special discounts",
-  },
-];
+import { Skeleton } from "../ui/skeleton";
+import Image from "next/image";
+import { ScrollArea } from "../ui/scroll-area";
 
 type MenuState = "main" | "products" | "categories";
 
@@ -56,11 +42,34 @@ const MenuNavigation = ({
   const isMobile = useIsMobile();
   const { signOut } = useLogout();
   const { categories } = useCategories();
+  const [filter, setFilter] = useState({});
+  const { products, isPending } = useProducts(filter);
 
   const [isOpen, setIsOpen] = useState(false);
   const [menuState, setMenuState] = useState<MenuState>("main");
   const [menuHistory, setMenuHistory] = useState<MenuState[]>(["main"]);
   const [direction, setDirection] = useState(1);
+
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  // Set initial filter (optional - fetch some products by default)
+  useEffect(() => {
+    if (categories?.length && !activeCategory) {
+      setFilter({
+        category: [categories[0]._id], // Default to first category
+        limit: 10,
+      });
+    }
+  }, [categories]);
+
+  // Handle category hover
+  const handleCategoryHover = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    setFilter({
+      category: [categoryId],
+      limit: 10,
+    });
+  };
 
   const isActive = (href: string) => {
     return (
@@ -234,16 +243,13 @@ const MenuNavigation = ({
         <span className="ml-2 font-medium">Products</span>
       </div>
 
-      {featuredProducts.map((item) => (
-        <MobileNavItem
-          key={item.href}
-          href={item.href}
-          isActive={isActive(item.href)}
-          onClick={closeMenu}
-        >
-          {item.title}
-        </MobileNavItem>
-      ))}
+      <MobileNavItem
+        href="/products"
+        isActive={isActive("/products")}
+        onClick={closeMenu}
+      >
+        All Products
+      </MobileNavItem>
 
       <div
         className="flex items-center px-4 py-2 text-sm font-medium text-muted-foreground cursor-pointer hover:text-primary"
@@ -338,35 +344,106 @@ const MenuNavigation = ({
 
         <NavigationMenuItem>
           <NavigationMenuTrigger>All Products</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <div className="grid w-[500px] gap-3 p-4 md:w-[600px] md:grid-cols-2 lg:w-[700px]">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Featured</h3>
-                <ul className="">
-                  {featuredProducts.map((item) => (
-                    <ListItem
-                      key={item.title}
-                      title={item.title}
-                      href={item.href}
-                    >
-                      {item.description}
-                    </ListItem>
-                  ))}
-                </ul>
+          <NavigationMenuContent className="p-0 h-[500px]">
+            <div className="grid w-[800px] h-full gap-6 md:grid-cols-[250px_1fr] text-sm">
+              {/* Categories Column */}
+              <div className="border-r ">
+                <ScrollArea className="h-full p-2">
+                  <ul className="space-y-1">
+                    {categories?.map((category) => (
+                      <li
+                        key={category._id}
+                        className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center ${
+                          activeCategory === category._id
+                            ? "bg-accent font-medium"
+                            : "hover:bg-accent/50"
+                        }`}
+                        onMouseEnter={() => handleCategoryHover(category._id)}
+                      >
+                        {category.name}
+
+                        <span className="ml-auto">
+                          <ChevronRight className="h-3 w-3" />
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </ScrollArea>
               </div>
 
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Categories</h3>
-                <ul className="">
-                  {categories?.map((category) => (
-                    <ListItem
-                      key={category._id}
-                      title={category.name}
-                      href={`/category/${category.slug}`}
-                      isCategory
-                    ></ListItem>
-                  ))}
-                </ul>
+              {/* Products Column */}
+              <div className="p-2 py-4">
+                <Link
+                  href={
+                    activeCategory
+                      ? `/category/${
+                          categories?.find((c) => c._id === activeCategory)
+                            ?.slug
+                        }`
+                      : "/products"
+                  }
+                  className="hover:underline hover:underline-offset-2"
+                >
+                  <h3 className="text-base font-semibold mb-4 flex items-center">
+                    {activeCategory
+                      ? `All ${
+                          categories?.find((c) => c._id === activeCategory)
+                            ?.name
+                        }`
+                      : "Featured Products"}
+                    <span className="ml-1">
+                      <ChevronRight className="h-4 w-4" />
+                    </span>
+                  </h3>
+                </Link>
+
+                <ScrollArea className="flex-1 p-4">
+                  {isPending ? (
+                    <ul className="grid grid-cols-5 gap-4">
+                      {[...Array(8)].map((_, i) => (
+                        <li key={i} className="w-full">
+                          <div className="flex flex-col items-center gap-2">
+                            <Skeleton className="size-16 rounded-full" />
+                            <div className="w-full space-y-1 text-center">
+                              <Skeleton className="h-4 w-3/4 mx-auto" />
+                              <Skeleton className="h-3 w-1/2 mx-auto" />
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : products?.length ? (
+                    <ul className="grid grid-cols-5 gap-4">
+                      {products.map((product) => (
+                        <li key={product._id}>
+                          <Link
+                            href={`/products/${product.slug}`}
+                            className="hover:text-primary transition-colors flex flex-col items-center gap-2"
+                          >
+                            <div className="size-16 rounded-full bg-primary/10 dark:bg-muted/30 overflow-hidden flex-shrink-0">
+                              <Image
+                                src={product.images[0]}
+                                alt={product.name}
+                                width={200}
+                                height={200}
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+                            <div className="text-center w-full">
+                              <span className="block truncate text-sm">
+                                {product.name}
+                              </span>
+                            </div>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-muted-foreground py-4 text-center">
+                      No products found in this category
+                    </div>
+                  )}
+                </ScrollArea>
               </div>
             </div>
           </NavigationMenuContent>
@@ -416,42 +493,6 @@ const MenuNavigation = ({
 };
 
 export default MenuNavigation;
-
-function ListItem({
-  title,
-  children,
-  href,
-  isCategory = false,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & {
-  href: string;
-  isCategory?: boolean;
-}) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink asChild className="hover:bg-transparent hover:text-primary">
-        <Link
-          href={href}
-          className="block select-none space-y-1 rounded-md p-2 leading-none w-fit"
-        >
-          <div
-            className={cn(
-              "text-sm font-medium leading-none",
-              isCategory && "font-normal"
-            )}
-          >
-            {title}
-          </div>
-          {!isCategory && (
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              {children}
-            </p>
-          )}
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  );
-}
 
 const MobileNavItem = ({
   href,
