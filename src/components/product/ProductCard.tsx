@@ -2,10 +2,10 @@
 import { IProduct } from "@/interfaces/product.interface";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
-import { Truck } from "lucide-react";
+import { Loader2, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthDialog } from "../shared/AuthDialog";
 import FavouriteButton from "../shared/FavouriteButton";
 import { Badge } from "../ui/badge";
@@ -13,6 +13,8 @@ import { Card, CardContent } from "../ui/card";
 
 const ProductCard = ({ product }: { product: IProduct }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [hasImageError, setHasImageError] = useState(false);
 
   const hasDiscount =
     product.currentOffer?.isActive && product.currentOffer?.percentageOff;
@@ -30,50 +32,88 @@ const ProductCard = ({ product }: { product: IProduct }) => {
 
   const isOutOfStock = product.quantityInStock <= 0;
 
+  useEffect(() => {
+    setIsImageLoading(true);
+    setHasImageError(false);
+  }, [product]);
+
   return (
     <>
       <Card className="shadow-none rounded-sm p-0 border-0 bg-transparent group">
         <CardContent className="p-0 relative">
           <div className="relative">
-            {/* Image container with hover effects */}
+            {/* Image container */}
             <div
               className="aspect-square bg-primary/10 dark:bg-muted/30 rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
-              {/* Product image with hover transition */}
-              <div className="relative w-full h-full">
-                <Link href={`/products/${product.slug}`}>
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
-                      isHovered && product.images[1]
-                        ? "opacity-0"
-                        : "opacity-100"
-                    }`}
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                  />
-                  {product.images[1] && (
-                    <Image
-                      src={product.images[1]}
-                      alt={`${product.name} - alternate view`}
-                      fill
-                      className={`w-full h-full object-contain transition-opacity duration-700 ease-in-out ${
-                        isHovered ? "opacity-100" : "opacity-0"
-                      }`}
-                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                    />
-                  )}
-                </Link>
-              </div>
+              {/* Loading state */}
+              {isImageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-full h-full">
+                    <Loader2 className="absolute inset-0 m-auto h-6 w-6 animate-spin text-primary" />
+                  </div>
+                </div>
+              )}
 
-              {/* offer badge */}
+              {/* Error state */}
+              {hasImageError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                  <span className="text-xs text-muted-foreground">
+                    Image not available
+                  </span>
+                </div>
+              )}
+
+              {/* Image content */}
+              {!hasImageError && (
+                <div className="relative w-full h-full">
+                  <Link href={`/products/${product.slug}`}>
+                    <Image
+                      src={product.images[0]}
+                      alt={product.name}
+                      fill
+                      className={`w-full h-full object-contain transition-opacity duration-300 ${
+                        isHovered && product.images[1]
+                          ? "opacity-0"
+                          : "opacity-100"
+                      } ${isImageLoading ? "opacity-0" : "opacity-100"}`}
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                      onLoadingComplete={() => setIsImageLoading(false)}
+                      onError={() => {
+                        setIsImageLoading(false);
+                        setHasImageError(true);
+                      }}
+                      priority={false} // Let Next.js optimize loading
+                    />
+                    {product.images[1] && (
+                      <Image
+                        src={product.images[1]}
+                        alt={`${product.name} - alternate view`}
+                        fill
+                        className={`w-full h-full object-contain transition-opacity duration-300 ${
+                          isHovered ? "opacity-100" : "opacity-0"
+                        } ${isImageLoading ? "opacity-0" : "opacity-100"}`}
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                        onLoadingComplete={() => setIsImageLoading(false)}
+                        onError={() => {
+                          setIsImageLoading(false);
+                          setHasImageError(true);
+                        }}
+                        priority={false}
+                      />
+                    )}
+                  </Link>
+                </div>
+              )}
+
+              {/* Discount badge */}
               {hasDiscount && (
                 <Badge
                   className={cn(
-                    "absolute top-2 left-2 lg:right-2 bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full z-[2] transition-all duration-500 ease-in-out"
+                    "absolute top-2 left-2 lg:right-2 bg-gradient-to-tr from-red-500 to-red-400 text-white text-xs font-semibold h-8 w-8 rounded-full z-[2] flex items-center justify-center",
+                    isImageLoading && "opacity-0"
                   )}
                 >
                   -{product?.currentOffer?.percentageOff}%
@@ -87,7 +127,8 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                   "absolute top-2 right-2",
                   isHovered
                     ? "opacity-100 translate-x-0"
-                    : "lg:opacity-0 lg:translate-x-2"
+                    : "lg:opacity-0 lg:translate-x-2",
+                  isImageLoading && "opacity-0"
                 )}
               />
 
@@ -101,8 +142,9 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               )}
             </div>
 
+            {/* Free delivery indicator */}
             {product?.isFreeDelivery && (
-              <span className="free-delivery-tag inline-flex items-center">
+              <span className="free-delivery-tag inline-flex items-center text-xs text-muted-foreground mt-1">
                 <Truck className="h-3 w-3 mr-1" />
                 Free Shipping
               </span>
@@ -115,16 +157,16 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               href={`/products/${product.slug}`}
               className="hover:text-primary"
             >
-              <h3 className="line-clamp-1 truncate mb-1 text-sm">
+              <h3 className="line-clamp-1 truncate mb-1 text-sm font-medium">
                 {product.name}
               </h3>
             </Link>
-            <div className="flex  items-center gap-1">
-              <span className=" font-bold">
+            <div className="flex items-center gap-1">
+              <span className="font-bold text-foreground">
                 {formatCurrency(discountedPrice)}
               </span>
               {hasDiscount && (
-                <span className="line-through text-gray-500 text-sm">
+                <span className="line-through text-muted-foreground text-sm">
                   {formatCurrency(product?.price)}
                 </span>
               )}

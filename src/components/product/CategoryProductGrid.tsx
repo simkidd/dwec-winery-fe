@@ -3,7 +3,7 @@ import useProducts from "@/hooks/use-products";
 import { ICategory } from "@/interfaces/product.interface";
 import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { ChevronDown, Frown, Loader2 } from "lucide-react";
+import { ChevronDown, Frown } from "lucide-react";
 import { useEffect } from "react";
 import { Button } from "../ui/button";
 import {
@@ -152,23 +152,27 @@ const CategoryProductGrid = ({ category }: { category: ICategory }) => {
                   {products.map((item) => (
                     <ProductCard key={item._id} product={item} />
                   ))}
+
+                  {isFetchingNextPage && (
+                    <>
+                      {[...Array(7)].map((_, i) => (
+                        <ProductCardSkeleton key={`skeleton-${i}`} />
+                      ))}
+                    </>
+                  )}
                 </div>
 
                 {/* Load More Button */}
-                {hasMore && (
+                {hasMore && !isFetchingNextPage && (
                   <div className="mt-8 flex justify-center">
-                    {isFetchingNextPage ? (
-                      <Loader2 className="animate-spin text-primary" />
-                    ) : (
-                      <Button
-                        variant="outline"
-                        onClick={() => loadMore()}
-                        disabled={isFetchingNextPage}
-                        className="min-w-[200px]"
-                      >
-                        Load More
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline"
+                      onClick={() => loadMore()}
+                      disabled={isFetchingNextPage}
+                      className="min-w-[200px]"
+                    >
+                      Load More
+                    </Button>
                   </div>
                 )}
               </>
