@@ -44,7 +44,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           <div className="relative">
             {/* Image container */}
             <div
-              className="aspect-square bg-primary/10 dark:bg-muted/30 rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
+              className="aspect-square bg-primary/10  rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >

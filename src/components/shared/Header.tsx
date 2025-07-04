@@ -7,6 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import {
   Heart,
   LogOutIcon,
+  Rss,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
@@ -168,6 +169,19 @@ const Header = () => {
                             Saved Items
                           </Link>
                         </Button>
+
+                        {(user.isAdmin || user.isSuperAdmin) && (
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start font-normal"
+                            asChild
+                          >
+                            <Link href="/admin/blogs">
+                              <Rss />
+                              Blog Manager
+                            </Link>
+                          </Button>
+                        )}
                         <Button
                           variant="destructive"
                           className="w-full cursor-pointer justify-start font-normal"

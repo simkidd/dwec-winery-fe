@@ -3,7 +3,7 @@ import Image from "next/image";
 import { blogPosts } from "./blog-posts";
 
 interface RelatedPostsProps {
-  currentPostId: number;
+  currentPostId: string;
 }
 
 export default function RelatedPosts({ currentPostId }: RelatedPostsProps) {
