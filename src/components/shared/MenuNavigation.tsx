@@ -19,15 +19,15 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { User } from "iconsax-reactjs";
 import { ChevronLeft, ChevronRight, LogIn, Menu } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import Logo from "./Logo";
-import { Skeleton } from "../ui/skeleton";
-import Image from "next/image";
 import { ScrollArea } from "../ui/scroll-area";
+import { Skeleton } from "../ui/skeleton";
+import Logo from "./Logo";
 
 type MenuState = "main" | "products" | "categories";
 
@@ -207,6 +207,16 @@ const MenuNavigation = ({
           >
             Saved items
           </MobileNavItem>
+
+          {(user.isAdmin || user.isSuperAdmin) && (
+            <MobileNavItem
+              href="/admin/blogs"
+              isActive={isActive("/account/favourites")}
+              onClick={closeMenu}
+            >
+              Blog Manager
+            </MobileNavItem>
+          )}
           <div>
             <span
               className="block px-4 py-2 text-sm font-medium transition-colors text-destructive cursor-pointer"

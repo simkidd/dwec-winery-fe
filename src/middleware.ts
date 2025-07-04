@@ -4,6 +4,7 @@ import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
 
 const privateRoutes = ["/account"];
+const adminRoutes = ["/admin"];
 const authRoutes = [
   "/login",
   "/register",
@@ -61,6 +62,22 @@ export default async function middleware(req: NextRequest) {
       loginUrl.searchParams.set("redirect", "/checkout");
       return NextResponse.redirect(loginUrl);
     }
+    return NextResponse.next();
+  }
+
+  // Handle admin routes
+  if (adminRoutes.some((route) => pathname.startsWith(route))) {
+    if (!token) {
+      const loginUrl = new URL("/login", req.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Check if user has admin privileges
+    if (!user?.isAdmin && !user?.isSuperAdmin) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
     return NextResponse.next();
   }
 

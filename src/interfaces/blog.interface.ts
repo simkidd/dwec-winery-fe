@@ -1,5 +1,5 @@
 export interface IBlogPost {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   content: string;

@@ -1,4 +1,4 @@
-import { Apple, Facebook, GooglePlay, Heart, Instagram } from "iconsax-reactjs";
+import { Apple, Facebook, GooglePlay, Instagram } from "iconsax-reactjs";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -195,7 +195,7 @@ const Footer = () => {
               &copy; {new Date().getFullYear()} DWEC Drinks. All rights
               reserved.
             </p>
-            <div className="flex items-center  text-sm">
+            {/* <div className="flex items-center  text-sm">
               Built with
               <Heart size="18" color="red" variant="Bold" className="mx-1" />
               by
@@ -205,7 +205,7 @@ const Footer = () => {
               >
                 24karat
               </a>
-            </div>
+            </div> */}
           </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link
