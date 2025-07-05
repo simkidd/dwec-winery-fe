@@ -1,12 +1,13 @@
 "use client";
-import useOrders from "@/hooks/use-orders";
-import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -14,27 +15,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Link from "next/link";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Separator } from "@/components/ui/separator";
+import useOrders from "@/hooks/use-orders";
 import { IOrderDetails } from "@/interfaces/order.interface";
+import { formatCurrency } from "@/utils/helpers";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ScrollArea } from "../ui/scroll-area";
 
 const OrdersList = () => {
   const { orders, isFetchingOrders } = useOrders();
-  const isMobile = useIsMobile();
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(price);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -51,7 +43,7 @@ const OrdersList = () => {
     }
   };
 
-  const OrderDetails = ({ order }: { order: IOrderDetails }) => {
+  const OrderDetailsContent = ({ order }: { order: IOrderDetails }) => {
     return (
       <div className="space-y-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -85,7 +77,7 @@ const OrdersList = () => {
             <div className="text-sm text-gray-600 space-y-1">
               <p className="capitalize">{order?.paymentMethod}</p>
               <p>Ref: {order?.paymentReference}</p>
-              <p>Paid: {formatPrice(order?.totalAmountPaid)}</p>
+              <p>Paid: {formatCurrency(order?.totalAmountPaid, "NGN", 2)}</p>
             </div>
           </div>
 
@@ -95,19 +87,23 @@ const OrdersList = () => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal:</span>
                 <span>
-                  {formatPrice(
-                    order?.totalAmountPaid - order.deliveryDetails?.fee
+                  {formatCurrency(
+                    order?.totalAmountPaid - order.deliveryDetails?.fee,
+                    "NGN",
+                    2
                   )}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery:</span>
-                <span>{formatPrice(order.deliveryDetails?.fee)}</span>
+                <span>
+                  {formatCurrency(order.deliveryDetails?.fee, "NGN", 2)}
+                </span>
               </div>
               <Separator className="my-2" />
               <div className="flex justify-between font-medium">
                 <span>Total:</span>
-                <span>{formatPrice(order?.totalAmountPaid)}</span>
+                <span>{formatCurrency(order?.totalAmountPaid, "NGN", 2)}</span>
               </div>
             </div>
           </div>
@@ -119,8 +115,8 @@ const OrdersList = () => {
           <h3 className="font-medium mb-3">Items ({order.products.length})</h3>
           <div className="space-y-4">
             {order.products.map((item) => (
-              <div key={item._id} className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+              <div key={item._id} className="flex items-start gap-4 pr-4 ">
+                <div className="w-16 h-16 bg-primary/10 rounded-md overflow-hidden flex-shrink-0">
                   {item.product.images.length > 0 ? (
                     <Image
                       src={
@@ -129,7 +125,7 @@ const OrdersList = () => {
                           : item.product.images[0]
                       }
                       alt={item.product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                       width={64}
                       height={64}
                     />
@@ -139,10 +135,12 @@ const OrdersList = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium truncate">{item.product.name}</h4>
+                <div className="flex-1 min-w-0 ">
+                  <h4 className="font-medium truncate text-wrap">
+                    {item.product.name}
+                  </h4>
                   {item.variantUsed && (
-                    <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 truncate text-wrap">
                       Variation: {item.variantUsed.name}
                     </p>
                   )}
@@ -150,9 +148,17 @@ const OrdersList = () => {
                 </div>
                 <div className="text-right">
                   {item.variantUsed ? (
-                    <p>{formatPrice(item.variantUsed.price * item.qty)}</p>
+                    <p>
+                      {formatCurrency(
+                        item.variantUsed.price * item.qty,
+                        "NGN",
+                        2
+                      )}
+                    </p>
                   ) : (
-                    <p>{formatPrice(item.product.price * item.qty)}</p>
+                    <p>
+                      {formatCurrency(item.product.price * item.qty, "NGN", 2)}
+                    </p>
                   )}
                 </div>
               </div>
@@ -163,7 +169,7 @@ const OrdersList = () => {
     );
   };
 
-  const OrderDialog = ({ order }: { order: IOrderDetails }) => {
+  const OrderDetailsModal = ({ order }: { order: IOrderDetails }) => {
     return (
       <Dialog>
         <DialogTrigger asChild>
@@ -171,43 +177,20 @@ const OrdersList = () => {
             variant="link"
             className="text-primary p-0 h-auto cursor-pointer"
           >
-            View full order details
+            View full details
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="!max-w-4xl px-0">
+          <DialogHeader className="px-4">
+            <DialogTitle className="text-left">
               Order #{order.trackingId.tracking_id} Details
             </DialogTitle>
           </DialogHeader>
-          <OrderDetails order={order} />
+          <ScrollArea className="h-[calc(100vh-150px)] px-4 sm:px-6">
+            <OrderDetailsContent order={order} />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
-    );
-  };
-
-  const OrderSheet = ({ order }: { order: IOrderDetails }) => {
-    return (
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            variant="link"
-            className="text-primary p-0 h-auto cursor-pointer"
-          >
-            View full order details
-          </Button>
-        </SheetTrigger>
-        <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>
-              Order #{order.trackingId.tracking_id} Details
-            </SheetTitle>
-          </SheetHeader>
-          <div className="px-4">
-            <OrderDetails order={order} />
-          </div>
-        </SheetContent>
-      </Sheet>
     );
   };
 
@@ -238,10 +221,13 @@ const OrdersList = () => {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card key={order._id} className="overflow-hidden py-0">
-              <CardHeader className="bg-gray-50 dark:bg-transparent px-6 py-4 border-b flex flex-row justify-between items-center">
+            <Card
+              key={order._id}
+              className="overflow-hidden py-0 divide-y gap-0"
+            >
+              <CardHeader className="bg-gray-50 dark:bg-transparent px-6 py-4 flex flex-row justify-between items-center">
                 <div className="space-y-1">
-                  <CardTitle className="text-lg">
+                  <CardTitle className="text-base">
                     Order #{order.trackingId.tracking_id}
                   </CardTitle>
                   <p className="text-sm text-gray-500">
@@ -251,141 +237,67 @@ const OrdersList = () => {
                     )}
                   </p>
                 </div>
-                <Badge
-                  variant="outline"
-                  className={getStatusColor(order.trackingStatus)}
-                >
-                  {order.trackingStatus}
-                </Badge>
+
+                <OrderDetailsModal order={order} />
               </CardHeader>
 
-              <CardContent className="">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  <div>
-                    <h3 className="font-medium mb-3">Delivery Information</h3>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      {order.deliveryMethod === "Pickup" ? (
-                        <p>Store Pickup</p>
-                      ) : (
-                        <>
-                          {order.deliveryDetails.streetAddress && (
-                            <p>{order.deliveryDetails.streetAddress}</p>
-                          )}
-                          <p>
-                            {order.deliveryDetails.city &&
-                              `${order.deliveryDetails.city}, `}
-                            {order.deliveryDetails.area}
-                          </p>
-                          {order.deliveryDetails.zipCode && (
-                            <p>{order.deliveryDetails.zipCode}</p>
-                          )}
-                        </>
-                      )}
-                      <p>Phone: {order.deliveryDetails?.phoneNumber}</p>
-                      <p>Email: {order.deliveryDetails?.email}</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium mb-3">Payment</h3>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p className="capitalize">{order?.paymentMethod}</p>
-                      <p>Ref: {order?.paymentReference}</p>
-                      <p>Paid: {formatPrice(order?.totalAmountPaid)}</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium mb-3">Order Summary</h3>
-                    <div className="text-sm space-y-1">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Subtotal:</span>
-                        <span>
-                          {formatPrice(
-                            order?.totalAmountPaid - order.deliveryDetails?.fee
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Delivery:</span>
-                        <span>{formatPrice(order.deliveryDetails?.fee)}</span>
-                      </div>
-                      <Separator className="my-2" />
-                      <div className="flex justify-between font-medium">
-                        <span>Total:</span>
-                        <span>{formatPrice(order?.totalAmountPaid)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator className="mb-6" />
-
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-medium">
-                      Items ({order.products.length})
-                    </h3>
-                    {!isMobile ? (
-                      <OrderDialog order={order} />
-                    ) : (
-                      <OrderSheet order={order} />
-                    )}
-                  </div>
-                  <div className="space-y-4">
-                    {order.products.slice(0, 2).map((item) => (
-                      <div key={item._id} className="flex items-start gap-4">
-                        <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
-                          {item.product.images.length > 0 ? (
-                            <Image
-                              src={
-                                item.variantUsed
-                                  ? item.variantUsed.images[0]
-                                  : item.product.images[0]
-                              }
-                              alt={item.product.name}
-                              className="w-full h-full object-cover"
-                              width={64}
-                              height={64}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              No Image
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium truncate">
-                            {item.product.name}
-                          </h4>
-                          {item.variantUsed && (
-                            <p className="text-sm text-gray-500 truncate">
-                              Variation: {item.variantUsed.name}
-                            </p>
-                          )}
-                          <p className="text-sm text-gray-500">
-                            Qty: {item.qty}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          {item.variantUsed ? (
-                            <p>
-                              {formatPrice(item.variantUsed.price * item.qty)}
-                            </p>
-                          ) : (
-                            <p>{formatPrice(item.product.price * item.qty)}</p>
-                          )}
-                        </div>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex space-x-2">
+                    {order.products.slice(0, 3).map((item) => (
+                      <div
+                        key={item._id}
+                        className="w-16 h-16 bg-primary/10 rounded-lg overflow-hidden shadow-sm border"
+                      >
+                        {item.product.images.length > 0 ? (
+                          <Image
+                            src={
+                              item.variantUsed
+                                ? item.variantUsed.images[0]
+                                : item.product.images[0]
+                            }
+                            alt={item.product.name}
+                            className="w-full h-full object-contain"
+                            width={48}
+                            height={48}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                            No Image
+                          </div>
+                        )}
                       </div>
                     ))}
-                    {order.products.length > 2 && (
-                      <p className="text-sm text-gray-500 text-center">
-                        + {order.products.length - 2} more items
-                      </p>
+                    {order.products.length > 3 && (
+                      <div className="w-16 h-16 bg-primary/10 rounded-lg border flex items-center justify-center text-xs font-medium text-gray-500">
+                        +{order.products.length - 3}
+                      </div>
                     )}
                   </div>
                 </div>
               </CardContent>
+
+              <CardFooter className="px-6 py-4">
+                <div className="w-full flex items-center justify-between flex-wrap gap-2">
+                  <Badge className={getStatusColor(order.trackingStatus)}>
+                    {order.trackingStatus}
+                  </Badge>
+
+                  <div className="flex items-center gap-4">
+                    <div className="inline-flex items-center">
+                      <p className="text-sm text-gray-500 pr-2">Total Items</p>
+                      <p className="font-medium">{order.products.length}</p>
+                    </div>
+                    <Separator orientation="vertical" className="h-8" />
+                    <div className="inline-flex items-center">
+                      <p className="text-sm text-gray-500 pr-2">Order Total</p>
+                      <p className="font-medium">
+                        {formatCurrency(order?.totalAmountPaid, "NGN", 2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardFooter>
             </Card>
           ))}
         </div>
