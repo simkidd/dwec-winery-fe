@@ -68,7 +68,7 @@ const MenuNavigation = ({
     : products;
 
   // Handle category hover
-  const handleCategoryHover = (categoryId: string) => {
+  const handleCategoryHover = (categoryId: string | null) => {
     setActiveCategory(categoryId);
   };
 
@@ -361,6 +361,30 @@ const MenuNavigation = ({
               <div className="border-r ">
                 <ScrollArea className="h-full p-2">
                   <ul className="space-y-1">
+                    {/* Featured Products Section */}
+                    <li
+                      className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center ${
+                        !activeCategory
+                          ? "bg-accent font-medium"
+                          : "hover:bg-accent/50"
+                      }`}
+                      onMouseEnter={() => handleCategoryHover(null)}
+                    >
+                      Featured Products
+                      <ChevronRight className="h-3 w-3 ml-auto" />
+                    </li>
+
+                    {/* Best Selling Section */}
+                    <li
+                      className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center hover:bg-accent/50`}
+                      onMouseEnter={() => handleCategoryHover(null)}
+                    >
+                      Best Selling
+                      <ChevronRight className="h-3 w-3 ml-auto" />
+                    </li>
+
+
+                    {/* Categories Section */}
                     {categories?.map((category) => (
                       <li
                         key={category._id}
