@@ -17,16 +17,31 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import useOrders from "@/hooks/use-orders";
-import { IOrderDetails } from "@/interfaces/order.interface";
-import { formatCurrency } from "@/utils/helpers";
+import { IOrderDetails, orderFilterInput } from "@/interfaces/order.interface";
+import { formatCurrency, getPaginationRange } from "@/utils/helpers";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const OrdersList = () => {
-  const { orders, isFetchingOrders } = useOrders();
+  const [filter, setFilter] = useState<orderFilterInput>({
+    limit: 10,
+    page: 1,
+  });
+  const { orders, isFetchingOrders, totalPages } = useOrders(filter);
+  const orderListRef = useRef<HTMLDivElement>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -42,6 +57,20 @@ const OrdersList = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  const onPaginationChange = (page: number) => {
+    setFilter({ ...filter, page });
+  };
+
+  // Scroll to order list when pagination changes
+  useEffect(() => {
+    if (orderListRef.current) {
+      orderListRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [filter.page]);
 
   const OrderDetailsContent = ({ order }: { order: IOrderDetails }) => {
     return (
@@ -195,7 +224,7 @@ const OrdersList = () => {
   };
 
   return (
-    <div className="w-full">
+    <div id="order-list" ref={orderListRef} className="w-full">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Your Orders</h1>
         <Button variant="outline" asChild>
@@ -219,88 +248,134 @@ const OrdersList = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <Card
-              key={order._id}
-              className="overflow-hidden py-0 divide-y gap-0"
-            >
-              <CardHeader className="bg-gray-50 dark:bg-transparent px-6 py-4 flex flex-row justify-between items-center">
-                <div className="space-y-1">
-                  <CardTitle className="text-base">
-                    Order #{order.trackingId.tracking_id}
-                  </CardTitle>
-                  <p className="text-sm text-gray-500">
-                    {format(
-                      new Date(order.createdAt),
-                      "MMM d, yyyy 'at' h:mm a"
-                    )}
-                  </p>
-                </div>
-
-                <OrderDetailsModal order={order} />
-              </CardHeader>
-
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex space-x-2">
-                    {order.products.slice(0, 3).map((item) => (
-                      <div
-                        key={item._id}
-                        className="w-16 h-16 bg-primary/10 rounded-lg overflow-hidden shadow-sm border"
-                      >
-                        {item.product.images.length > 0 ? (
-                          <Image
-                            src={
-                              item.variantUsed
-                                ? item.variantUsed.images[0]
-                                : item.product.images[0]
-                            }
-                            alt={item.product.name}
-                            className="w-full h-full object-contain"
-                            width={48}
-                            height={48}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                            No Image
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                    {order.products.length > 3 && (
-                      <div className="w-16 h-16 bg-primary/10 rounded-lg border flex items-center justify-center text-xs font-medium text-gray-500">
-                        +{order.products.length - 3}
-                      </div>
-                    )}
+        <>
+          <div className="space-y-4 mb-8">
+            {orders.map((order) => (
+              <Card
+                key={order._id}
+                className="overflow-hidden py-0 divide-y gap-0"
+              >
+                <CardHeader className="bg-gray-50 dark:bg-transparent px-6 py-4 flex flex-row justify-between items-center">
+                  <div className="space-y-1">
+                    <CardTitle className="text-base">
+                      Order #{order.trackingId.tracking_id}
+                    </CardTitle>
+                    <p className="text-sm text-gray-500">
+                      {format(
+                        new Date(order.createdAt),
+                        "MMM d, yyyy 'at' h:mm a"
+                      )}
+                    </p>
                   </div>
-                </div>
-              </CardContent>
 
-              <CardFooter className="px-6 py-4">
-                <div className="w-full flex items-center justify-between flex-wrap gap-2">
-                  <Badge className={getStatusColor(order.trackingStatus)}>
-                    {order.trackingStatus}
-                  </Badge>
+                  <OrderDetailsModal order={order} />
+                </CardHeader>
 
+                <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="inline-flex items-center">
-                      <p className="text-sm text-gray-500 pr-2">Total Items</p>
-                      <p className="font-medium">{order.products.length}</p>
-                    </div>
-                    <Separator orientation="vertical" className="h-8" />
-                    <div className="inline-flex items-center">
-                      <p className="text-sm text-gray-500 pr-2">Order Total</p>
-                      <p className="font-medium">
-                        {formatCurrency(order?.totalAmountPaid, "NGN", 2)}
-                      </p>
+                    <div className="flex space-x-2">
+                      {order.products.slice(0, 3).map((item) => (
+                        <div
+                          key={item._id}
+                          className="w-16 h-16 bg-primary/10 rounded-lg overflow-hidden shadow-sm border"
+                        >
+                          {item.product.images.length > 0 ? (
+                            <Image
+                              src={
+                                item.variantUsed
+                                  ? item.variantUsed.images[0]
+                                  : item.product.images[0]
+                              }
+                              alt={item.product.name}
+                              className="w-full h-full object-contain"
+                              width={48}
+                              height={48}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                              No Image
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {order.products.length > 3 && (
+                        <div className="w-16 h-16 bg-primary/10 rounded-lg border flex items-center justify-center text-xs font-medium text-gray-500">
+                          +{order.products.length - 3}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+
+                <CardFooter className="px-6 py-4">
+                  <div className="w-full flex items-center justify-between flex-wrap gap-2">
+                    <Badge className={getStatusColor(order.trackingStatus)}>
+                      {order.trackingStatus}
+                    </Badge>
+
+                    <div className="flex items-center gap-4">
+                      <div className="inline-flex items-center">
+                        <p className="text-sm text-gray-500 pr-2">
+                          Total Items
+                        </p>
+                        <p className="font-medium">{order.products.length}</p>
+                      </div>
+                      <Separator orientation="vertical" className="h-8" />
+                      <div className="inline-flex items-center">
+                        <p className="text-sm text-gray-500 pr-2">
+                          Order Total
+                        </p>
+                        <p className="font-medium">
+                          {formatCurrency(order?.totalAmountPaid, "NGN", 2)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+
+          {orders.length > 0 && totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => onPaginationChange(filter?.page - 1)}
+                    aria-disabled={filter.page === 1}
+                    className={cn(
+                      "cursor-pointer",
+                      filter.page === 1 && "pointer-events-none opacity-50"
+                    )}
+                  />
+                </PaginationItem>
+
+                {getPaginationRange(filter.page, totalPages).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === filter.page}
+                      onClick={() => onPaginationChange(page)}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => onPaginationChange(filter.page + 1)}
+                    aria-disabled={filter.page >= totalPages}
+                    className={cn(
+                      "cursor-pointer",
+                      filter.page >= totalPages &&
+                        "pointer-events-none opacity-50"
+                    )}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+        </>
       )}
     </div>
   );

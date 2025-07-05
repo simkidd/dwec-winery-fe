@@ -17,7 +17,7 @@ const useOrders = (params?: orderFilterInput) => {
     refetch: refetchOrders,
   } = useQuery<PaginatedOrderResponse<IOrderDetails>>({
     queryKey: ["orders", params],
-    queryFn: getOrders,
+    queryFn: async () => getOrders(params),
     // select:(data)=> data.
   });
 

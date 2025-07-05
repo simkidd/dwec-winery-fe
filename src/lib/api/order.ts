@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CreateOrderDTO, PaymentDTO } from "@/interfaces/order.interface";
+import {
+  CreateOrderDTO,
+  orderFilterInput,
+  PaymentDTO,
+} from "@/interfaces/order.interface";
 import instance from "@/services/axios";
 
 // Handle responses and errors
@@ -47,9 +51,11 @@ export const createOrder = async (data: CreateOrderDTO) => {
     handleError(error);
   }
 };
-export const getOrders = async () => {
+export const getOrders = async (params?: orderFilterInput) => {
   try {
-    const response = await instance.get(`/${ROUTE_PATH}/orders/user-orders`);
+    const response = await instance.get(`/${ROUTE_PATH}/orders/user-orders`, {
+      params,
+    });
 
     return handleResponse(response);
   } catch (error) {

@@ -20,7 +20,7 @@ export interface PaginatedOrderResponse<T> {
 }
 
 export interface orderFilterInput {
-  page?: number;
+  page: number;
   limit?: number;
 }
 

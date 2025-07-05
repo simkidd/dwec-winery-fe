@@ -27,3 +27,25 @@ export const formatUnderscoreText = (text: string) => {
 export const isVariantItem = (item: ICartItem): item is ICartItemVariant => {
   return "variant" in item && item.variant !== undefined;
 };
+
+export const getPaginationRange = (current: number, total: number) => {
+  let start = Math.max(1, current - 2);
+  let end = Math.min(total, current + 2);
+
+  if (total <= 5) {
+    start = 1;
+    end = total;
+  } else {
+    if (current <= 3) {
+      end = 5;
+    } else if (current >= total - 2) {
+      start = total - 4;
+    }
+  }
+
+  const range = [];
+  for (let i = start; i <= end; i++) {
+    range.push(i);
+  }
+  return range;
+};
