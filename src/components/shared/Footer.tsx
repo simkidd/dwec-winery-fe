@@ -159,8 +159,9 @@ const Footer = () => {
             <div className="flex flex-col">
               <h3 className="font-semibold">Download Our App</h3>
               <div className="flex flex-wrap gap-2 mt-4">
-                <Link
+                <a
                   href={"#"}
+                  target="_blank"
                   className="flex items-center justify-center border border-white bg-transparent shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1 hover:bg-foreground/20 transition duration-300 ease-in-out"
                 >
                   <Apple size="32" variant="Bold" />
@@ -170,9 +171,10 @@ const Footer = () => {
                     </span>
                     <p className="font-semibold">App Store</p>
                   </div>
-                </Link>
-                <Link
-                  href={"#"}
+                </a>
+                <a
+                  href={"https://play.google.com/store/apps/details?id=com.dwecwinery.app"}
+                  target="_blank"
                   className="flex items-center justify-center border border-white bg-transparent shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1 hover:bg-foreground/20 transition duration-300 ease-in-out"
                 >
                   <GooglePlay size="32" variant="Bold" />
@@ -182,7 +184,7 @@ const Footer = () => {
                     </span>
                     <p className="font-semibold">Play Store</p>
                   </div>
-                </Link>
+                </a>
               </div>
             </div>
           </div>

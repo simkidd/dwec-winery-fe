@@ -7,7 +7,10 @@ import ProductCardSkeleton from "../product/ProductCardSkeleton";
 import { Button } from "../ui/button";
 
 const FeaturedProducts = () => {
-  const { products, isPending } = useProducts();
+  const { products, isPending } = useProducts({
+    limit: 10,
+    sort: "highestPrice",
+  });
 
   return (
     <section className="py-12 w-full">
@@ -36,7 +39,7 @@ const FeaturedProducts = () => {
           </div>
         ) : products.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {products.slice(0, 10).map((item) => (
+            {products.map((item) => (
               <ProductCard key={item._id} product={item} />
             ))}
           </div>
