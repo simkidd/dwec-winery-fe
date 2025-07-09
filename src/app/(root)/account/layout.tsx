@@ -2,6 +2,19 @@ import AccountNav from "@/components/account/AccountNav";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
 import { Separator } from "@/components/ui/separator";
+import { config } from "@/utils/config";
+import { Metadata } from "next";
+
+const { SITE_NAME } = config;
+
+const pageTitle = "Account";
+
+export const metadata: Metadata = {
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${pageTitle} | ${SITE_NAME}`,
+  },
+};
 
 export default function AccountLayout({
   children,

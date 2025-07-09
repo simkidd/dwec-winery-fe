@@ -1,6 +1,13 @@
 import CategoriesGrid from "@/components/product/CategoriesGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+const pageTitle = "Category";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+};
 
 const CategoriesPage = () => {
   return (

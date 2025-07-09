@@ -20,7 +20,7 @@ const AdsCatalog = ({ id, slug }: { slug: string; id: string }) => {
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-4 w-1/3" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {[...Array(12)].map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -29,12 +29,32 @@ const AdsCatalog = ({ id, slug }: { slug: string; id: string }) => {
     );
   }
 
-  if (!ad || !ad.otherAssociatedProducts?.length) {
+  if (!ad) {
     return (
       <div className="text-center py-16 space-y-4">
-        <h2 className="text-2xl font-bold">No products found</h2>
+        <h2 className="text-2xl font-bold">Collection not found</h2>
         <p className="text-muted-foreground">
-          The collection you&apos;re looking for doesn&apos;t exist or has no products.
+          The collection you&apos;re looking for doesn&apos;t exist.
+        </p>
+        <Button asChild variant="outline">
+          <Link href="/products">Browse all products</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  // Create combined array of products
+  const allProducts = [
+    ...(ad.associatedProduct ? [ad.associatedProduct] : []),
+    ...(ad.otherAssociatedProducts || []),
+  ];
+
+  if (allProducts.length === 0) {
+    return (
+      <div className="text-center py-16 space-y-4">
+        <h2 className="text-2xl font-bold">No products available</h2>
+        <p className="text-muted-foreground">
+          This collection currently has no products.
         </p>
         <Button asChild variant="outline">
           <Link href="/products">Browse all products</Link>
@@ -45,33 +65,38 @@ const AdsCatalog = ({ id, slug }: { slug: string; id: string }) => {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold capitalize">
           {slug.replace(/-/g, " ")}
         </h1>
         <p className="text-muted-foreground">
-          {ad.otherAssociatedProducts.length} premium drinks
+          {allProducts.length} premium drinks
         </p>
       </div>
 
+      {/* Ad Image */}
       {ad.image && (
         <div className="rounded-sm overflow-hidden">
           <Image
             src={ad.image}
             alt={ad.name}
             className="w-full h-auto max-h-64 object-cover"
-            width={300}
+            width={1200}
             height={300}
+            priority
           />
         </div>
       )}
 
+      {/* Combined Products Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {ad.otherAssociatedProducts.map((product) => (
+        {allProducts.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>
 
+      {/* Back to Products */}
       <div className="flex justify-center pt-8">
         <Button asChild variant="outline">
           <Link href="/products">View All Products</Link>
