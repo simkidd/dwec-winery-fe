@@ -20,7 +20,7 @@ import useOrders from "@/hooks/use-orders";
 import { IOrderDetails, orderFilterInput } from "@/interfaces/order.interface";
 import { formatCurrency, getPaginationRange } from "@/utils/helpers";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShoppingBasket } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
@@ -34,6 +34,7 @@ import {
 } from "../ui/pagination";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "../shared/EmptyState";
 
 const OrdersList = () => {
   const [filter, setFilter] = useState<orderFilterInput>({
@@ -237,16 +238,16 @@ const OrdersList = () => {
           <Loader2 className="animate-spin text-primary" />
         </div>
       ) : orders.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <p className="text-gray-500 mb-4">
-              You haven&apos;t placed any orders yet.
-            </p>
-            <Button asChild>
-              <Link href="/products">Browse Products</Link>
+        <EmptyState
+          icon={<ShoppingBasket className="h-12 w-12 text-muted-foreground" />}
+          title="No orders yet"
+          description="You haven't placed any orders yet."
+          action={
+            <Button asChild className="rounded-sm">
+              <Link href={"/products"}>Browse Products</Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <>
           <div className="space-y-4 mb-8">

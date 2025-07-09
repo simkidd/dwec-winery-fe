@@ -16,9 +16,36 @@ import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "../shared/Logo";
 import Link from "next/link";
+import { IAds } from "@/interfaces/ads.interface";
+import { slugify } from "@/utils/helpers";
 
 const HeroSection = () => {
   const { ads, isPending } = useAds();
+
+  // Function to determine the link for each ad
+  const getAdLink = (
+    ad: IAds
+  ): string | { pathname: string; query: { id: string } } => {
+    // If there are other associated products, link to catalog page with slug and ID
+    if (ad.otherAssociatedProducts?.length) {
+      return {
+        pathname: `/catalog/${slugify(ad.name)}`,
+        query: { id: ad._id },
+      };
+    }
+    // If there's a single associated product, link directly to it
+    if (ad.associatedProduct?.slug) {
+      return `/products/${ad.associatedProduct.slug}`;
+    }
+    // Fallback to products page
+    return "/products";
+  };
+
+  // Function to properly format the href for Next.js Link
+  const formatHref = (link: ReturnType<typeof getAdLink>) => {
+    if (typeof link === "string") return link;
+    return `${link.pathname}?${new URLSearchParams(link.query).toString()}`;
+  };
 
   // Loading state
   if (isPending) {
@@ -76,21 +103,31 @@ const HeroSection = () => {
         ]}
       >
         <CarouselContent className="-ml-0">
-          {ads.map((slide) => (
-            <CarouselItem key={slide._id} className="pl-0">
-              <div className="p-0">
-                <Card className="border-0 p-0 rounded-none overflow-hidden">
-                  <CardContent className="relative p-0 aspect-video md:aspect-[2.4/1]">
-                    {/* Background Image with overlay */}
-                    <div
-                      className="w-full h-full bg-cover bg-center relative"
-                      style={{ backgroundImage: `url(${slide.image})` }}
-                    ></div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
+          {ads.map((slide) => {
+            const link = getAdLink(slide);
+
+            return (
+              <CarouselItem key={slide._id} className="pl-0">
+                <div className="p-0">
+                  <Card className="border-0 p-0 rounded-none overflow-hidden">
+                    <CardContent className="relative p-0 aspect-video md:aspect-[2.4/1]">
+                      {/* Background Image with overlay */}
+                      <Link
+                        href={link}
+                        as={typeof link === "string" ? link : formatHref(link)}
+                        passHref
+                      >
+                        <div
+                          className="w-full h-full bg-cover bg-center relative"
+                          style={{ backgroundImage: `url(${slide.image})` }}
+                        ></div>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>
+            );
+          })}
         </CarouselContent>
 
         {/* Navigation Arrows */}

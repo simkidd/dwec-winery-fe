@@ -49,3 +49,14 @@ export const getPaginationRange = (current: number, total: number) => {
   }
   return range;
 };
+
+export function slugify(text: string = ""): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}

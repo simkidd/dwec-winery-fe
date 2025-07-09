@@ -11,7 +11,7 @@ import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -40,7 +40,6 @@ export type LoginFormValues = z.infer<typeof formSchema>;
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
@@ -64,7 +63,7 @@ const LoginForm = () => {
       cookies.set(USER_DETAILS, JSON.stringify(data?.data?.user));
       dispatch(loginSuccess({ user: data?.data?.user }));
 
-      router.push(callbackUrl);
+      window.location.href = callbackUrl;
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);

@@ -8,7 +8,7 @@ import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
@@ -58,7 +58,6 @@ const formSchema = z
 export type RegisterFormValues = z.infer<typeof formSchema>;
 
 const SignUpForm = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
@@ -74,7 +73,7 @@ const SignUpForm = () => {
   };
 
   const handleAgeCancel = () => {
-    router.push(callbackUrl);
+    window.location.href = callbackUrl;
   };
 
   const form = useForm<RegisterFormValues>({
@@ -93,7 +92,7 @@ const SignUpForm = () => {
     mutationFn: registerUser,
     onSuccess: (data) => {
       toast.success(data?.message);
-      router.push(callbackUrl);
+      window.location.href = callbackUrl;
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
