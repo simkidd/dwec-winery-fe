@@ -13,21 +13,32 @@ const ContactUs = () => {
       description: "Our friendly team is here to help.",
       details: "dwecwinery@gmail.com",
       action: "mailto:dwecwinery@gmail.com",
+      type: "email",
     },
     {
       icon: <Phone className="h-6 w-6 text-primary" />,
       title: "Call Us",
       description: "Mon-Fri from 9am to 5pm",
-      details: "+234 703 625 4646",
-      action: "tel:+2347036254646",
+      details: [
+        {
+          text: "+234 703 625 4646",
+          href: "tel:+2347036254646",
+        },
+        {
+          text: "+234 805 823 2688",
+          href: "tel:+2348058232688",
+        },
+      ],
+      type: "phone",
     },
     {
       icon: <MapPin className="h-6 w-6 text-primary" />,
       title: "Visit Us",
       description: "Come say hello at our office",
-      details: "86A Woji Road, GRA Phase 2",
+      details: "86A Woji Road, GRA Phase 2, Port Harcourt, Rivers State",
       action:
         "https://www.google.com/maps/place/86A+Woji+Road,+Elechi,+Port+Harcourt+500271,+Rivers",
+      type: "address",
     },
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
@@ -35,6 +46,7 @@ const ContactUs = () => {
       description: "Our operating hours",
       details: "Open 24 Hours",
       action: null,
+      type: "hours",
     },
   ];
 
@@ -135,16 +147,37 @@ const ContactUs = () => {
                     <div>
                       <h3 className="font-medium">{method.title}</h3>
 
-                      {method.action ? (
+                      {method.type === "phone" ? (
+                        <div className="space-y-1 flex flex-col mt-1">
+                          {(
+                            method.details as { text: string; href: string }[]
+                          ).map((phone, i) => (
+                            <a
+                              key={i}
+                              href={phone.href}
+                              className="group relative inline-block text-sm text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              <span className="relative">
+                                {phone.text}
+                                <span className="absolute left-0 bottom-0 w-full h-[1px] bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+                      ) : method.action ? (
                         <a
                           href={method.action}
-                          className="text-sm text-muted-foreground mt-1"
+                          className="group relative inline-block text-sm text-muted-foreground hover:text-primary transition-colors mt-1"
+                          target="_blank"
                         >
-                          {method.details}
+                          <span className="relative">
+                            {method.details as string}
+                            <span className="absolute left-0 bottom-0 w-full h-[1px] bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                          </span>
                         </a>
                       ) : (
                         <p className="text-sm text-muted-foreground mt-1">
-                          {method.details}
+                          {method.details as string}
                         </p>
                       )}
                     </div>
