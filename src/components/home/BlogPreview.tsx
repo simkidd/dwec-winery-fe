@@ -11,17 +11,16 @@ const BlogPreview = () => {
         <div className="flex items-end justify-between mb-6">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">
-              From Our Cellar
+              Our Blog
             </h2>
             <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Discover wine tips, cocktail recipes, and stories from our
-              vineyards
+              A good drink starts a conversation
             </p>
           </div>
 
           <Button asChild variant={"link"} className="hidden md:flex ">
             <Link href={"/blog"} className="flex items-center gap-1">
-              View all articles <ChevronRight />
+              View More Blog <ChevronRight />
             </Link>
           </Button>
         </div>
@@ -35,7 +34,7 @@ const BlogPreview = () => {
         <div className="mt-8 flex justify-center md:hidden">
           <Button variant="outline" className="gap-2" asChild>
             <Link href={"/blog"}>
-              View all articles <ChevronRight />
+              View More Blog <ChevronRight />
             </Link>
           </Button>
         </div>

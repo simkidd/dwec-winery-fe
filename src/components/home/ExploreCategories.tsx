@@ -16,17 +16,16 @@ const ExploreCategories = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Explore Our Drinks Categories
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight capitalize">
+              Our Catalogue
             </h2>
             <p className="mt-3 text-muted-foreground max-w-2xl">
-              Discover exceptional drinks from around the world, carefully
-              curated for every occasion and palate.
+              Explore an irresistble selection from over 1,000 premium brands. 
             </p>
           </div>
           <Button variant={"link"} asChild className="hidden md:flex ">
             <Link href="/category" className="flex items-center gap-1">
-              View all categories <ChevronRight />
+              Shop All Range<ChevronRight />
             </Link>
           </Button>
         </div>
@@ -65,7 +64,7 @@ const ExploreCategories = () => {
         <div className="mt-8 flex justify-center md:hidden">
           <Button variant="outline" className="gap-2" asChild>
             <Link href={"/category"}>
-              View all categories <ChevronRight className="h-4 w-4" />
+              Shop All Range <ChevronRight className="h-4 w-4" />
             </Link>
           </Button>
         </div>

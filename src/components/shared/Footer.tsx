@@ -8,9 +8,9 @@ const Footer = () => {
   return (
     <footer className="bg-[#020618] text-white pt-12 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           {/* Brand Info */}
-          <div className="space-y-4">
+          <div className="md:col-span-2 space-y-4">
             <div className="flex items-center space-x-2 mb-4">
               <div className="h-14">
                 <Image
@@ -22,13 +22,13 @@ const Footer = () => {
                 />
               </div>
             </div>
-            <p>
-              We’ve mastered the business of sale and distribution of drinks in
-              Nigeria, this enables us to serve you better, we are affiliated
-              with major drink companies inside and outside Nigeria to guarantee
-              quality product that is been delivered to you.
+            <p className="text-sm">
+              DWEC WINERY is Port Harcourt&apos;s leading destination for
+              premium, authentic wines and spirits - delivering luxury at the
+              best prices, with 24/7 customer support, secure payment options,
+              and fast same-day delivery across Rivers State.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 ">
               <a
                 href="#"
                 className="hover:text-white/80 transition duration-300 ease-in-out"
@@ -47,7 +47,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="col-span-1 text-sm">
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
@@ -84,7 +84,7 @@ const Footer = () => {
               </li>
               <li>
                 <AnimatedLink
-                  href="/contact"
+                  href="/contact-us"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
                 >
                   Contact
@@ -94,31 +94,42 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="lg:col-span-2 text-sm">
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5  mt-0.5" />
+                <MapPin className="h-5 w-5 shrink-0 mt-0.5" />
                 <AnimatedLink
                   href="https://www.google.com/maps/place/86A+Woji+Road,+Elechi,+Port+Harcourt+500271,+Rivers"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span>86A Woji Road, GRA Phase 2</span>
+                  <span>
+                    86A Woji Road, GRA Phase 2, Port Harcourt, Rivers State
+                  </span>
                 </AnimatedLink>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 " />
+                <Phone className="h-5 w-5 shrink-0 " />
                 <AnimatedLink
-                  href="tel:+234 703 625 4646"
+                  href="tel:+2347036254646"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
                 >
                   <span>+234 703 625 4646</span>
                 </AnimatedLink>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 " />
+                <Phone className="h-5 w-5 shrink-0 " />
+                <AnimatedLink
+                  href="tel:+2348058232688"
+                  className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
+                >
+                  <span>+234 805 823 2688</span>
+                </AnimatedLink>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 shrink-0 " />
                 <AnimatedLink
                   href="mailto:dwecwinery@gmail.com"
                   className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-white to-white"
@@ -133,8 +144,9 @@ const Footer = () => {
             </div>
           </div>
 
+          <div className="hidden lg:block lg:col-span-3"></div>
           {/* Newsletter & App Download */}
-          <div className="space-y-6">
+          <div className="lg:col-span-2 justify-end space-y-6">
             {/* <div>
               <h3 className="text-lg font-semibold mb-4">
                 Get Exclusive Deals
@@ -173,7 +185,9 @@ const Footer = () => {
                   </div>
                 </a>
                 <a
-                  href={"https://play.google.com/store/apps/details?id=com.dwecwinery.app"}
+                  href={
+                    "https://play.google.com/store/apps/details?id=com.dwecwinery.app"
+                  }
                   target="_blank"
                   className="flex items-center justify-center border border-white bg-transparent shadow-xs w-[160px] h-[48px] rounded-[24px] gap-1 hover:bg-foreground/20 transition duration-300 ease-in-out"
                 >
@@ -191,7 +205,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-t-gray-500 pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
             <p className=" text-sm">
               &copy; {new Date().getFullYear()} DWEC Drinks. All rights

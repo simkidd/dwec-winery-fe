@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 const FeaturedProducts = () => {
   const { products, isPending } = useProducts({
-    limit: 10,
+    limit: 20,
     sort: "highestPrice",
   });
 
@@ -17,16 +17,16 @@ const FeaturedProducts = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-end justify-between mb-6">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Featured Drinks
+            <h2 className="text-3xl font-bold tracking-tight capitalize">
+              Explore our best selections
             </h2>
             <p className="text-muted-foreground max-w-2xl">
-              Discover our hand-selected premium drinks from renowned vineyards
+              Curated for the True Connoisseur!
             </p>
           </div>
           <Button asChild variant={"link"} className="hidden md:flex ">
             <Link href={"/products"} className="flex items-center gap-1">
-              View all drinks <ChevronRight />
+              View All Range <ChevronRight />
             </Link>
           </Button>
         </div>
@@ -58,7 +58,7 @@ const FeaturedProducts = () => {
         <div className="mt-8 flex justify-center md:hidden">
           <Button variant="outline" className="gap-2" asChild>
             <Link href={"/products"}>
-              View all drinks
+              View All Range
               <ChevronRight className="h-4 w-4" />
             </Link>
           </Button>

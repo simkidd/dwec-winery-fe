@@ -9,8 +9,8 @@ const HomePage = () => {
   return (
     <div className="flex flex-col">
       <HeroSection />
-      <FeaturesSection />
       <ExploreCategories />
+      <FeaturesSection />
       <FeaturedProducts />
       {/* <SpecialOffers /> */}
 
