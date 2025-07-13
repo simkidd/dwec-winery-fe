@@ -184,6 +184,14 @@ const MenuNavigation = ({
       </MobileNavItem>
 
       <MobileNavItem
+        href="/faqs"
+        isActive={isActive("/faqs")}
+        onClick={closeMenu}
+      >
+        FAQs
+      </MobileNavItem>
+
+      <MobileNavItem
         href="/contact-us"
         isActive={isActive("/contact-us")}
         onClick={closeMenu}
@@ -507,6 +515,19 @@ const MenuNavigation = ({
             )}
           >
             <Link href="/blog">Blog</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/faqs") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/faqs">FAQs</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 

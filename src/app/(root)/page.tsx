@@ -1,3 +1,4 @@
+import AppDownloadSection from "@/components/home/AppDownloadSection";
 import BlogPreview from "@/components/home/BlogPreview";
 import ExploreCategories from "@/components/home/ExploreCategories";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
@@ -13,6 +14,7 @@ const HomePage = () => {
       <WhyShopWithUs />
       <FeaturedProducts />
       <BlogPreview />
+      <AppDownloadSection />
     </div>
   );
 };

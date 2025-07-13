@@ -81,38 +81,56 @@
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
+  /* Base colors */
+  --background: #1d1a18; /* Deep stone */
+  --foreground: #f5f3f0; /* Light cream text */
+  
+  /* Card surfaces */
+  --card: #292524; /* Medium stone */
+  --card-foreground: #f5f3f0;
+  
+  /* Popovers/modals */
+  --popover: #292524;
+  --popover-foreground: #f5f3f0;
+  
+  /* Primary brand color (kept your burgundy) */
   --primary: #8a2f30;
-  --primary-foreground: #fff;
-  /* --primary-foreground: oklch(0.208 0.042 265.755); */
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --primary-foreground: #f5f3f0;
+  
+  /* Secondary elements */
+  --secondary: #44403b; /* Lightest stone */
+  --secondary-foreground: #f5f3f0;
+  
+  /* Muted/disabled content */
+  --muted: #292524;
+  --muted-foreground: #a8a5a0; /* Soft stone text */
+  
+  /* Accents */
+  --accent: #44403b;
+  --accent-foreground: #f5f3f0;
+  
+  /* Destructive actions */
+  --destructive: #c74e4b; /* Warm red that complements stone */
+  --border: #3a3632; /* Stone border */
+  --input: #3a3632; /* Input backgrounds */
+  --ring: #8a2f30; /* Focus rings use primary color */
+  
+  /* Chart colors */
+  --chart-1: #8a2f30; /* Burgundy */
+  --chart-2: #5c6b6f; /* Cool slate */
+  --chart-3: #b38e6d; /* Warm clay */
+  --chart-4: #44403b; /* Neutral stone */
+  --chart-5: #9e4a4f; /* Muted red */
+  
+  /* Sidebar */
+  --sidebar: #292524;
+  --sidebar-foreground: #f5f3f0;
+  --sidebar-primary: #8a2f30;
+  --sidebar-primary-foreground: #f5f3f0;
+  --sidebar-accent: #44403b;
+  --sidebar-accent-foreground: #f5f3f0;
+  --sidebar-border: #3a3632;
+  --sidebar-ring: #8a2f30;
 }
 
 @layer base {

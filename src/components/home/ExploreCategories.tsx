@@ -12,29 +12,37 @@ const ExploreCategories = () => {
   const { categories, isPending } = useCategories();
 
   return (
-    <section className="w-full py-16 bg-gray-50 dark:bg-gray-900">
+    <section className="w-full py-16 bg-gray-50 dark:bg-stone-900/95">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight capitalize">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Our Catalogue
             </h2>
-            <p className="mt-3 text-muted-foreground max-w-2xl">
-              Explore an irresistble selection from over 1,000 premium brands. 
+            <p className="mt-3 text-stone-600 dark:text-stone-400 max-w-2xl">
+              Explore an irresistible selection from over 1,000 premium brands
             </p>
           </div>
-          <Button variant={"link"} asChild className="hidden md:flex ">
-            <Link href="/category" className="flex items-center gap-1">
-              Shop All Range<ChevronRight />
-            </Link>
-          </Button>
+          <div>
+            <Button variant={"link"} asChild className="hidden md:flex group">
+              <Link href="/category" className="flex items-center gap-1">
+                <span className="text-primary dark:text-stone-300 group-hover:text-primary  transition-colors">
+                  Shop All Range
+                </span>
+                <ChevronRight className="h-5 w-5 text-primary dark:text-stone-400 group-hover:text-primary transition-colors" />
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {isPending ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-video rounded-sm relative">
-                <Skeleton className="h-full w-full rounded-sm" />
+              <div
+                key={i}
+                className="aspect-video rounded-lg relative overflow-hidden"
+              >
+                <Skeleton className="h-full w-full rounded-lg bg-stone-200 dark:bg-stone-800" />
                 <motion.div
                   initial={{ opacity: 0.3, scale: 0.95 }}
                   animate={{
@@ -48,26 +56,67 @@ const ExploreCategories = () => {
                   }}
                   className="absolute inset-0 flex items-center justify-center pointer-events-none"
                 >
-                  <Logo className="w-20 h-20 opacity-20 grayscale-100" />
+                  <Logo className="w-20 h-20 opacity-20 dark:opacity-10 grayscale" />
                 </motion.div>
               </div>
             ))}
           </div>
         ) : categories.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                },
+              },
+            }}
+          >
             {categories.slice(0, 4).map((category) => (
-              <CategoryCard key={category.name} category={category} />
+              <motion.div
+                key={category.name}
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: {
+                      duration: 0.5,
+                      ease: "easeOut",
+                    },
+                  },
+                }}
+              >
+                <CategoryCard category={category} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : null}
 
-        <div className="mt-8 flex justify-center md:hidden">
-          <Button variant="outline" className="gap-2" asChild>
+        <motion.div
+          className="mt-8 flex justify-center md:hidden"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <Button
+            variant="outline"
+            className="gap-2 border-stone-300 dark:border-stone-700 hover:border-primary"
+            asChild
+          >
             <Link href={"/category"}>
-              Shop All Range <ChevronRight className="h-4 w-4" />
+              <span className="text-stone-800 dark:text-stone-200">
+                Shop All Range
+              </span>
+              <ChevronRight className="h-4 w-4 text-stone-600 dark:text-stone-400" />
             </Link>
           </Button>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

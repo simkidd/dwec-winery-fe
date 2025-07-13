@@ -263,7 +263,7 @@ const Header = () => {
 
       {/* Bottom Header - Hidden on mobile */}
       {!isMobile && (
-        <div className=" bg-gray-50 dark:bg-gray-900 border-b">
+        <div className=" bg-gray-50 dark:bg-stone-800 border-b">
           <div className="container mx-auto px-4 flex">
             <MenuNavigation user={user as IUser} />
           </div>

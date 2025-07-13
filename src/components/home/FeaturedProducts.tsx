@@ -26,7 +26,10 @@ const FeaturedProducts = () => {
           </div>
           <Button asChild variant={"link"} className="hidden md:flex ">
             <Link href={"/products"} className="flex items-center gap-1">
-              View All Range <ChevronRight />
+              <span className="text-primary dark:text-stone-300 group-hover:text-primary transition-colors">
+                View All Range
+              </span>
+              <ChevronRight className="h-5 w-5 text-primary dark:text-stone-400 group-hover:text-primary transition-colors" />
             </Link>
           </Button>
         </div>
