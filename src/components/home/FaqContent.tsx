@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Gift, Mail, Phone, Truck, Wine } from "lucide-react";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 const FaqContent = () => {
   const [activeTab, setActiveTab] = useState("delivery");
@@ -85,11 +86,11 @@ const FaqContent = () => {
             <input
               type="text"
               placeholder="Search our knowledge base..."
-              className="w-full px-6 py-4 pr-14 rounded-xl border border-stone-300 dark:border-stone-600 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:bg-stone-700 text-lg"
+              className="w-full px-6 py-3 pr-14 rounded-xl border border-stone-300 dark:border-stone-600 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:bg-stone-700"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <div className="absolute right-4 top-4 text-stone-400">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -180,20 +181,24 @@ const FaqContent = () => {
             vintage sourcing, and event planning services.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="tel:+2347003392946"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-lg"
-            >
-              <Phone className="w-5 h-5" />
-              Call Concierge
-            </a>
-            <a
-              href="mailto:concierge@dwecwinery.com"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-stone-600 text-white rounded-lg hover:bg-stone-700/50 transition-colors text-lg"
-            >
-              <Mail className="w-5 h-5" />
-              Email Request
-            </a>
+            <Button asChild size={"lg"}>
+              <a
+                href="tel:+2347003392946"
+                className="inline-flex items-center justify-center gap-3 px-8 text-white rounded-lg hover:bg-primary/90 transition-colors text-lg"
+              >
+                <Phone className="w-5 h-5" />
+                Call Concierge
+              </a>
+            </Button>
+            <Button asChild size={"lg"} variant={"outline"}>
+              <a
+                href="mailto:concierge@dwecwinery.com"
+                className="inline-flex items-center justify-center gap-3 px-8   rounded-lg hover:bg-stone-700/50 transition-colors text-lg"
+              >
+                <Mail className="w-5 h-5" />
+                Email Request
+              </a>
+            </Button>
           </div>
         </div>
       </motion.div>
