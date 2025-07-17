@@ -7,6 +7,8 @@ import { useAppSelector } from "@/store/hooks";
 import {
   Heart,
   LogOutIcon,
+  Mail,
+  Phone,
   Rss,
   SearchIcon,
   ShoppingCartIcon,
@@ -70,13 +72,37 @@ const Header = () => {
         isScrolled ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      {/* Top Header */}
+      {/* Top Contact Bar */}
+      <div className="bg-primary text-primary-foreground text-xs hidden md:block">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a
+              href="tel:+2348123456789"
+              className="flex items-center gap-2 hover:underline"
+            >
+              <Phone className="h-4 w-4" />
+              <span>+234 703 625 4646</span>
+            </a>
+            <a
+              href="mailto:info@dwecwinery.com"
+              className="flex items-center gap-2 hover:underline"
+            >
+              <Mail className="h-4 w-4" />
+              <span>dwecwinery@gmail.com</span>
+            </a>
+          </div>
+          <div className="hidden md:flex items-center gap-4">
+            <span>Free shipping on specific orders</span>
+            <span>|</span>
+            <span>Same-day delivery in Rivers State</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Header */}
       <div className="bg-background border-b">
         <div className="w-full container mx-auto px-4 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-4">
-            {/* Mobile Menu Button */}
-            {isMobile && <MenuNavigation mobileView user={user as IUser} />}
-
             {/* Logo */}
             <div className=" flex font-bold text-lg">
               <Link href={"/"}>
@@ -252,6 +278,9 @@ const Header = () => {
             </Button>
 
             <ThemeSwitcher />
+
+            {/* Mobile Menu Button */}
+            {isMobile && <MenuNavigation mobileView user={user as IUser} />}
           </div>
         </div>
 

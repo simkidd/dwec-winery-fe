@@ -338,7 +338,7 @@ const MenuNavigation = ({
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-full">
+        <SheetContent side="right" className="w-full">
           <div className="relative h-full overflow-hidden">
             <AnimatePresence initial={false} custom={direction}>
               {menuState === "main" && renderMainMenu()}

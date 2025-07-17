@@ -50,7 +50,7 @@ const HeroSection = () => {
   // Loading state
   if (isPending) {
     return (
-      <div className="w-full relative aspect-video md:aspect-[2.4/1]">
+      <div className="w-full relative aspect-[2.5/1] md:aspect-[4/1]">
         <Skeleton className="w-full h-full rounded-none" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.95 }}
@@ -74,7 +74,7 @@ const HeroSection = () => {
   // Empty state
   if (!ads.length) {
     return (
-      <div className="w-full relative aspect-video md:aspect-[2.4/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
+      <div className="w-full relative aspect-[2.5/1] md:aspect-[4/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
         <div className="text-center p-6">
           <h2 className="text-3xl font-bold mb-4">Welcome to Our Store</h2>
           <p className="text-xl mb-6">Discover our amazing products</p>
@@ -110,7 +110,7 @@ const HeroSection = () => {
               <CarouselItem key={slide._id} className="pl-0">
                 <div className="p-0">
                   <Card className="border-0 p-0 rounded-none overflow-hidden">
-                    <CardContent className="relative p-0 aspect-video md:aspect-[2.4/1]">
+                    <CardContent className="relative p-0 aspect-[2.5/1] md:aspect-[4/1]">
                       {/* Background Image with overlay */}
                       <Link
                         href={link}

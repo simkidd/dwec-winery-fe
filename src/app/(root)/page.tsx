@@ -11,9 +11,9 @@ const HomePage = () => {
       <HeroSection />
       <ExploreCategories />
       {/* <FeaturesSection /> */}
-      <WhyShopWithUs />
       <FeaturedProducts />
       <BlogPreview />
+      <WhyShopWithUs />
       <AppDownloadSection />
     </div>
   );

@@ -7,12 +7,14 @@ const WhyShopWithUs = () => {
     {
       icon: <Gem className="h-7 w-7" />,
       title: "Premium Quality",
-      description: "100% authentic wines, whiskeys, and spirits — carefully sourced for the best taste.",
+      description:
+        "100% authentic wines, whiskeys, and spirits — carefully sourced for the best taste.",
     },
     {
       icon: <BadgePercent className="h-7 w-7" />,
       title: "Best Prices",
-      description: "Luxury made affordable. Enjoy top-tier drinks at competitive rates.",
+      description:
+        "Luxury made affordable. Enjoy top-tier drinks at competitive rates.",
     },
     {
       icon: <Clock className="h-7 w-7" />,
@@ -76,19 +78,15 @@ const WhyShopWithUs = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          className=""
         >
-          <motion.div className="space-y-6 lg:space-y-8 sm:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-3 lg:gap-8">
-            {benefits.slice(0, 3).map((benefit, index) => (
-              <motion.div key={index} variants={itemVariants} className="lg:h-full">
-                <FeatureCard {...benefit} />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div className="sm:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-2 lg:gap-8 space-y-6 lg:space-y-8">
-            {benefits.slice(3).map((benefit, index) => (
-              <motion.div key={index + 3} variants={itemVariants} className="lg:h-full">
+          <motion.div className="space-y-6 ">
+            {benefits.map((benefit, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="lg:h-full"
+              >
                 <FeatureCard {...benefit} />
               </motion.div>
             ))}
@@ -108,9 +106,7 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-  <div
-    className="bg-white dark:bg-stone-800 p-7 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col items-center text-center border border-stone-200 dark:border-stone-700 hover:border-primary/30 h-full"
-  >
+  <div className="bg-white dark:bg-stone-800 p-7 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col items-center text-center border border-stone-200 dark:border-stone-700 hover:border-primary/30 h-full">
     <div className="bg-primary/10 p-3.5 rounded-full mb-5 text-primary dark:text-primary-400">
       {icon}
     </div>

@@ -7,6 +7,13 @@ import { Skeleton } from "../ui/skeleton";
 import CategoryCard from "../product/CategoryCard";
 import { motion } from "framer-motion";
 import Logo from "../shared/Logo";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const ExploreCategories = () => {
   const { categories, isPending } = useCategories();
@@ -17,7 +24,7 @@ const ExploreCategories = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-              Our Catalogue
+              Our Categories
             </h2>
             <p className="mt-3 text-stone-600 dark:text-stone-400 max-w-2xl">
               Explore an irresistible selection from over 1,000 premium brands
@@ -26,7 +33,7 @@ const ExploreCategories = () => {
           <div>
             <Button variant={"link"} asChild className="hidden md:flex group">
               <Link href="/category" className="flex items-center gap-1">
-                <span className="text-primary dark:text-stone-300 group-hover:text-primary  transition-colors">
+                <span className="text-primary dark:text-stone-300 group-hover:text-primary transition-colors">
                   Shop All Range
                 </span>
                 <ChevronRight className="h-5 w-5 text-primary dark:text-stone-400 group-hover:text-primary transition-colors" />
@@ -36,8 +43,8 @@ const ExploreCategories = () => {
         </div>
 
         {isPending ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {[...Array(4)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
                 className="aspect-video rounded-lg relative overflow-hidden"
@@ -63,10 +70,9 @@ const ExploreCategories = () => {
           </div>
         ) : categories.length > 0 ? (
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true }}
             variants={{
               hidden: { opacity: 0 },
               visible: {
@@ -77,24 +83,42 @@ const ExploreCategories = () => {
               },
             }}
           >
-            {categories.slice(0, 4).map((category) => (
-              <motion.div
-                key={category.name}
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: {
-                    y: 0,
-                    opacity: 1,
-                    transition: {
-                      duration: 0.5,
-                      ease: "easeOut",
-                    },
-                  },
+            <div className="relative">
+              <Carousel
+                opts={{
+                  align: "start",
+                  slidesToScroll: "auto",
                 }}
+                className="w-full"
               >
-                <CategoryCard category={category} />
-              </motion.div>
-            ))}
+                <CarouselContent className="-ml-4">
+                  {categories.map((category) => (
+                    <CarouselItem
+                      key={category.name}
+                      className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                    >
+                      <motion.div
+                        variants={{
+                          hidden: { y: 20, opacity: 0 },
+                          visible: {
+                            y: 0,
+                            opacity: 1,
+                            transition: {
+                              duration: 0.5,
+                              ease: "easeOut",
+                            },
+                          },
+                        }}
+                      >
+                        <CategoryCard category={category} />
+                      </motion.div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex cursor-pointer" />
+                <CarouselNext className="hidden md:flex cursor-pointer" />
+              </Carousel>
+            </div>
           </motion.div>
         ) : null}
 

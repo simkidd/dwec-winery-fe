@@ -1,15 +1,15 @@
 "use client";
-import { Check, GooglePlay, Apple } from "iconsax-reactjs";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { Apple, GooglePlay } from "iconsax-reactjs";
+import Image from "next/image";
 
 const AppDownloadSection = () => {
   return (
-    <section className="bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 pt-16 pb-16 lg:pb-0 overflow-hidden">
+    <section className="bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div className="flex flex-col lg:flex-row items-end justify-between gap-12">
           {/* Left Column - Phone Mockup with Animated Blobs */}
-          <div className="relative w-full max-w-md">
+          <div className="relative w-full max-w-md hidden lg:block">
             <div className="absolute -top-8 -left-6 w-40 h-40 bg-primary/20 rounded-full blur-xl"></div>
             <div className="absolute -bottom-8 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-xl"></div>
 
@@ -21,27 +21,26 @@ const AppDownloadSection = () => {
                 ease: "easeInOut",
               }}
               viewport={{ once: true }}
-              className="relative mx-auto "
+              className="relative mx-auto h-[250px]"
             >
               <Image
-                src="/images/dwec-iphone-hand-mockup.png"
+                src="/images/iphone-crop.png"
                 alt="DWEC WINERY Mobile App"
-                width={500}
-                height={560}
-                sizes="(max-width: 640px) 280px, (max-width: 768px) 320px, 500px"
-                className="drop-shadow-2xl z-10 relative w-full h-auto"
+                width={300}
+                height={100}
+                className="drop-shadow-2xl w-full h-full object-contain"
               />
             </motion.div>
           </div>
 
           {/* Right Column - Content */}
-          <div className="max-w-xl text-center lg:text-left">
+          <div className="max-w-xl mx-auto text-center lg:text-left py-10">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-3xl font-bold mb-4 sm:text-4xl"
+              className="text-2xl font-bold mb-4 sm:text-3xl"
             >
               Shop Premium Drinks On The Go
             </motion.h2>
@@ -51,7 +50,7 @@ const AppDownloadSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="text-lg text-muted-foreground mb-8"
+              className="text-muted-foreground mb-4"
             >
               Download our app for exclusive offers, faster checkout, and
               personalized recommendations.
@@ -86,34 +85,6 @@ const AppDownloadSection = () => {
                   <p className="font-medium">Google Play</p>
                 </div>
               </a>
-            </motion.div>
-
-            {/* App Features Grid */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              viewport={{ once: true }}
-              className="mt-12 grid grid-cols-2 gap-4"
-            >
-              {[
-                "Exclusive App-Only Deals",
-                "Fingerprint Login",
-                "Order Tracking",
-                "Tasting Notes",
-              ].map((feature, index) => (
-                <motion.div
-                  key={feature}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-center gap-2"
-                >
-                  <Check className="h-4 w-4 text-primary shrink-0" />
-                  <span className="text-sm text-wrap text-left">{feature}</span>
-                </motion.div>
-              ))}
             </motion.div>
           </div>
         </div>
