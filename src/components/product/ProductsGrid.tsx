@@ -93,7 +93,7 @@ const ProductsGrid = () => {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="gap-2 rounded-sm"
+                      className="gap-2 rounded-sm cursor-pointer"
                       disabled={isLoadingInfinite}
                     >
                       <span>{currentSortLabel}</span>

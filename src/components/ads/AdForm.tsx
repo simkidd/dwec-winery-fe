@@ -197,7 +197,8 @@ const AdForm = forwardRef<AdsFormRef, AdFormProps>(({ initialValues }, ref) => {
   });
 
   const updateAdMutation = useMutation({
-    mutationFn: updateAd,
+    mutationFn: (data: AdsFormValues) =>
+      updateAd(initialValues?._id as string, data),
     onSuccess: async (data) => {
       toast.success(data?.message || "Ad updated successfully!");
     },
@@ -209,10 +210,11 @@ const AdForm = forwardRef<AdsFormRef, AdFormProps>(({ initialValues }, ref) => {
 
   const onSubmit = async (values: AdsFormValues) => {
     const payload = {
+      ...values,
       name: values.name,
       description: values.description || undefined, // Send undefined if empty
-      validFrom: values.validFrom.toISOString(),
-      expiresOn: values.expiresOn.toISOString(),
+      // validFrom: values.validFrom.toISOString(),
+      // expiresOn: values.expiresOn.toISOString(),
       totalAmountPaid: values.totalAmountPaid,
       paymentPer: values.paymentPer,
       image: typeof values.image === "string" ? values.image : "", // Only send if it's a string
@@ -227,7 +229,7 @@ const AdForm = forwardRef<AdsFormRef, AdFormProps>(({ initialValues }, ref) => {
     console.log("Submitting payload:", payload);
 
     if (initialValues?._id) {
-      updateAdMutation.mutate(initialValues._id, payload);
+      updateAdMutation.mutate(payload);
     } else {
       createAdMutation.mutate(payload);
     }

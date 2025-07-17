@@ -73,7 +73,7 @@ const Header = () => {
       )}
     >
       {/* Top Contact Bar */}
-      <div className="bg-primary text-primary-foreground text-xs hidden md:block">
+      <div className="bg-gray-50 dark:bg-stone-800 text-muted-foreground text-xs hidden md:block border-b">
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <a

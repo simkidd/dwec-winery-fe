@@ -72,17 +72,17 @@ export const generateMetadata = async ({
   }
 };
 
-export const generateStaticParams = async () => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return blogPosts.map((post: any) => ({
-      // id: post?._id,
-      slug: post?.slug,
-    }));
-  } catch (error) {
-    console.log(error);
-  }
-};
+// export const generateStaticParams = async () => {
+//   try {
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     return blogPosts.map((post: any) => ({
+//       // id: post?._id,
+//       slug: post?.slug,
+//     }));
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;

@@ -110,7 +110,7 @@ const HeroSection = () => {
               <CarouselItem key={slide._id} className="pl-0">
                 <div className="p-0">
                   <Card className="border-0 p-0 rounded-none overflow-hidden">
-                    <CardContent className="relative p-0 aspect-[2.5/1] md:aspect-[4/1]">
+                    <CardContent className="relative p-0 aspect-[2.5/1] md:aspect-[3/1]">
                       {/* Background Image with overlay */}
                       <Link
                         href={link}
