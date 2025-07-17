@@ -226,7 +226,7 @@ const OrdersList = () => {
 
   return (
     <div id="order-list" ref={orderListRef} className="w-full">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 py-4">
         <h1 className="text-2xl font-bold">Your Orders</h1>
         <Button variant="outline" asChild>
           <Link href="/products">Continue Shopping</Link>

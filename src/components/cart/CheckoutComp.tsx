@@ -331,7 +331,7 @@ const CheckoutComp = () => {
                               htmlFor="home-delivery"
                               className="!mt-0 cursor-pointer flex"
                             >
-                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-stone-800 flex justify-between items-center">
                                 <div className="flex items-center space-x-2">
                                   <RadioGroupItem
                                     value="Home Delivery"
@@ -353,7 +353,7 @@ const CheckoutComp = () => {
                               htmlFor="pickup"
                               className="!mt-0 cursor-pointer"
                             >
-                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-stone-800 flex justify-between items-center">
                                 <div className="flex items-center space-x-2">
                                   <RadioGroupItem
                                     value="Pickup"
@@ -519,7 +519,7 @@ const CheckoutComp = () => {
                               htmlFor="paystack"
                               className="!mt-0 cursor-pointer"
                             >
-                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-stone-800">
                                 <div className="flex items-center space-x-2">
                                   <RadioGroupItem
                                     value="paystack"
@@ -539,7 +539,7 @@ const CheckoutComp = () => {
                               htmlFor="pay-on-delivery"
                               className="!mt-0 text-muted-foreground cursor-not-allowed"
                             >
-                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-gray-900">
+                              <div className="w-full p-4 border rounded-sm bg-gray-50 dark:bg-stone-800">
                                 <div className="flex items-center space-x-2">
                                   <RadioGroupItem
                                     value="pay-on-delivery"
@@ -625,7 +625,7 @@ const CheckoutComp = () => {
                 <ScrollArea className="">
                   {items.map((item, i) => (
                     <div key={i} className="flex items-start gap-4 py-3">
-                      <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0 border">
+                      <div className="relative h-16 w-16 rounded-md overflow-hidden shrink-0 border bg-primary/10">
                         <Image
                           src={
                             item.variant?.images?.[0] || item.product.images[0]

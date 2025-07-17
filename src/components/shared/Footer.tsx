@@ -232,14 +232,14 @@ const Footer = () => {
           <div className="flex space-x-6 mt-4 md:mt-0">
             {["Privacy Policy", "Terms of Service", "Shipping Policy"].map(
               (item, index) => (
-                <motion.div key={index} whileHover={{ y: -2 }}>
+                <div key={index}>
                   <Link
                     href="#"
                     className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
                   >
                     {item}
                   </Link>
-                </motion.div>
+                </div>
               )
             )}
           </div>

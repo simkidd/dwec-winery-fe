@@ -10,16 +10,15 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { ShoppingCart, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 // import EmptyCart from "./EmptyCart";
 import CartItem from "@/components/cart/CartItem";
-import PageHeader from "@/components/shared/PageHeader";
 import EmptyCart from "@/components/cart/EmptyCart";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
+import PageHeader from "@/components/shared/PageHeader";
+import Link from "next/link";
 
 const CartPage = () => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
@@ -33,14 +32,6 @@ const CartPage = () => {
   }, 0);
 
   const itemCount = items.reduce((count, item) => count + item.qty, 0);
-
-  const handleCheckout = () => {
-    router.push("/checkout");
-  };
-
-  const handleContinueShopping = () => {
-    router.push("/products");
-  };
 
   const handleClearCart = () => {
     dispatch(clearCart());
@@ -74,7 +65,7 @@ const CartPage = () => {
               </h1>
               <Button
                 variant="ghost"
-                className="text-destructive hover:text-destructive"
+                className="text-destructive hover:text-destructive cursor-pointer"
                 onClick={handleClearCart}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -120,21 +111,15 @@ const CartPage = () => {
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
 
-                <Button
-                  size="lg"
-                  className="w-full mt-6"
-                  onClick={handleCheckout}
-                >
-                  Proceed to Checkout
-                </Button>
+                <div className="space-y-2 mt-4">
+                  <Button asChild size="lg" className="w-full cursor-pointer">
+                    <Link href={"/checkout"}>Proceed to Checkout</Link>
+                  </Button>
 
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleContinueShopping}
-                >
-                  Continue Shopping
-                </Button>
+                  <Button variant="outline" className="w-full cursor-pointer">
+                    <Link href={"/products"}>Continue Shopping</Link>
+                  </Button>
+                </div>
               </div>
             </Card>
           </div>

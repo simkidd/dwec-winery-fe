@@ -1,5 +1,6 @@
 "use client"
 import { Facebook, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface ShareButtonsProps {
   title: string;
@@ -44,9 +45,9 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
         <button
           onClick={() => {
             navigator.clipboard.writeText(url);
-            alert("Link copied to clipboard!");
+            toast.info("Link copied to clipboard!")
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 cursor-pointer"
           aria-label="Copy link"
         >
           <LinkIcon size={18} />

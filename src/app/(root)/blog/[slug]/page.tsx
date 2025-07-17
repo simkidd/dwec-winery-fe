@@ -3,6 +3,7 @@ import RelatedPosts from "@/components/blog/RelatedPosts";
 import ShareButtons from "@/components/blog/ShareButtons";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
+import { config } from "@/utils/config";
 // import { IBlogPost } from "@/interfaces/blog.interface";
 // import { config } from "@/utils/config";
 import { CalendarDays, Clock, Tag } from "lucide-react";
@@ -10,78 +11,78 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
 
-// export const generateMetadata = async ({
-//   params,
-// }: {
-//   params: Promise<{ slug: string }>;
-// }) => {
-//   try {
-//     const { slug } = await params;
-//     const post = blogPosts.find((post) => post.slug === slug);
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  try {
+    const { slug } = await params;
+    const post = blogPosts.find((post) => post.slug === slug);
 
-//     if (!post) {
-//       throw new Error("Post not found");
-//     }
+    if (!post) {
+      throw new Error("Post not found");
+    }
 
-//     return {
-//       title: post.title,
-//       description: post.excerpt,
-//       canonical: `${config.SITE_URL}/blog/${post.slug}`,
-//       openGraph: {
-//         type: "website",
-//         url: `${config.SITE_URL}/blog/${post.slug}`,
-//         title: post.title,
-//         description: post.excerpt,
-//         images: [
-//           {
-//             url: post.imageUrl,
-//             width: 1200,
-//             height: 630,
-//           },
-//         ],
-//       },
-//       twitter: {
-//         cardType: "summary_large_image",
-//         title: post.title,
-//         description: post.excerpt,
-//         image: post.imageUrl,
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Failed to fetch post metadata:", error);
+    return {
+      title: post.title,
+      description: post.excerpt,
+      canonical: `${config.SITE_URL}/blog/${post.slug}`,
+      openGraph: {
+        type: "website",
+        url: `${config.SITE_URL}/blog/${post.slug}`,
+        title: post.title,
+        description: post.excerpt,
+        images: [
+          {
+            url: post.imageUrl,
+            width: 1200,
+            height: 630,
+          },
+        ],
+      },
+      twitter: {
+        cardType: "summary_large_image",
+        title: post.title,
+        description: post.excerpt,
+        image: post.imageUrl,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch post metadata:", error);
 
-//     return {
-//       title: "post Not Found",
-//       description: "The requested post could not be found.",
-//       canonical: `${config.SITE_URL}/post-not-found`,
-//       openGraph: {
-//         type: "website",
-//         url: `${config.SITE_URL}/post-not-found`,
-//         title: "post Not Found",
-//         description: "The requested post could not be found.",
-//         images: [],
-//       },
-//       twitter: {
-//         cardType: "summary",
-//         title: "post Not Found",
-//         description: "The requested post could not be found.",
-//         image: "",
-//       },
-//     };
-//   }
-// };
+    return {
+      title: "post Not Found",
+      description: "The requested post could not be found.",
+      canonical: `${config.SITE_URL}/post-not-found`,
+      openGraph: {
+        type: "website",
+        url: `${config.SITE_URL}/post-not-found`,
+        title: "post Not Found",
+        description: "The requested post could not be found.",
+        images: [],
+      },
+      twitter: {
+        cardType: "summary",
+        title: "post Not Found",
+        description: "The requested post could not be found.",
+        image: "",
+      },
+    };
+  }
+};
 
-// export const generateStaticParams = async () => {
-//   try {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     return blogPosts.map((post: IBlogPost) => ({
-//       // id: post?._id,
-//       slug: post?.slug,
-//     }));
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+export const generateStaticParams = async () => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return blogPosts.map((post: any) => ({
+      // id: post?._id,
+      slug: post?.slug,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
@@ -132,7 +133,7 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
       </div>
 
       {/* Content Section */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 pb-20">
         <div className="mx-auto max-w-4xl">
           {/* Article Content */}
           <article className="prose prose-lg dark:prose-invert max-w-none">

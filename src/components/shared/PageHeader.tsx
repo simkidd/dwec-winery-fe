@@ -17,7 +17,7 @@ const PageHeader = ({
   return (
     <div
       className={cn(
-        "w-full h-48 md:h-64 lg:h-80 xl:h-96 relative flex items-center overflow-hidden",
+        "w-full h-48 md:h-64 lg:h-72 relative flex items-center overflow-hidden",
         className
       )}
     >

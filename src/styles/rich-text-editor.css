@@ -1,10 +1,10 @@
 .rich-text-editor {
   .ql-toolbar.ql-snow {
-    @apply border border-gray-300 dark:border-gray-600 rounded-tl-lg rounded-tr-lg;
+    @apply border border-input rounded-tl-lg rounded-tr-lg dark:bg-input/10;
   }
 
   .ql-container.ql-snow {
-    @apply border border-gray-300 dark:border-gray-600 rounded-bl-lg rounded-br-lg;
+    @apply border border-input rounded-bl-lg rounded-br-lg dark:bg-input/30;
   }
 
   .ql-editor {

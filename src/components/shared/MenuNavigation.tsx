@@ -217,13 +217,23 @@ const MenuNavigation = ({
           </MobileNavItem>
 
           {(user.isAdmin || user.isSuperAdmin) && (
-            <MobileNavItem
-              href="/admin/blogs"
-              isActive={isActive("/account/favourites")}
-              onClick={closeMenu}
-            >
-              Blog Manager
-            </MobileNavItem>
+            <>
+              <MobileNavItem
+                href="/admin/blogs"
+                isActive={isActive("/account/favourites")}
+                onClick={closeMenu}
+              >
+                Blog Manager
+              </MobileNavItem>
+
+              <MobileNavItem
+                href="/admin/ads"
+                isActive={isActive("/admin/ads")}
+                onClick={closeMenu}
+              >
+                Ads Manager
+              </MobileNavItem>
+            </>
           )}
           <div>
             <span
@@ -390,7 +400,6 @@ const MenuNavigation = ({
                       Best Selling
                       <ChevronRight className="h-3 w-3 ml-auto" />
                     </li>
-
 
                     {/* Categories Section */}
                     {categories?.map((category) => (

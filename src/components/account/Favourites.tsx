@@ -15,7 +15,7 @@ const Favourites = () => {
   } = useFavourites();
 
   return (
-    <div>
+    <div className="py-4">
       {favorites?.length === 0 ? (
         <EmptyState
           icon={<HeartOff className="h-12 w-12 text-muted-foreground" />}

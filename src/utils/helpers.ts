@@ -60,3 +60,11 @@ export function slugify(text: string = ""): string {
     .replace(/--+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+// export const debounce = (fn: Function, delay: number) => {
+//   let timeoutId: NodeJS.Timeout;
+//   return (...args: any[]) => {
+//     clearTimeout(timeoutId);
+//     timeoutId = setTimeout(() => fn(...args), delay);
+//   };
+// };

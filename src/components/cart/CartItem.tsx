@@ -43,7 +43,7 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
 
   return (
     <div className="flex items-start gap-4">
-      <div className="w-24 h-24 aspect-square bg-muted/50 dark:bg-muted/30 py-2 rounded-sm overflow-hidden shrink-0">
+      <div className="w-24 h-24 aspect-square bg-primary/10 py-2 rounded-sm overflow-hidden shrink-0">
         <Image
           src={primaryImage}
           alt={item.product.name}

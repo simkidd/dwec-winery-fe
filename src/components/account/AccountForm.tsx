@@ -57,7 +57,7 @@ const AccountForm = () => {
   };
 
   return (
-    <div>
+    <div className="py-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">

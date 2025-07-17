@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AdsFormValues } from "@/components/ads/AdForm";
 import { ProductFilterInput } from "@/interfaces/product.interface";
 import instance from "@/services/axios";
 
@@ -99,16 +100,6 @@ export const getCategoryBySlug = async (slug: string) => {
   }
 };
 
-export const getAds = async () => {
-  try {
-    const response = await instance.get(`/users/ads/get-ads`);
-
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
-};
-
 export const addToFavourites = async (productId: string) => {
   try {
     const response = await instance.patch(`/users/products/update-fav`, {
@@ -124,6 +115,49 @@ export const addToFavourites = async (productId: string) => {
 export const getFavourites = async () => {
   try {
     const response = await instance.get(`/users/products/get-fav-products`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getAds = async () => {
+  try {
+    const response = await instance.get(`/users/ads/get-ads`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+/**
+ * For admin usage
+ */
+export const createAd = async (data: AdsFormValues) => {
+  try {
+    const response = await instance.post(`/admin/create-ad`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateAd = async (id: string, data: AdsFormValues) => {
+  try {
+    const response = await instance.patch(`/admin/update-ad/${id}`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteAd = async (id: string) => {
+  try {
+    const response = await instance.delete(`/admin/delete-ad/${id}`);
 
     return handleResponse(response);
   } catch (error) {

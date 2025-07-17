@@ -4,9 +4,9 @@ import {
   updateQuantity,
 } from "@/store/features/cart/cart.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { formatCurrency } from "@/utils/helpers";
 import { ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import {
@@ -18,7 +18,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
-import { formatCurrency } from "@/utils/helpers";
 import CartSheetItem from "./CartSheetItem";
 
 const CartSheet = ({
@@ -28,7 +27,6 @@ const CartSheet = ({
   isOpen: boolean;
   onChange: () => void;
 }) => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.cart);
 
@@ -45,12 +43,10 @@ const CartSheet = ({
 
   const handleCheckout = () => {
     onChange();
-    router.push("/checkout");
   };
 
   const handleViewCart = () => {
     onChange();
-    router.push("/cart");
   };
 
   const handleRemoveItem = (productId: string) => {
@@ -117,18 +113,20 @@ const CartSheet = ({
 
               <div className="flex flex-col gap-2">
                 <Button
-                  onClick={handleCheckout}
+                  asChild
                   className="w-full cursor-pointer"
+                  onClick={handleCheckout}
                 >
-                  Checkout
+                  <Link href={"/checkout"}>Checkout</Link>
                 </Button>
 
                 <Button
+                  asChild
                   variant="secondary"
                   className="w-full cursor-pointer"
                   onClick={handleViewCart}
                 >
-                  View Cart
+                  <Link href={"/cart"}>View Cart</Link>
                 </Button>
               </div>
             </div>

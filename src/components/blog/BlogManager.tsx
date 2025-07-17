@@ -10,7 +10,7 @@ import {
 import { IBlogPost } from "@/interfaces/blog.interface";
 import { deletePost } from "@/lib/api/blog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Edit, Loader2, Trash2 } from "lucide-react";
+import { Edit, Loader2, PlusIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -76,6 +76,7 @@ const BlogManager = () => {
             setShowBlogForm(true);
           }}
         >
+          <PlusIcon />
           New Post
         </Button>
 
@@ -165,7 +166,7 @@ const BlogManager = () => {
         </Dialog>
       </div>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 py-8 mb-8">
         <div className="grid gap-6 md:grid-cols-3">
           {blogPosts.map((post) => (
             <div key={post.id} className="group relative">

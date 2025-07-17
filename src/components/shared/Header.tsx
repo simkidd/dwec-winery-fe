@@ -171,16 +171,25 @@ const Header = () => {
                         </Button>
 
                         {(user.isAdmin || user.isSuperAdmin) && (
-                          <Button
-                            variant="ghost"
-                            className="w-full justify-start font-normal"
-                            asChild
-                          >
-                            <Link href="/admin/blogs">
-                              <Rss />
-                              Blog Manager
-                            </Link>
-                          </Button>
+                          <>
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start font-normal"
+                              asChild
+                            >
+                              <Link href="/admin/blogs">
+                                <Rss />
+                                Blog Manager
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start font-normal"
+                              asChild
+                            >
+                              <Link href="/admin/ads">Ads Manager</Link>
+                            </Button>
+                          </>
                         )}
                         <Button
                           variant="destructive"
