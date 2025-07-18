@@ -85,7 +85,7 @@ const WhyShopWithUs = () => {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="lg:h-full"
+                className=""
               >
                 <FeatureCard {...benefit} />
               </motion.div>

@@ -25,7 +25,7 @@ const CategoryCard = ({ category }: { category: ICategory }) => {
 
         {/* Text content */}
         <div className="absolute inset-0 flex items-center justify-center p-4 text-white">
-          <h3 className="text-xl font-bold uppercase">{category.name}</h3>
+          <h3 className="lg:text-xl font-bold capitalize">{category.name}</h3>
         </div>
       </div>
     </Link>

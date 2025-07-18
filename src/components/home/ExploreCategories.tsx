@@ -21,7 +21,7 @@ const ExploreCategories = () => {
   return (
     <section className="w-full py-16 bg-gray-50 dark:bg-stone-900/95">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end lg:mb-8 gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Our Categories
@@ -87,7 +87,7 @@ const ExploreCategories = () => {
               <Carousel
                 opts={{
                   align: "start",
-                  slidesToScroll: "auto",
+                  slidesToScroll: 1,
                 }}
                 className="w-full"
               >
@@ -95,7 +95,7 @@ const ExploreCategories = () => {
                   {categories.map((category) => (
                     <CarouselItem
                       key={category.name}
-                      className="pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                      className="pl-4 flex-[0_0_45%] md:flex-[0_0_30%] lg:flex-[0_0_22%]"
                     >
                       <motion.div
                         variants={{
@@ -115,8 +115,8 @@ const ExploreCategories = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="hidden md:flex cursor-pointer" />
-                <CarouselNext className="hidden md:flex cursor-pointer" />
+                <CarouselPrevious className="hidden md:flex cursor-pointer disabled:hidden" />
+                <CarouselNext className="hidden md:flex cursor-pointer disabled:hidden" />
               </Carousel>
             </div>
           </motion.div>
