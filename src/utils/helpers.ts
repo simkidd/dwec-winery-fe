@@ -68,3 +68,12 @@ export function slugify(text: string = ""): string {
 //     timeoutId = setTimeout(() => fn(...args), delay);
 //   };
 // };
+
+export const formatCategory = (category?: string) => {
+  if (!category) return "Uncategorized";
+
+  return category
+    .split("-") // Split hyphenated words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(" "); // Join with spaces
+};

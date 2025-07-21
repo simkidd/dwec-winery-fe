@@ -18,7 +18,7 @@ const BlogPage = () => {
         description="Discover our latest articles and insights"
       />
 
-      <div className="container mx-auto px-4 py-12">
+      <div className=" py-12">
         <BlogGrid />
       </div>
     </div>

@@ -1,5 +1,5 @@
 "use client";
-import { IBlogPost } from "@/interfaces/blog.interface";
+import { BlogCategory, IBlogPost } from "@/interfaces/blog.interface";
 import { createPost, updatePost } from "@/lib/api/blog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,6 +35,15 @@ import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -53,6 +62,10 @@ const formSchema = z.object({
   tags: z.array(z.string()),
   excerpt: z.string().min(20, {
     message: "Excerpt must be at least 20 characters.",
+  }),
+   category: z.nativeEnum(BlogCategory, {
+    required_error: "Please select a category",
+    invalid_type_error: "Please select a valid category",
   }),
 });
 
@@ -79,6 +92,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
       featured: false,
       tags: [],
       excerpt: "",
+      category: undefined,
       ...initialValues,
     },
   });
@@ -87,6 +101,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     if (initialValues) {
       form.reset({
         ...initialValues,
+        category: initialValues.category || undefined,
         tags: initialValues.tags || [],
         isPublished: initialValues.isPublished || false,
         featured: initialValues.featured || false,
@@ -147,6 +162,10 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     formData.append("isPublished", String(values.isPublished));
     formData.append("featured", String(values.featured));
     formData.append("excerpt", String(values.excerpt));
+
+    if (values.category) {
+      formData.append("category", values.category);
+    }
 
     // Handle tags
     values.tags.forEach((tag) => {
@@ -353,6 +372,105 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
                     <p className="text-sm text-muted-foreground">
                       Add relevant tags to help categorize your post
                     </p>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || undefined}
+                      >
+                        <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
+                          <SelectValue placeholder="Select blog category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Wine Production</SelectLabel>
+                            <SelectItem value={BlogCategory.Vineyard}>
+                              Vineyard Updates
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.Winemaking}>
+                              Winemaking Process
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.VintageReports}>
+                              Vintage Reports
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.OrganicWinemaking}>
+                              Organic Winemaking
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.BarrelAging}>
+                              Barrel Aging
+                            </SelectItem>
+                          </SelectGroup>
+
+                          <SelectGroup>
+                            <SelectLabel>Wine Experiences</SelectLabel>
+                            <SelectItem value={BlogCategory.WineTasting}>
+                              Tasting Notes
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.CellarDoor}>
+                              Cellar Door
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.WineTourism}>
+                              Wine Tourism
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.Events}>
+                              Events & Tours
+                            </SelectItem>
+                          </SelectGroup>
+
+                          <SelectGroup>
+                            <SelectLabel>Wine Knowledge</SelectLabel>
+                            <SelectItem value={BlogCategory.WineEducation}>
+                              Wine Education
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.GrapeVarieties}>
+                              Grape Varieties
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.WineHistory}>
+                              Wine History
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.WineTech}>
+                              Wine Technology
+                            </SelectItem>
+                          </SelectGroup>
+
+                          <SelectGroup>
+                            <SelectLabel>Our Offerings</SelectLabel>
+                            <SelectItem value={BlogCategory.WineClub}>
+                              Wine Club
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.LimitedEditions}>
+                              Limited Editions
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.SeasonalReleases}>
+                              Seasonal Releases
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.StaffPicks}>
+                              Staff Picks
+                            </SelectItem>
+                          </SelectGroup>
+
+                          <SelectGroup>
+                            <SelectLabel>Recognition</SelectLabel>
+                            <SelectItem value={BlogCategory.Awards}>
+                              Awards
+                            </SelectItem>
+                            <SelectItem value={BlogCategory.Sustainability}>
+                              Sustainability
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

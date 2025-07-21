@@ -11,9 +11,17 @@ import usePosts from "@/hooks/usePosts";
 import { PostFilterInput } from "@/interfaces/blog.interface";
 import { deletePost } from "@/lib/api/blog";
 import { cn } from "@/lib/utils";
-import { getPaginationRange } from "@/utils/helpers";
+import { formatCategory, getPaginationRange } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Edit, Loader2, PlusIcon, Trash2 } from "lucide-react";
+import {
+  CalendarIcon,
+  Edit,
+  ImageIcon,
+  Loader2,
+  PlusIcon,
+  Trash2,
+  UploadIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -29,6 +37,9 @@ import {
 } from "../ui/pagination";
 import BlogForm from "./BlogForm";
 import { Skeleton } from "../ui/skeleton";
+import BlogStats from "./BlogStats";
+import { Separator } from "../ui/separator";
+import { formatDate } from "date-fns";
 
 const BlogManager = () => {
   const queryClient = useQueryClient();
@@ -85,6 +96,10 @@ const BlogManager = () => {
 
   return (
     <div>
+      <div className="container mx-auto px-4 py-8">
+        <BlogStats />
+      </div>
+      <Separator />
       <div className="container mx-auto px-4 py-8 flex justify-end">
         <BlogForm>
           <Button className="cursor-pointer">
@@ -149,21 +164,48 @@ const BlogManager = () => {
               {posts.map((post) => (
                 <div key={post._id} className="group relative">
                   <Link href={`/blog/${post.slug}`} className="block">
-                    <div className="relative mb-4 h-48 overflow-hidden rounded-lg">
-                      <Image
-                        src={post.image?.imageUrl || ""}
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
+                    <div className="relative mb-4 h-48 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                      {post.image?.imageUrl ? (
+                        <Image
+                          src={post.image.imageUrl}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                          <ImageIcon className="h-12 w-12 mb-2" />
+                          <span className="text-sm">No image</span>
+                        </div>
+                      )}
                     </div>
                     <h5 className="mb-1 text-sm font-medium text-primary">
-                      category
+                      {formatCategory(post.category)}
                     </h5>
-                    <h3 className="text-lg font-bold group-hover:text-primary">
+                    <h3 className="text-lg font-bold group-hover:text-primary mb-2">
                       {post.title}
                     </h3>
+
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                      <div className="flex items-center gap-1">
+                        <CalendarIcon className="h-3 w-3" />
+                        <span>
+                          {formatDate(post.createdAt, "MMM dd, yyyy")}
+                        </span>
+                      </div>
+                      {post.publishedAt && (
+                        <>
+                          <Separator orientation="vertical" className="h-3" />
+                          <div className="flex items-center gap-1">
+                            <UploadIcon className="h-3 w-3" />
+                            <span>
+                              {formatDate(post.publishedAt, "MMM dd, yyyy")}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </Link>
 
                   <div className="flex items-center justify-end gap-2 mt-2">

@@ -3,7 +3,14 @@ import usePosts from "@/hooks/usePosts";
 import { PostFilterInput } from "@/interfaces/blog.interface";
 import { cn } from "@/lib/utils";
 import { getPaginationRange } from "@/utils/helpers";
+import Autoplay from "embla-carousel-autoplay";
+import { CalendarDays, Clock } from "lucide-react";
 import { useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem
+} from "../ui/carousel";
 import {
   Pagination,
   PaginationContent,
@@ -12,9 +19,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
-import BlogCard from "./BlogCard";
 import { Skeleton } from "../ui/skeleton";
-import { CalendarDays, Clock } from "lucide-react";
+import BlogCard from "./BlogCard";
 
 const BlogGrid = () => {
   const [filter, setFilter] = useState<PostFilterInput>({
@@ -83,14 +89,38 @@ const BlogGrid = () => {
 
   return (
     <div className="space-y-8">
-      {/* Featured Post Section */}
+      {/* Featured Posts Carousel Section */}
       {featuredPosts && (
         <div className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold">Featured Articles</h2>
           {loadingFeaturedPosts ? (
-            <FeaturedPostSkeleton />
+            <div className="container mx-auto px-4">
+              {[...Array(1)].map((_, index) => (
+                <FeaturedPostSkeleton key={index} />
+              ))}
+            </div>
           ) : featuredPosts && featuredPosts.length > 0 ? (
-            <BlogCard post={featuredPosts[0]} variant="featured" />
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+              plugins={[
+                Autoplay({
+                  delay: 5000,
+                }),
+              ]}
+            >
+              <CarouselContent className="-ml-0">
+                {featuredPosts.map((post) => (
+                  <CarouselItem key={post._id} className="pl-0">
+                    <div className=" container mx-auto px-4">
+                      <BlogCard post={post} variant="featured" />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           ) : (
             <p className="text-muted-foreground">No featured articles found</p>
           )}
@@ -98,7 +128,7 @@ const BlogGrid = () => {
       )}
 
       {/* Regular Posts Grid */}
-      <div className="mb-8">
+      <div className="mb-8 container mx-auto px-4">
         <h2 className="mb-6 text-2xl font-bold">Latest Articles</h2>
         {isPending ? (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

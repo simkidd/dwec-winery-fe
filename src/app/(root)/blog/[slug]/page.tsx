@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { IBlogPost } from "@/interfaces/blog.interface";
 import { getPostBySlug } from "@/lib/api/blog";
 import { config } from "@/utils/config";
+import { formatCategory } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 // import { IBlogPost } from "@/interfaces/blog.interface";
 // import { config } from "@/utils/config";
@@ -112,7 +113,9 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="container mx-auto px-4 relative z-10 flex h-full items-end pb-8 lg:pb-12 text-white">
           <div className="max-w-3xl">
-            <Badge className="mb-3 text-sm rounded-full">category</Badge>
+            <Badge className="mb-3 text-sm rounded-full">
+              {formatCategory(post.category)}
+            </Badge>
             <h1 className="mb-4 text-4xl font-bold md:text-5xl">
               {post.title}
             </h1>

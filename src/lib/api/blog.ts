@@ -49,6 +49,24 @@ export const getPostBySlug = async (slug: string) => {
   }
 };
 
+export const getRelatedPosts = async (id: string) => {
+  try {
+    const response = await instance.get(`/blogs/related/${id}`);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getBlogStats = async () => {
+  try {
+    const response = await instance.get(`/blogs/stats/dashboard-stats`);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export const createPost = async (data: FormData) => {
   try {
     const response = await instance.post(`/blogs/create`, data, {

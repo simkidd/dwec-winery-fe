@@ -20,7 +20,7 @@ export interface IBlogPost {
   updatedAt: string;
   publishedAt?: string;
   readTime?: number;
-  category?: string;
+  category?: BlogCategory;
 }
 
 export interface PostFilterInput {
@@ -31,4 +31,27 @@ export interface PostFilterInput {
   sortOrder?: "asc" | "desc";
   isPublished?: boolean;
   featured?: boolean;
+}
+
+export enum BlogCategory {
+  WineTasting = "wine-tasting",
+  Vineyard = "vineyard",
+  Winemaking = "winemaking",
+  FoodPairing = "food-pairing",
+  Events = "events",
+  Awards = "awards",
+  Sustainability = "sustainability",
+  VintageReports = "vintage-reports",
+  WineEducation = "wine-education",
+  GrapeVarieties = "grape-varieties",
+  CellarDoor = "cellar-door",
+  WineClub = "wine-club",
+  LimitedEditions = "limited-editions",
+  OrganicWinemaking = "organic-winemaking",
+  WineTourism = "wine-tourism",
+  WineHistory = "wine-history",
+  BarrelAging = "barrel-aging",
+  WineTech = "wine-tech",
+  StaffPicks = "staff-picks",
+  SeasonalReleases = "seasonal-releases",
 }
