@@ -68,7 +68,7 @@ const BlogCard = ({
           <div className="flex items-center justify-between">
             <span className="flex items-center">
               <CalendarDays className="mr-1 h-4 w-4" />
-              {post.createdAt
+              {post.publishedAt
                 ? formatDate(new Date(post?.publishedAt), "MMM dd, yyyy")
                 : ""}
             </span>

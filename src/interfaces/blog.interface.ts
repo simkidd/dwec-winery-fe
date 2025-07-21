@@ -18,8 +18,9 @@ export interface IBlogPost {
   featured?: boolean;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt?: string;
   readTime?: number;
+  category?: string;
 }
 
 export interface PostFilterInput {

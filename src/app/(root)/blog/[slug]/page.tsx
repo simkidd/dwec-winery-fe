@@ -119,7 +119,7 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="flex items-center">
                 <CalendarDays className="mr-2 h-4 w-4" />
-                {post.createdAt
+                {post.publishedAt
                   ? formatDate(new Date(post?.publishedAt), "MMM dd, yyyy")
                   : ""}
               </span>

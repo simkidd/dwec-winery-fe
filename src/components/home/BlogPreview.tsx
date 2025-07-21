@@ -1,23 +1,28 @@
-"use client"
+"use client";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { blogPosts } from "../blog/blog-posts";
 import BlogCard from "../blog/BlogCard";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import usePosts from "@/hooks/usePosts";
 
 const BlogPreview = () => {
+  const { posts } = usePosts({
+    page: 1,
+    limit: 3,
+    isPublished: true,
+  });
   return (
     <section className="bg-stone-50 dark:bg-stone-900 py-16">
       <div className="container mx-auto px-4">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ 
-            opacity: 1, 
+          whileInView={{
+            opacity: 1,
             y: 0,
-            transition: { duration: 0.6 }
+            transition: { duration: 0.6 },
           }}
           viewport={{ once: true, margin: "0px 0px -50px 0px" }}
         >
@@ -30,11 +35,7 @@ const BlogPreview = () => {
             </p>
           </div>
 
-          <Button 
-            asChild 
-            variant={"link"} 
-            className="hidden md:flex group"
-          >
+          <Button asChild variant={"link"} className="hidden md:flex group">
             <Link href={"/blog"} className="flex items-center gap-1">
               <span className="text-primary dark:text-stone-300 group-hover:text-primary transition-colors">
                 View More Blog
@@ -60,9 +61,9 @@ const BlogPreview = () => {
             },
           }}
         >
-          {blogPosts.slice(0, 3).map((post) => (
+          {posts.map((post) => (
             <motion.div
-              key={post.id}
+              key={post._id}
               variants={{
                 hidden: { y: 30, opacity: 0 },
                 visible: {
@@ -70,7 +71,7 @@ const BlogPreview = () => {
                   opacity: 1,
                   transition: {
                     duration: 0.6,
-                    ease: [0.16, 1, 0.3, 1]
+                    ease: [0.16, 1, 0.3, 1],
                   },
                 },
               }}
@@ -82,13 +83,15 @@ const BlogPreview = () => {
 
         {/* Mobile View More Button */}
         <div className="mt-8 flex justify-center md:hidden">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="gap-2 border-stone-300 dark:border-stone-700 hover:border-primary"
             asChild
           >
             <Link href={"/blog"}>
-              <span className="text-stone-800 dark:text-stone-200">View More Blog</span>
+              <span className="text-stone-800 dark:text-stone-200">
+                View More Blog
+              </span>
               <ChevronRight className="h-4 w-4 text-stone-600 dark:text-stone-400" />
             </Link>
           </Button>
