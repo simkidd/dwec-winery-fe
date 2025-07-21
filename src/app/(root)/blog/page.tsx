@@ -1,4 +1,3 @@
-import { blogPosts } from "@/components/blog/blog-posts";
 import BlogGrid from "@/components/blog/BlogGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
@@ -20,7 +19,7 @@ const BlogPage = () => {
       />
 
       <div className="container mx-auto px-4 py-12">
-        <BlogGrid posts={blogPosts} />
+        <BlogGrid />
       </div>
     </div>
   );

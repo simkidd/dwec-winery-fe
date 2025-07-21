@@ -2,45 +2,44 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { IBlogPost } from "@/interfaces/blog.interface";
+import usePosts from "@/hooks/usePosts";
+import { PostFilterInput } from "@/interfaces/blog.interface";
 import { deletePost } from "@/lib/api/blog";
+import { cn } from "@/lib/utils";
+import { getPaginationRange } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit, Loader2, PlusIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import { blogPosts } from "./blog-posts";
-import BlogForm, { BlogFormRef } from "./BlogForm";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
+import BlogForm from "./BlogForm";
+import { Skeleton } from "../ui/skeleton";
 
 const BlogManager = () => {
-  const [showBlogForm, setShowBlogForm] = useState(false);
+  const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
-  const [currentPost, setCurrentPost] = useState<IBlogPost | null>(null);
-  const formRef = useRef<BlogFormRef>(null);
-  const queryClient = useQueryClient();
+  const [filter, setFilter] = useState<PostFilterInput>({
+    page: 1,
+    limit: 15,
+  });
 
-  const handleSubmit = async () => {
-    if (formRef.current) {
-      const result = await formRef.current.submitForm();
-      if (result) {
-        setShowBlogForm(false);
-        setCurrentPost(null);
-      }
-    }
-  };
-
-  const handleEdit = (post: IBlogPost) => {
-    setCurrentPost(post);
-    setShowBlogForm(true);
-  };
+  const { posts, isPending, totalPages } = usePosts(filter);
 
   const handleDeleteClick = (postId: string) => {
     setPostToDelete(postId);
@@ -51,7 +50,7 @@ const BlogManager = () => {
     mutationFn: deletePost,
     onSuccess: () => {
       toast.success("Post deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
@@ -66,67 +65,33 @@ const BlogManager = () => {
     }
   };
 
+  const onPaginationChange = (page: number) => {
+    setFilter({ ...filter, page });
+  };
+
+  const PostSkeleton = () => (
+    <div className="space-y-4">
+      <Skeleton className="h-48 w-full rounded-lg" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-5 w-3/4" />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Skeleton className="h-8 w-8 rounded-md" />
+        <Skeleton className="h-8 w-8 rounded-md" />
+      </div>
+    </div>
+  );
+
   return (
     <div>
       <div className="container mx-auto px-4 py-8 flex justify-end">
-        <Button
-          className="cursor-pointer"
-          onClick={() => {
-            setCurrentPost(null);
-            setShowBlogForm(true);
-          }}
-        >
-          <PlusIcon />
-          New Post
-        </Button>
-
-        {/* Blog Form Dialog */}
-        <Dialog
-          open={showBlogForm}
-          onOpenChange={() => {
-            setShowBlogForm(false);
-            setCurrentPost(null);
-          }}
-        >
-          <DialogContent className="!max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>
-                {currentPost ? "Edit Post" : "New Post"}
-              </DialogTitle>
-            </DialogHeader>
-            <BlogForm ref={formRef} initialValues={currentPost as IBlogPost} />
-            <DialogFooter>
-              <Button
-                type="button"
-                variant={"ghost"}
-                className="cursor-pointer"
-                onClick={() => {
-                  setShowBlogForm(false);
-                  setCurrentPost(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                disabled={formRef.current?.isSubmitting}
-                className="cursor-pointer"
-                onClick={handleSubmit}
-              >
-                {formRef.current?.isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {currentPost ? "Updating..." : "Creating..."}
-                  </>
-                ) : currentPost ? (
-                  "Update Post"
-                ) : (
-                  "Create Post"
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <BlogForm>
+          <Button className="cursor-pointer">
+            <PlusIcon className="h-4 w-4" />
+            New Post
+          </Button>
+        </BlogForm>
 
         {/* Delete Confirmation Dialog */}
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
@@ -154,7 +119,7 @@ const BlogManager = () => {
               >
                 {deletePostMutation.isPending ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className=" h-4 w-4 animate-spin" />
                     Deleting...
                   </>
                 ) : (
@@ -167,48 +132,105 @@ const BlogManager = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8 mb-8">
-        <div className="grid gap-6 md:grid-cols-3">
-          {blogPosts.map((post) => (
-            <div key={post.id} className="group relative">
-              <Link href={`/blog/${post.slug}`} className="block">
-                <div className="relative mb-4 h-48 overflow-hidden rounded-lg">
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-                <h5 className="mb-1 text-sm font-medium text-primary">
-                  {post.category}
-                </h5>
-                <h3 className="text-lg font-bold group-hover:text-primary">
-                  {post.title}
-                </h3>
-              </Link>
+        {isPending ? (
+          <div className="grid gap-6 md:grid-cols-3">
+            {[...Array(6)].map((_, index) => (
+              <PostSkeleton key={index} />
+            ))}
+          </div>
+        ) : posts.length === 0 ? (
+          // Empty state
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No posts found</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-6 md:grid-cols-3 mb-10">
+              {posts.map((post) => (
+                <div key={post._id} className="group relative">
+                  <Link href={`/blog/${post.slug}`} className="block">
+                    <div className="relative mb-4 h-48 overflow-hidden rounded-lg">
+                      <Image
+                        src={post.image?.imageUrl || ""}
+                        alt={post.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    </div>
+                    <h5 className="mb-1 text-sm font-medium text-primary">
+                      category
+                    </h5>
+                    <h3 className="text-lg font-bold group-hover:text-primary">
+                      {post.title}
+                    </h3>
+                  </Link>
 
-              <div className="flex items-center justify-end gap-2 mt-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleEdit(post)}
-                  className="cursor-pointer"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleDeleteClick(post.id)}
-                  className="cursor-pointer"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+                  <div className="flex items-center justify-end gap-2 mt-2">
+                    <BlogForm initialValues={post}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="cursor-pointer"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </BlogForm>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleDeleteClick(post._id)}
+                      className="cursor-pointer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+
+            {posts.length > 0 && totalPages > 1 && (
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => onPaginationChange(filter?.page - 1)}
+                      aria-disabled={filter.page === 1}
+                      className={cn(
+                        "cursor-pointer",
+                        filter.page === 1 && "pointer-events-none opacity-50"
+                      )}
+                    />
+                  </PaginationItem>
+
+                  {getPaginationRange(filter.page, totalPages).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        className="cursor-pointer"
+                        isActive={page === filter.page}
+                        onClick={() => onPaginationChange(page)}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => onPaginationChange(filter.page + 1)}
+                      aria-disabled={filter.page >= totalPages}
+                      className={cn(
+                        "cursor-pointer",
+                        filter.page >= totalPages &&
+                          "pointer-events-none opacity-50"
+                      )}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

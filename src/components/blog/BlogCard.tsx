@@ -1,10 +1,9 @@
 import { IBlogPost } from "@/interfaces/blog.interface";
+import { formatDate } from "date-fns";
+import { CalendarDays, Clock } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { CalendarDays, Clock, Tag } from "lucide-react";
+import { AnimatedLink } from "../shared/AnimatedLink";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { ArrowRight } from "iconsax-reactjs";
 
 const BlogCard = ({
   post,
@@ -22,7 +21,7 @@ const BlogCard = ({
       {/* Full-bleed image with overlay */}
       <div className="absolute inset-0">
         <Image
-          src={post.imageUrl}
+          src={post.image?.imageUrl || ""}
           alt={post.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -40,7 +39,7 @@ const BlogCard = ({
         {/* Category tag */}
         <div className="mb-2">
           <Badge className="rounded-full bg-primary/90 font-medium backdrop-blur-sm">
-            {post.category}
+            {post.tags && post.tags[0]}
           </Badge>
         </div>
 
@@ -50,9 +49,9 @@ const BlogCard = ({
             variant === "featured" ? "text-3xl md:text-4xl" : "text-2xl"
           }`}
         >
-          <Link href={`/blog/${post.slug}`} className="hover:text-primary-200">
+          <AnimatedLink href={`/blog/${post.slug}`} className="hover:text-primary-200">
             {post.title}
-          </Link>
+          </AnimatedLink>
         </h3>
 
         {/* Excerpt */}
@@ -69,32 +68,15 @@ const BlogCard = ({
           <div className="flex items-center justify-between">
             <span className="flex items-center">
               <CalendarDays className="mr-1 h-4 w-4" />
-              {post.date}
+              {post.createdAt
+                ? formatDate(new Date(post?.publishedAt), "MMM dd, yyyy")
+                : ""}
             </span>
             <span className="flex items-center">
               <Clock className="mr-1 h-4 w-4" />
-              {post.readTime}
+              {post.readTime} min read
             </span>
           </div>
-          {post.tags?.[0] && (
-            <span className="flex items-center">
-              <Tag className="mr-1 h-4 w-4" />
-              {post.tags[0]}
-            </span>
-          )}
-        </div>
-
-        {/* Read more link */}
-        <div className="mt-4">
-          <Button asChild variant={"link"}>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="text-white inline-flex items-center"
-            >
-              Read more
-              <ArrowRight />
-            </Link>
-          </Button>
         </div>
       </div>
 

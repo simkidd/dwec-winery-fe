@@ -1,13 +1,33 @@
+import { IUser } from "./user.interface";
+
+export interface IImage {
+  publicId: string; // Cloudinary public_id
+  imageUrl: string; // Cloudinary secure_url
+}
+
 export interface IBlogPost {
-  id: string;
+  _id: string;
   title: string;
-  excerpt: string;
   content: string;
-  date: string;
-  category: string;
-  imageUrl: string;
-  slug: string;
-  readTime?: string;
+  excerpt?: string;
+  author: IUser;
   tags?: string[];
+  isPublished?: boolean;
+  slug: string;
+  image?: IImage;
+  featured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  readTime?: number;
+}
+
+export interface PostFilterInput {
+  page: number;
+  limit: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  isPublished?: boolean;
   featured?: boolean;
 }
