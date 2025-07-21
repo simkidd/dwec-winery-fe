@@ -1,15 +1,16 @@
-import { blogPosts } from "@/components/blog/blog-posts";
 import RelatedPosts from "@/components/blog/RelatedPosts";
 import ShareButtons from "@/components/blog/ShareButtons";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
+import { IBlogPost } from "@/interfaces/blog.interface";
+import { getPostBySlug } from "@/lib/api/blog";
 import { config } from "@/utils/config";
+import { formatDate } from "date-fns";
 // import { IBlogPost } from "@/interfaces/blog.interface";
 // import { config } from "@/utils/config";
 import { CalendarDays, Clock, Tag } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import React from "react";
 
 export const generateMetadata = async ({
   params,
@@ -18,7 +19,8 @@ export const generateMetadata = async ({
 }) => {
   try {
     const { slug } = await params;
-    const post = blogPosts.find((post) => post.slug === slug);
+    const { data } = await getPostBySlug(slug);
+    const post = data as IBlogPost;
 
     if (!post) {
       throw new Error("Post not found");
@@ -35,7 +37,7 @@ export const generateMetadata = async ({
         description: post.excerpt,
         images: [
           {
-            url: post.imageUrl,
+            url: post.image?.imageUrl,
             width: 1200,
             height: 630,
           },
@@ -45,7 +47,7 @@ export const generateMetadata = async ({
         cardType: "summary_large_image",
         title: post.title,
         description: post.excerpt,
-        image: post.imageUrl,
+        image: post.image?.imageUrl,
       },
     };
   } catch (error) {
@@ -86,7 +88,9 @@ export const generateMetadata = async ({
 
 const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
-  const post = blogPosts.find((post) => post.slug === slug);
+  const { data } = await getPostBySlug(slug);
+
+  const post = data as IBlogPost;
 
   if (!post) {
     return notFound();
@@ -98,7 +102,7 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
       {/* Hero Section */}
       <div className="relative h-96 w-full md:h-[500px]">
         <Image
-          src={post.imageUrl}
+          src={post.image?.imageUrl || ""}
           alt={post.title}
           fill
           className="object-cover"
@@ -108,18 +112,20 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="container mx-auto px-4 relative z-10 flex h-full items-end pb-8 lg:pb-12 text-white">
           <div className="max-w-3xl">
-            <Badge className="mb-3 text-sm rounded-full">{post.category}</Badge>
+            <Badge className="mb-3 text-sm rounded-full">category</Badge>
             <h1 className="mb-4 text-4xl font-bold md:text-5xl">
               {post.title}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="flex items-center">
                 <CalendarDays className="mr-2 h-4 w-4" />
-                {post.date}
+                {post.createdAt
+                  ? formatDate(new Date(post?.publishedAt), "MMM dd, yyyy")
+                  : ""}
               </span>
               <span className="flex items-center">
                 <Clock className="mr-2 h-4 w-4" />
-                {post.readTime}
+                {post.readTime} min read
               </span>
               {post.tags?.map((tag) => (
                 <span key={tag} className="flex items-center">
@@ -159,7 +165,7 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
           </div>
 
           {/* Related Posts */}
-          <RelatedPosts currentPostId={post.id} />
+          <RelatedPosts currentPostId={post._id} />
         </div>
       </div>
     </div>

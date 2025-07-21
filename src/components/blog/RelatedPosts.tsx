@@ -1,14 +1,19 @@
-import Link from "next/link";
+"use client";
+import usePosts from "@/hooks/usePosts";
 import Image from "next/image";
-import { blogPosts } from "./blog-posts";
+import Link from "next/link";
 
 interface RelatedPostsProps {
   currentPostId: string;
 }
 
 export default function RelatedPosts({ currentPostId }: RelatedPostsProps) {
-  const relatedPosts = blogPosts
-    .filter((post) => post.id !== currentPostId)
+  const { posts } = usePosts({
+    page: 1,
+    limit: 100,
+  });
+  const relatedPosts = posts
+    .filter((post) => post._id !== currentPostId)
     .slice(0, 3);
 
   return (
@@ -16,11 +21,11 @@ export default function RelatedPosts({ currentPostId }: RelatedPostsProps) {
       <h4 className="mb-6 text-lg font-medium">You might also like</h4>
       <div className="grid gap-6 md:grid-cols-3">
         {relatedPosts.map((post) => (
-          <div key={post.id} className="group">
+          <div key={post._id} className="group">
             <Link href={`/blog/${post.slug}`} className="block">
               <div className="relative mb-4 h-48 overflow-hidden rounded-lg">
                 <Image
-                  src={post.imageUrl}
+                  src={post.image?.imageUrl || ""}
                   alt={post.title}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -28,7 +33,7 @@ export default function RelatedPosts({ currentPostId }: RelatedPostsProps) {
                 />
               </div>
               <h5 className="mb-1 text-sm font-medium text-primary">
-                {post.category}
+                category
               </h5>
               <h3 className="text-lg font-bold group-hover:text-primary">
                 {post.title}
