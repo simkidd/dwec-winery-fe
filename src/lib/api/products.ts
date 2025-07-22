@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AdsFormValues } from "@/components/ads/AdForm";
 import { ProductFilterInput } from "@/interfaces/product.interface";
 import instance from "@/services/axios";
 
@@ -132,12 +131,9 @@ export const getAds = async () => {
   }
 };
 
-/**
- * For admin usage
- */
-export const createAd = async (data: AdsFormValues) => {
+export const getAdminAds = async () => {
   try {
-    const response = await instance.post(`/admin/create-ad`, data);
+    const response = await instance.get(`/admin/all-ads`);
 
     return handleResponse(response);
   } catch (error) {
@@ -145,9 +141,30 @@ export const createAd = async (data: AdsFormValues) => {
   }
 };
 
-export const updateAd = async (id: string, data: AdsFormValues) => {
+/**
+ * For admin usage
+ */
+export const createAd = async (data: FormData) => {
   try {
-    const response = await instance.patch(`/admin/update-ad/${id}`, data);
+    const response = await instance.post(`/admin/create-ad`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateAd = async (id: string, data: FormData) => {
+  try {
+    const response = await instance.patch(`/admin/update-ad/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
     return handleResponse(response);
   } catch (error) {

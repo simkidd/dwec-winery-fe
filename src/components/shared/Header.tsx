@@ -8,12 +8,13 @@ import {
   Heart,
   LogOutIcon,
   Mail,
+  Megaphone,
+  Notebook,
   Phone,
-  Rss,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  X,
+  X
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -204,7 +205,7 @@ const Header = () => {
                               asChild
                             >
                               <Link href="/admin/blogs">
-                                <Rss />
+                                <Notebook />
                                 Blog Manager
                               </Link>
                             </Button>
@@ -213,7 +214,10 @@ const Header = () => {
                               className="w-full justify-start font-normal"
                               asChild
                             >
-                              <Link href="/admin/ads">Ads Manager</Link>
+                              <Link href="/admin/ads">
+                                <Megaphone />
+                                Ads Manager
+                              </Link>
                             </Button>
                           </>
                         )}

@@ -25,47 +25,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
-import AdForm, { AdsFormRef } from "./AdForm";
-import { IAds } from "@/interfaces/ads.interface";
 import useAds from "@/hooks/use-ads";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { formatDate } from "date-fns";
-import { Badge } from "../ui/badge";
-import Image from "next/image";
 import { deleteAd } from "@/lib/api/products";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
+import { Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import AdForm from "./AdForm";
 
 const AdsManager = () => {
-  const { ads, isPending } = useAds();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentAd, setCurrentAd] = useState<IAds | null>(null);
+  const { ads, isPending } = useAds(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [adToDelete, setAdToDelete] = useState<string | null>(null);
-  const formRef = useRef<AdsFormRef>(null);
   const queryClient = useQueryClient();
-
-  const handleSubmit = async () => {
-    if (formRef.current) {
-      const result = await formRef.current.submitForm();
-      if (result) {
-        setIsDialogOpen(false);
-        setCurrentAd(null);
-      }
-    }
-  };
-
-  const handleEdit = (ad: IAds) => {
-    setCurrentAd(ad);
-    setIsDialogOpen(true);
-  };
-
-  const handleCreate = () => {
-    setCurrentAd(null);
-    setIsDialogOpen(true);
-  };
 
   const deleteAdMutation = useMutation({
     mutationFn: deleteAd,
@@ -102,10 +78,13 @@ const AdsManager = () => {
                 Manage all advertisements and banners
               </CardDescription>
             </div>
-            <Button className="cursor-pointer" onClick={handleCreate}>
-              <Plus className="h-4 w-4" />
-              New Ad
-            </Button>
+
+            <AdForm>
+              <Button className="cursor-pointer">
+                <Plus className="h-4 w-4" />
+                New Ad
+              </Button>
+            </AdForm>
           </div>
         </CardHeader>
         <CardContent>
@@ -188,14 +167,15 @@ const AdsManager = () => {
 
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="cursor-pointer"
-                              onClick={() => handleEdit(ad)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
+                            <AdForm initialValues={ad}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="cursor-pointer"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            </AdForm>
                           </TooltipTrigger>
                           <TooltipContent>Edit</TooltipContent>
                         </Tooltip>
@@ -223,50 +203,6 @@ const AdsManager = () => {
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[900px]">
-          <DialogHeader>
-            <DialogTitle>
-              {currentAd ? "Edit Banner" : "Create New Banner"}
-            </DialogTitle>
-          </DialogHeader>
-
-          <AdForm initialValues={currentAd as IAds} />
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="cursor-pointer"
-              onClick={() => {
-                setIsDialogOpen(false);
-                setCurrentAd(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              form="ads-form"
-              disabled={formRef.current?.isSubmitting}
-              className="cursor-pointer"
-              onClick={handleSubmit}
-            >
-              {formRef.current?.isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {currentAd ? "Saving..." : "Creating..."}
-                </>
-              ) : currentAd ? (
-                "Save Changes"
-              ) : (
-                "Create Ad"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

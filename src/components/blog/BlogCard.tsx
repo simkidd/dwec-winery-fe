@@ -41,8 +41,8 @@ const BlogCard = ({
         </div>
       ) : (
         // Fallback content when no image
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400">
-          <div className="text-center p-6 flex flex-col items-center">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-card text-gray-400">
+          <div className="text-center p-6 flex flex-col items-center opacity-50">
             <ImageIcon className="h-12 w-12 mb-2" />
             <p className="">No image available</p>
           </div>
@@ -52,7 +52,7 @@ const BlogCard = ({
       {/* Content container */}
       <div
         className={`absolute inset-0 flex flex-col justify-end p-6 ${
-          hasImage ? "text-white" : "text-gray-700"
+          hasImage ? "text-white" : "dark:text-stone-200"
         }`}
       >
         {/* Category tag */}
@@ -75,7 +75,7 @@ const BlogCard = ({
           <AnimatedLink
             href={`/blog/${post.slug}`}
             className={`hover:text-primary-200 ${
-              !hasImage ? "hover:text-gray-800" : ""
+              !hasImage ? "hover:text-stone-200" : ""
             }`}
           >
             {post.title}
@@ -86,17 +86,13 @@ const BlogCard = ({
         <p
           className={`mb-4 line-clamp-2 ${
             variant === "featured" ? "text-lg" : "text-base"
-          } ${hasImage ? "text-gray-100" : "text-gray-600"}`}
+          } `}
         >
           {post.excerpt}
         </p>
 
         {/* Meta information */}
-        <div
-          className={`flex flex-col gap-2 text-sm ${
-            hasImage ? "text-gray-200" : "text-gray-600"
-          }`}
-        >
+        <div className={`flex flex-col gap-2 text-sm `}>
           <div className="flex items-center justify-between">
             <span className="flex items-center">
               <CalendarDays className="mr-1 h-4 w-4" />

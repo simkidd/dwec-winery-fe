@@ -44,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { cn } from "@/lib/utils";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -63,7 +64,7 @@ const formSchema = z.object({
   excerpt: z.string().min(20, {
     message: "Excerpt must be at least 20 characters.",
   }),
-   category: z.nativeEnum(BlogCategory, {
+  category: z.nativeEnum(BlogCategory, {
     required_error: "Please select a category",
     invalid_type_error: "Please select a valid category",
   }),
@@ -112,7 +113,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     }
   }, [initialValues, form]);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
@@ -298,17 +299,28 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
                 ) : (
                   <div
                     {...getRootProps()}
-                    className="border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors  "
+                    className={cn(
+                      "border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors",
+                      isDragActive
+                        ? "border-primary bg-primary/10"
+                        : "border-muted-foreground/30"
+                    )}
                   >
                     <input {...getInputProps()} />
-                    <div className="flex flex-col items-center justify-center gap-2  h-[300px]">
+                    <div className="flex flex-col items-center justify-center gap-2 h-[300px]">
                       <ImagePlus className="h-8 w-8 text-gray-400" />
-                      <p className="text-sm text-gray-500">
-                        Drag & drop an image here, or click to select
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        JPEG, PNG, WEBP (Max 5MB)
-                      </p>
+                      {isDragActive ? (
+                        <p className="font-medium">Drop the image here</p>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-2 ">
+                          <p className="text-sm text-gray-500">
+                            Drag & drop an image here, or click to select
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            JPEG, PNG, WEBP (Max 5MB)
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
