@@ -71,14 +71,10 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                 <div className="relative w-full h-full">
                   <Link href={`/products/${product.slug}`}>
                     <Image
-                      src={product.images[0]}
+                      src={isHovered ? product.images[0] : product.images[1]}
                       alt={product.name}
                       fill
-                      className={`w-full h-full object-contain transition-opacity duration-300 ${
-                        isHovered && product.images[1]
-                          ? "opacity-0"
-                          : "opacity-100"
-                      } ${isImageLoading ? "opacity-0" : "opacity-100"}`}
+                      className={`w-full h-full object-contain transition duration-300 ease-in-out ${isImageLoading ? "opacity-0" : "opacity-100"}`}
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                       onLoadingComplete={() => setIsImageLoading(false)}
                       onError={() => {
@@ -87,23 +83,6 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                       }}
                       priority={false} // Let Next.js optimize loading
                     />
-                    {product.images[1] && (
-                      <Image
-                        src={product.images[1]}
-                        alt={`${product.name} - alternate view`}
-                        fill
-                        className={`w-full h-full object-contain transition-opacity duration-300 ${
-                          isHovered ? "opacity-100" : "opacity-0"
-                        } ${isImageLoading ? "opacity-0" : "opacity-100"}`}
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                        onLoadingComplete={() => setIsImageLoading(false)}
-                        onError={() => {
-                          setIsImageLoading(false);
-                          setHasImageError(true);
-                        }}
-                        priority={false}
-                      />
-                    )}
                   </Link>
                 </div>
               )}

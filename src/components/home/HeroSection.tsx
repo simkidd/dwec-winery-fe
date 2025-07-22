@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
@@ -21,6 +22,25 @@ import { slugify } from "@/utils/helpers";
 
 const HeroSection = () => {
   const { ads, isPending } = useAds();
+  const [api, setApi] = useState<CarouselApi>();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update current index when slide changes
+  const onSelect = () => {
+    if (api) {
+      setCurrentIndex(api.selectedScrollSnap());
+    }
+  };
+
+  // Initialize carousel API
+  useEffect(() => {
+    if (api) {
+      api.on("select", onSelect);
+      return () => {
+        api.off("select", onSelect);
+      };
+    }
+  }, [api]);
 
   // Function to determine the link for each ad
   const getAdLink = (
@@ -50,7 +70,7 @@ const HeroSection = () => {
   // Loading state
   if (isPending) {
     return (
-      <div className="w-full relative aspect-[2.5/1] md:aspect-[4/1]">
+      <div className="w-full relative aspect-[2.5/1] md:aspect-[3/1]">
         <Skeleton className="w-full h-full rounded-none" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.95 }}
@@ -74,7 +94,7 @@ const HeroSection = () => {
   // Empty state
   if (!ads.length) {
     return (
-      <div className="w-full relative aspect-[2.5/1] md:aspect-[4/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
+      <div className="w-full relative aspect-[2.5/1] md:aspect-[3/1] bg-gradient-to-r from-primary/50 to-primary/20 flex items-center justify-center text-white">
         <div className="text-center p-6">
           <h2 className="text-3xl font-bold mb-4">Welcome to Our Store</h2>
           <p className="text-xl mb-6">Discover our amazing products</p>
@@ -89,6 +109,7 @@ const HeroSection = () => {
   return (
     <section className="w-full relative">
       <Carousel
+        setApi={setApi}
         opts={{
           align: "start",
           loop: true,
@@ -134,6 +155,22 @@ const HeroSection = () => {
         <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100" />
         <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100" />
       </Carousel>
+
+      {/* Pagination Dots */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {ads.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => api?.scrollTo(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              currentIndex === index
+                ? "bg-white w-6"
+                : "bg-white/50 hover:bg-white/70"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </section>
   );
 };
