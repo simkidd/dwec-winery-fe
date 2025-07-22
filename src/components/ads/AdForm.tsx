@@ -227,7 +227,8 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     mutationFn: createAd,
     onSuccess: async (data) => {
       toast.success(data?.message || "Post created successfully!");
-      queryClient.invalidateQueries({ queryKey: ["allAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allAdminAds"] });
       handleClose();
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -241,7 +242,8 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
       updateAd(initialValues?._id as string, data),
     onSuccess: async (data) => {
       toast.success(data?.message || "Ad updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["allAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allAdminAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allAdminAds"] });
       handleClose();
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -251,6 +253,19 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
   });
 
   const onSubmit = async (values: AdsFormValues) => {
+    // Validate image for both create and edit cases
+    const isEditing = !!initialValues?._id;
+    const hadOriginalImage = !!initialValues?.image;
+    const imageWasRemoved = isEditing && hadOriginalImage && !previewImage;
+    const noNewImageProvided = !imageFile;
+
+    if (
+      (!isEditing && noNewImageProvided) ||
+      (isEditing && imageWasRemoved && noNewImageProvided)
+    ) {
+      return;
+    }
+
     const formData = new FormData();
 
     // Append all form values
@@ -277,7 +292,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     if (imageFile) {
       formData.append("file", imageFile);
     }
-    if (initialValues?._id) {
+    if (isEditing) {
       updateAdMutation.mutate(formData);
     } else {
       createAdMutation.mutate(formData);
@@ -583,7 +598,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                   />
 
                   <div className="space-y-4">
-                    <FormLabel>Ad Image*</FormLabel>
+                    <FormLabel>Banner Image*</FormLabel>
                     {previewImage ? (
                       <div className="relative group">
                         <div className="relative w-full h-48 rounded-md overflow-hidden border">
@@ -607,14 +622,22 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                     ) : (
                       <div
                         {...getRootProps()}
-                        className={`border-2 border-input border-dashed hover:border-primary rounded-lg text-center cursor-pointer transition-colors ${
+                        className={cn(
+                          "border-2 border-input border-dashed hover:border-primary rounded-lg text-center cursor-pointer transition-colors",
                           isDragActive
                             ? "border-primary bg-primary/10"
-                            : "border-muted-foreground/30"
-                        }`}
+                            : "border-muted-foreground/30",
+                          form.formState.isSubmitted && !imageFile
+                            ? "border-destructive"
+                            : "border-input hover:border-primary"
+                        )}
                       >
                         <input {...getInputProps()} />
-                        <div className="flex flex-col items-center justify-center gap-2 h-48">
+                        <div
+                          className={cn(
+                            "flex flex-col items-center justify-center gap-2 h-48"
+                          )}
+                        >
                           <ImagePlus className="h-8 w-8 text-gray-400" />
                           {isDragActive ? (
                             <p className="font-medium">Drop the image here</p>
@@ -631,6 +654,24 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                         </div>
                       </div>
                     )}
+                    {form.formState.isSubmitted && (
+                      <>
+                        {!initialValues?._id && !imageFile && (
+                          <p className="text-sm font-medium text-destructive">
+                            Banner image is required
+                          </p>
+                        )}
+                        {initialValues?._id &&
+                          initialValues.image &&
+                          !previewImage &&
+                          !imageFile && (
+                            <p className="text-sm font-medium text-destructive">
+                              Please provide a new image or keep the existing
+                              one
+                            </p>
+                          )}
+                      </>
+                    )}
                   </div>
 
                   {/* Associated Product Field */}
@@ -644,7 +685,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full justify-between"
+                            className="w-full justify-between cursor-pointer"
                             onClick={openProductDialog}
                           >
                             {selectedProduct ? (
@@ -798,7 +839,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
+                            className="w-full cursor-pointer"
                             onClick={openOtherProductsDialog}
                           >
                             Select Products ({field.value?.length || 0})

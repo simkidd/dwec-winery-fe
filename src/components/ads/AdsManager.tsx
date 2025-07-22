@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ import useAds from "@/hooks/use-ads";
 import { deleteAd } from "@/lib/api/products";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { Eye, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -37,17 +36,29 @@ import { Badge } from "../ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import AdForm from "./AdForm";
 
+const formatPosition = (position: string) => {
+  const positionMap: Record<string, string> = {
+    hero: "Hero",
+    featured: "Featured",
+    sidebar: "Sidebar",
+    promotion: "Promotion",
+  };
+  return positionMap[position] || position;
+};
+
 const AdsManager = () => {
+  const queryClient = useQueryClient();
   const { ads, isPending } = useAds(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [adToDelete, setAdToDelete] = useState<string | null>(null);
-  const queryClient = useQueryClient();
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const deleteAdMutation = useMutation({
     mutationFn: deleteAd,
     onSuccess: () => {
       toast.success("Ad deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["allAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allUserAds"] });
+      queryClient.invalidateQueries({ queryKey: ["allAdminAds"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {
@@ -65,6 +76,14 @@ const AdsManager = () => {
     if (adToDelete) {
       deleteAdMutation.mutate(adToDelete);
     }
+  };
+
+  const openImagePreview = (imageUrl: string) => {
+    setPreviewImage(imageUrl);
+  };
+
+  const closeImagePreview = () => {
+    setPreviewImage(null);
   };
 
   return (
@@ -96,27 +115,47 @@ const AdsManager = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Preview</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Dates</TableHead>
+                  <TableHead>Position</TableHead>
+                  <TableHead>Valid From</TableHead>
+                  <TableHead>Expires On</TableHead>
                   <TableHead>Product</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Preview</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {ads.map((ad) => (
                   <TableRow key={ad._id}>
+                    <TableCell>
+                      <div
+                        className="relative w-20 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => ad.image && openImagePreview(ad.image)}
+                      >
+                        {ad.image ? (
+                          <Image
+                            src={ad.image}
+                            alt={ad.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted"></div>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium">{ad.name}</TableCell>
                     <TableCell>
-                      <div className="flex flex-col">
-                        <span>
-                          {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                          to {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
-                        </span>
-                      </div>
+                      <Badge variant="outline" className="capitalize">
+                        {formatPosition(ad.position)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell>
                       {ad.associatedProduct?.name || "N/A"}
@@ -136,23 +175,10 @@ const AdsManager = () => {
                         {ad.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="relative w-20 h-10 rounded-md overflow-hidden border">
-                        {ad.image ? (
-                          <Image
-                            src={ad.image}
-                            alt={ad.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted"></div>
-                        )}
-                      </div>
-                    </TableCell>
+
                     <TableCell>
                       <div className="flex gap-2">
-                        <Tooltip>
+                        {/* <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
@@ -163,7 +189,7 @@ const AdsManager = () => {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>View Info</TooltipContent>
-                        </Tooltip>
+                        </Tooltip> */}
 
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -240,6 +266,33 @@ const AdsManager = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Image Preview Dialog */}
+      {previewImage !== null && (
+        <div className="fixed inset-0 bg-black/85 flex flex-col items-center justify-center z-50">
+          <div className="w-90vw">
+            <div className="relative w-full h-full">
+              {previewImage && (
+                <Image
+                  src={previewImage}
+                  alt="Ad preview"
+                  width={1200}
+                  height={800}
+                  className="w-full h-full object-contain"
+                />
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 rounded-full bg-background/80 hover:bg-background"
+                onClick={closeImagePreview}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

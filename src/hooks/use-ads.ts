@@ -1,13 +1,13 @@
 "use client";
-import { IAds } from "@/interfaces/ads.interface";
+import { FilterAdsParams, IAds } from "@/interfaces/ads.interface";
 import { getAdminAds, getAds } from "@/lib/api/products";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-const useAds = (isAdmin: boolean = false) => {
+const useAds = (isAdmin: boolean = false, params?: FilterAdsParams) => {
   const { data, isPending, isError, refetch } = useQuery({
-    queryKey: isAdmin ? ["allAdminAds"] : ["allAds"],
-    queryFn: async () => (isAdmin ? getAdminAds() : getAds()),
+    queryKey: isAdmin ? ["allAdminAds"] : ["allUserAds"],
+    queryFn: async () => (isAdmin ? getAdminAds() : getAds(params)),
   });
 
   const { ads } = useMemo(() => {

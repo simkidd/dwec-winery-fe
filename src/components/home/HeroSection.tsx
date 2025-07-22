@@ -17,11 +17,14 @@ import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "../shared/Logo";
 import Link from "next/link";
-import { IAds } from "@/interfaces/ads.interface";
+import { FilterAdsParams, IAds } from "@/interfaces/ads.interface";
 import { slugify } from "@/utils/helpers";
 
 const HeroSection = () => {
-  const { ads, isPending } = useAds();
+  const [filter] = useState<FilterAdsParams>({
+    position: "featured",
+  });
+  const { ads, isPending } = useAds(false, filter);
   const [api, setApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 

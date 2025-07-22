@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FilterAdsParams } from "@/interfaces/ads.interface";
 import { ProductFilterInput } from "@/interfaces/product.interface";
 import instance from "@/services/axios";
 
@@ -121,9 +122,9 @@ export const getFavourites = async () => {
   }
 };
 
-export const getAds = async () => {
+export const getAds = async (params?: FilterAdsParams) => {
   try {
-    const response = await instance.get(`/users/ads/get-ads`);
+    const response = await instance.get(`/users/ads/get-ads`, { params });
 
     return handleResponse(response);
   } catch (error) {

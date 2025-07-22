@@ -17,3 +17,7 @@ export interface IAds {
   isFreeDeliveryOnAssociatedProduct: boolean;
   isActive: boolean;
 }
+
+export interface FilterAdsParams {
+  position?: BannerPosition;
+}
