@@ -1,6 +1,6 @@
 import { IBlogPost } from "@/interfaces/blog.interface";
 import { formatDate } from "date-fns";
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Clock, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { AnimatedLink } from "../shared/AnimatedLink";
 import { Badge } from "../ui/badge";
@@ -41,10 +41,10 @@ const BlogCard = ({
         </div>
       ) : (
         // Fallback content when no image
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-          <div className="text-center p-6">
-            <h3 className="text-4xl font-bold text-gray-600 mb-4">✍️</h3>
-            <p className="text-gray-400">No image available</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400">
+          <div className="text-center p-6 flex flex-col items-center">
+            <ImageIcon className="h-12 w-12 mb-2" />
+            <p className="">No image available</p>
           </div>
         </div>
       )}
@@ -52,7 +52,7 @@ const BlogCard = ({
       {/* Content container */}
       <div
         className={`absolute inset-0 flex flex-col justify-end p-6 ${
-          hasImage ? "text-white" : "text-gray-200"
+          hasImage ? "text-white" : "text-gray-700"
         }`}
       >
         {/* Category tag */}
@@ -75,7 +75,7 @@ const BlogCard = ({
           <AnimatedLink
             href={`/blog/${post.slug}`}
             className={`hover:text-primary-200 ${
-              !hasImage ? "hover:text-gray-300" : ""
+              !hasImage ? "hover:text-gray-800" : ""
             }`}
           >
             {post.title}
@@ -86,7 +86,7 @@ const BlogCard = ({
         <p
           className={`mb-4 line-clamp-2 ${
             variant === "featured" ? "text-lg" : "text-base"
-          } ${hasImage ? "text-gray-100" : "text-gray-300"}`}
+          } ${hasImage ? "text-gray-100" : "text-gray-600"}`}
         >
           {post.excerpt}
         </p>
@@ -94,7 +94,7 @@ const BlogCard = ({
         {/* Meta information */}
         <div
           className={`flex flex-col gap-2 text-sm ${
-            hasImage ? "text-gray-200" : "text-gray-400"
+            hasImage ? "text-gray-200" : "text-gray-600"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -111,17 +111,6 @@ const BlogCard = ({
           </div>
         </div>
       </div>
-
-      {/* Featured badge */}
-      {variant === "featured" && (
-        <div
-          className={`absolute right-4 top-4 rounded-full px-3 py-1 text-sm font-medium backdrop-blur-sm ${
-            hasImage ? "bg-white/20 text-white" : "bg-gray-700/80 text-gray-200"
-          }`}
-        >
-          Featured
-        </div>
-      )}
     </article>
   );
 };
