@@ -15,9 +15,6 @@ const PaymentVerificationSuccess = () => {
       </p>
 
       <div className="flex gap-4">
-        <Button asChild>
-          <Link href={`/account/orders`}>View Orders</Link>
-        </Button>
         <Button variant="outline" asChild>
           <Link href="/products">Continue Shopping</Link>
         </Button>
