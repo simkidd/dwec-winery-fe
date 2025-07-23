@@ -11,7 +11,11 @@ const BlogPreview = () => {
     page: 1,
     limit: 3,
     isPublished: true,
+    featured: true,
   });
+
+  if (posts.length === 0) return null;
+
   return (
     <section className="bg-stone-50 dark:bg-stone-900 py-16">
       <div className="container mx-auto px-4">

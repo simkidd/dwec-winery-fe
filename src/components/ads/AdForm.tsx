@@ -165,8 +165,8 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
       name: "",
       position: undefined,
       description: "",
-      validFrom: new Date(),
-      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Default to 1 week from now
+      validFrom: undefined,
+      expiresOn: undefined,
       totalAmountPaid: undefined,
       paymentPer: "month",
       associatedProduct: "",
@@ -184,10 +184,10 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
         description: initialValues.description || "",
         validFrom: initialValues.validFrom
           ? new Date(initialValues.validFrom)
-          : new Date(),
+          : undefined,
         expiresOn: initialValues.expiresOn
           ? new Date(initialValues.expiresOn)
-          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          : undefined,
         totalAmountPaid: initialValues.totalAmountPaid || undefined,
         paymentPer: initialValues.paymentPer || "month",
         associatedProduct: initialValues.associatedProduct?._id || "",
@@ -433,7 +433,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                                 )}
                               >
                                 {field.value ? (
-                                  format(field.value, "PPP")
+                                  format(field.value, "MMM d, yyyy")
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -446,7 +446,14 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                               mode="single"
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) => date < new Date()}
+                              disabled={(date) => {
+                                // Get today's date at midnight (ignoring time)
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+
+                                // Disable all dates before tomorrow
+                                return date < today;
+                              }}
                               autoFocus
                             />
                           </PopoverContent>
@@ -473,7 +480,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                                 )}
                               >
                                 {field.value ? (
-                                  format(field.value, "PPP")
+                                  format(field.value, "MMM d, yyyy")
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -486,11 +493,20 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                               mode="single"
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) =>
-                                date <=
-                                (form.getValues("validFrom") ||
-                                  date < new Date())
-                              }
+                              disabled={(date) => {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                const validFrom = form.getValues("validFrom");
+
+                                // If validFrom is set, disable dates before or equal to validFrom
+                                if (validFrom) {
+                                  const validFromDate = new Date(validFrom);
+                                  validFromDate.setHours(0, 0, 0, 0);
+                                  return date <= validFromDate;
+                                }
+                                // Otherwise disable dates before tomorrow
+                                return date <= today;
+                              }}
                               autoFocus
                             />
                           </PopoverContent>

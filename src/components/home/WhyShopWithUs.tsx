@@ -80,12 +80,12 @@ const WhyShopWithUs = () => {
           viewport={{ once: true, margin: "-50px" }}
           className=""
         >
-          <motion.div className="space-y-6 ">
+          <motion.div className="flex flex-col lg:flex-row gap-6">
             {benefits.map((benefit, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className=""
+                className="flex-1"
               >
                 <FeatureCard {...benefit} />
               </motion.div>

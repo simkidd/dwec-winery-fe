@@ -142,6 +142,16 @@ export const getAdminAds = async () => {
   }
 };
 
+export const getAdminAdById = async (id: string) => {
+  try {
+    const response = await instance.get(`/admin/get-ad/${id}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 /**
  * For admin usage
  */

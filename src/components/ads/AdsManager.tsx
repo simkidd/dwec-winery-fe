@@ -269,27 +269,26 @@ const AdsManager = () => {
 
       {/* Image Preview Dialog */}
       {previewImage !== null && (
-        <div className="fixed inset-0 bg-black/85 flex flex-col items-center justify-center z-50">
-          <div className="w-90vw">
-            <div className="relative w-full h-full">
-              {previewImage && (
-                <Image
-                  src={previewImage}
-                  alt="Ad preview"
-                  width={1200}
-                  height={800}
-                  className="w-full h-full object-contain"
-                />
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 rounded-full bg-background/80 hover:bg-background"
-                onClick={closeImagePreview}
-              >
-                <X className="h-5 w-5" />
-              </Button>
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="relative w-full h-full flex items-center justify-center">
+            <div className="relative w-auto h-auto max-w-[90vw] max-h-[90vh]">
+              <Image
+                src={previewImage}
+                alt="Ad preview"
+                width={1920}
+                height={1080}
+                className="object-contain w-full h-full"
+                quality={100}
+              />
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 rounded-full bg-black/50 hover:bg-black/70 text-white hover:text-white cursor-pointer"
+              onClick={closeImagePreview}
+            >
+              <X className="h-6 w-6" />
+            </Button>
           </div>
         </div>
       )}

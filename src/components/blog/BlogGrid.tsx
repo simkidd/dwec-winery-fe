@@ -5,11 +5,12 @@ import { cn } from "@/lib/utils";
 import { getPaginationRange } from "@/utils/helpers";
 import Autoplay from "embla-carousel-autoplay";
 import { CalendarDays, Clock } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
-  CarouselItem
+  CarouselItem,
 } from "../ui/carousel";
 import {
   Pagination,
@@ -37,6 +38,25 @@ const BlogGrid = () => {
   const { posts, isPending, totalPages } = usePosts(filter);
   const { posts: featuredPosts, isPending: loadingFeaturedPosts } =
     usePosts(filterFeatured);
+  const [api, setApi] = useState<CarouselApi>();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update current index when slide changes
+  const onSelect = () => {
+    if (api) {
+      setCurrentIndex(api.selectedScrollSnap());
+    }
+  };
+
+  // Initialize carousel API
+  useEffect(() => {
+    if (api) {
+      api.on("select", onSelect);
+      return () => {
+        api.off("select", onSelect);
+      };
+    }
+  }, [api]);
 
   const onPaginationChange = (page: number) => {
     setFilter({ ...filter, page });
@@ -99,28 +119,47 @@ const BlogGrid = () => {
               ))}
             </div>
           ) : featuredPosts && featuredPosts.length > 0 ? (
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-              plugins={[
-                Autoplay({
-                  delay: 5000,
-                }),
-              ]}
-            >
-              <CarouselContent className="-ml-0">
-                {featuredPosts.map((post) => (
-                  <CarouselItem key={post._id} className="pl-0">
-                    <div className=" container mx-auto px-4">
-                      <BlogCard post={post} variant="featured" />
-                    </div>
-                  </CarouselItem>
+            <div className="relative pb-6">
+              <Carousel
+                setApi={setApi}
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+                plugins={[
+                  Autoplay({
+                    delay: 5000,
+                  }),
+                ]}
+              >
+                <CarouselContent className="-ml-0">
+                  {featuredPosts.map((post) => (
+                    <CarouselItem key={post._id} className="pl-0">
+                      <div className=" container mx-auto px-4">
+                        <BlogCard post={post} variant="featured" />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+
+              {/* Pagination Dots */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {featuredPosts.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => api?.scrollTo(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      currentIndex === index
+                        ? "bg-primary w-6"
+                        : "bg-primary/50 hover:bg-primary/70"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
                 ))}
-              </CarouselContent>
-            </Carousel>
+              </div>
+            </div>
           ) : (
             <p className="text-muted-foreground">No featured articles found</p>
           )}
