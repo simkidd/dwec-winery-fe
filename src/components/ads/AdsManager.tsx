@@ -145,7 +145,9 @@ const AdsManager = () => {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium">{ad.name}</TableCell>
+                    <TableCell className="font-medium min-w-[200px] ">
+                      <span className="line-clamp-2 text-wrap">{ad.name}</span>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
                         {formatPosition(ad.position)}
@@ -157,8 +159,10 @@ const AdsManager = () => {
                     <TableCell>
                       {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
                     </TableCell>
-                    <TableCell>
-                      {ad.associatedProduct?.name || "N/A"}
+                    <TableCell className="min-w-[150px] max-w-[160px]">
+                      <span className="text-wrap line-clamp-2">
+                        {ad.associatedProduct?.name || "N/A"}
+                      </span>
                       {ad.otherAssociatedProducts?.length > 0 && (
                         <span className="text-muted-foreground text-xs block">
                           +{ad.otherAssociatedProducts.length} more

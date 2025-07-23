@@ -37,6 +37,10 @@ const ProductCard = ({ product }: { product: IProduct }) => {
     setHasImageError(false);
   }, [product]);
 
+  // Get the first two images (or fallback to first image if only one exists)
+  const primaryImage = product.images[0];
+  const secondaryImage = product.images[1] || product.images[0];
+
   return (
     <>
       <Card className="shadow-none rounded-sm p-0 border-0 bg-transparent group">
@@ -59,11 +63,13 @@ const ProductCard = ({ product }: { product: IProduct }) => {
 
               {/* Error state */}
               {hasImageError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted">
-                  <span className="text-xs text-muted-foreground">
-                    Image not available
-                  </span>
-                </div>
+                <Link href={`/products/${product.slug}`}>
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                    <span className="text-xs text-muted-foreground">
+                      Image not available
+                    </span>
+                  </div>
+                </Link>
               )}
 
               {/* Image content */}
@@ -71,10 +77,12 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                 <div className="relative w-full h-full">
                   <Link href={`/products/${product.slug}`}>
                     <Image
-                      src={isHovered ? product.images[0] : product.images[1]}
+                      src={isHovered ? secondaryImage : primaryImage}
                       alt={product.name}
                       fill
-                      className={`w-full h-full object-contain transition duration-300 ease-in-out ${isImageLoading ? "opacity-0" : "opacity-100"}`}
+                      className={`w-full h-full object-contain transition duration-300 ease-in-out ${
+                        isImageLoading ? "opacity-0" : "opacity-100"
+                      }`}
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                       onLoadingComplete={() => setIsImageLoading(false)}
                       onError={() => {
