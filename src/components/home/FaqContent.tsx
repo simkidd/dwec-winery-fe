@@ -2,7 +2,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
-  Gift,
   Mail,
   Phone,
   Truck,
