@@ -72,10 +72,12 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 { href: "/about", text: "About Us" },
-                { href: "/cocktails", text: "Cocktails" },
-                { href: "/mixers", text: "Mixers" },
-                { href: "/exclusive", text: "Exclusive Editions" },
-                { href: "/contact-us", text: "Contact" },
+                { href: "/faqs", text: "FAQs" },
+                { href: "/blog", text: "Blog" },
+                { href: "/contact-us", text: "Contact Us" },
+                { href: "/privacy-policy", text: "Privacy Policy" },
+                { href: "#", text: "Return & Shopping Policy" },
+                { href: "#", text: "Terms & Conditions" },
               ].map((link, index) => (
                 <motion.li
                   key={index}
@@ -230,18 +232,19 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} DWEC Drinks. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            {["Privacy Policy", "Terms of Service", "Shipping Policy"].map(
-              (item, index) => (
-                <div key={index}>
-                  <Link
-                    href="#"
-                    className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </div>
-              )
-            )}
+            {[
+              { href: "/privacy-policy", text: "Privacy Policy" },
+              { href: "#", text: "Terms of Service" },
+            ].map((item, index) => (
+              <div key={index}>
+                <Link
+                  href={item.href}
+                  className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
+                >
+                  {item.text}
+                </Link>
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>
