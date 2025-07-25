@@ -10,20 +10,20 @@ import {
   Star,
   ShoppingCart,
 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 
 // Define types for better TypeScript support
 interface FAQQuestion {
   question: string;
-  answer: string | any;
+  answer: string | React.ReactNode;
   searchableText?: string; // For search functionality
 }
 
 interface FAQCategory {
   id: string;
   title: string;
-  icon: any;
+  icon: React.ReactNode;
   questions: FAQQuestion[];
 }
 
@@ -345,7 +345,7 @@ const FAQItem = ({
   answer,
 }: {
   question: string;
-  answer: string | any;
+  answer: string | React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
