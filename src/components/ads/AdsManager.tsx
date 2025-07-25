@@ -42,6 +42,9 @@ const formatPosition = (position: string) => {
     featured: "Featured",
     sidebar: "Sidebar",
     promotion: "Promotion",
+    main: "Main",
+    product: "Product",
+    footer: "Footer",
   };
   return positionMap[position] || position;
 };
@@ -115,9 +118,9 @@ const AdsManager = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Preview</TableHead>
+                  <TableHead className="w-[100px]">Preview</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Position</TableHead>
+                  <TableHead>Positions</TableHead>
                   <TableHead>Valid From</TableHead>
                   <TableHead>Expires On</TableHead>
                   <TableHead>Product</TableHead>
@@ -129,72 +132,116 @@ const AdsManager = () => {
                 {ads.map((ad) => (
                   <TableRow key={ad._id}>
                     <TableCell>
-                      <div
-                        className="relative w-20 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => ad.image && openImagePreview(ad.image)}
-                      >
-                        {ad.image ? (
-                          <Image
-                            src={ad.image}
-                            alt={ad.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted"></div>
+                      <div className="flex gap-2">
+                        {/* Handle legacy ads with just the image field */}
+                        {!ad.banners?.length && ad.image && (
+                          <div
+                            className="relative w-16 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() =>
+                              openImagePreview(ad?.image as string)
+                            }
+                          >
+                            <Image
+                              src={ad.image}
+                              alt={ad.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+
+                        {/* Handle new ads with banners array */}
+                        {ad.banners?.length > 0 && (
+                          <>
+                            {ad.banners.slice(0, 2).map((banner, index) => (
+                              <div
+                                key={index}
+                                className="relative w-16 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => openImagePreview(banner.image)}
+                              >
+                                <Image
+                                  src={banner.image}
+                                  alt={`${ad.name} - ${banner.position}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            ))}
+                            {ad.banners.length > 2 && (
+                              <div className="flex items-center justify-center text-xs text-muted-foreground">
+                                +{ad.banners.length - 2} more
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {/* Fallback for ads with no images */}
+                        {!ad.banners?.length && !ad.image && (
+                          <div className="w-16 h-10 bg-muted rounded-md"></div>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="font-medium min-w-[200px] ">
-                      <span className="line-clamp-2 text-wrap">{ad.name}</span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {formatPosition(ad.position)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell className="min-w-[150px] max-w-[160px]">
-                      <span className="text-wrap line-clamp-2">
-                        {ad.associatedProduct?.name || "N/A"}
-                      </span>
-                      {ad.otherAssociatedProducts?.length > 0 && (
-                        <span className="text-muted-foreground text-xs block">
-                          +{ad.otherAssociatedProducts.length} more
-                        </span>
+                    <TableCell className="font-medium">
+                      <div className="line-clamp-2">{ad.name}</div>
+                      {ad.description && (
+                        <div className="text-xs text-muted-foreground line-clamp-1">
+                          {ad.description}
+                        </div>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                        {ad.banners?.map((banner) => (
+                          <Badge
+                            key={banner.position}
+                            variant="outline"
+                            className="capitalize"
+                          >
+                            {formatPosition(banner.position)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="text-sm">
+                          {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="text-sm">
+                          {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="line-clamp-1">
+                          {ad.associatedProduct?.name || "N/A"}
+                        </span>
+                        {ad.otherAssociatedProducts?.length > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            +{ad.otherAssociatedProducts.length} more
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant={ad.isActive ? "default" : "secondary"}
                         className={
-                          ad.isActive ? "bg-green-100 text-green-800" : ""
+                          ad.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
                         }
                       >
                         {ad.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
-
                     <TableCell>
                       <div className="flex gap-2">
-                        {/* <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="cursor-pointer"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>View Info</TooltipContent>
-                        </Tooltip> */}
-
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <AdForm initialValues={ad}>
