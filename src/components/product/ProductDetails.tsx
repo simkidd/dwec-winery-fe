@@ -263,7 +263,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
             <Carousel
               opts={{
                 align: "start",
-                slidesToScroll: "auto",
+                slidesToScroll: 1,
               }}
               className="w-full px-2"
             >
@@ -271,7 +271,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 {relatedProducts.map((product) => (
                   <CarouselItem
                     key={product._id}
-                    className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 pl-2"
+                    className="flex-[0_0_46%] md:flex-[0_0_32%] lg:flex-[0_0_22%] pl-2"
                   >
                     <div className="p-1">
                       <ProductCard product={product} />

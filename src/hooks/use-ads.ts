@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 const useAds = (isAdmin: boolean = false, params?: FilterAdsParams) => {
   const { data, isPending, isError, refetch } = useQuery({
-    queryKey: isAdmin ? ["allAdminAds"] : ["allUserAds"],
+    queryKey: isAdmin ? ["allAdminAds"] : ["allUserAds", params],
     queryFn: async () => (isAdmin ? getAdminAds() : getAds(params)),
   });
 

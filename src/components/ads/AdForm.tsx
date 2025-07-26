@@ -61,18 +61,18 @@ export const NairaIcon = () => <span className="font-medium">₦</span>;
 const BANNER_POSITIONS = [
   { value: "hero", label: "Hero Banner" },
   { value: "featured", label: "Featured Section" },
-  { value: "sidebar", label: "Sidebar" },
-  { value: "promotion", label: "Promotion Section" },
-  { value: "main", label: "Main Section" },
-  { value: "product", label: "Product Section" },
-  { value: "footer", label: "Bottom Section" },
+  // { value: "sidebar", label: "Sidebar" },
+  // { value: "promotion", label: "Promotion Section" },
+  // { value: "main", label: "Main Section" },
+  // { value: "product", label: "Product Section" },
+  // { value: "footer", label: "Bottom Section" },
 ] as const;
 
-const BANNER_TYPES = [
-  { value: "promotional", label: "Promotional" },
-  { value: "seasonal", label: "Seasonal" },
-  { value: "default", label: "Default" },
-] as const;
+// const BANNER_TYPES = [
+//   { value: "promotional", label: "Promotional" },
+//   { value: "seasonal", label: "Seasonal" },
+//   { value: "default", label: "Default" },
+// ] as const;
 
 // Form validation schema
 const formSchema = z
@@ -654,7 +654,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="type"
                     render={({ field }) => (
@@ -680,7 +680,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                 </div>
 
                 {/* Right Column */}

@@ -16,38 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import useAds from "@/hooks/use-ads";
 import { deleteAd } from "@/lib/api/products";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { formatDate } from "date-fns";
-import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "../ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import AdForm from "./AdForm";
-
-const formatPosition = (position: string) => {
-  const positionMap: Record<string, string> = {
-    hero: "Hero",
-    featured: "Featured",
-    sidebar: "Sidebar",
-    promotion: "Promotion",
-    main: "Main",
-    product: "Product",
-    footer: "Footer",
-  };
-  return positionMap[position] || position;
-};
+import AdsTable from "./AdsTable";
 
 const AdsManager = () => {
   const queryClient = useQueryClient();
@@ -115,168 +92,12 @@ const AdsManager = () => {
               <Loader2 className="animate-spin text-primary" />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Preview</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Positions</TableHead>
-                  <TableHead>Valid From</TableHead>
-                  <TableHead>Expires On</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {ads.map((ad) => (
-                  <TableRow key={ad._id}>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {/* Handle legacy ads with just the image field */}
-                        {!ad.banners?.length && ad.image && (
-                          <div
-                            className="relative w-16 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() =>
-                              openImagePreview(ad?.image as string)
-                            }
-                          >
-                            <Image
-                              src={ad.image}
-                              alt={ad.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-
-                        {/* Handle new ads with banners array */}
-                        {ad.banners?.length > 0 && (
-                          <>
-                            {ad.banners.slice(0, 2).map((banner, index) => (
-                              <div
-                                key={index}
-                                className="relative w-16 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
-                                onClick={() => openImagePreview(banner.image)}
-                              >
-                                <Image
-                                  src={banner.image}
-                                  alt={`${ad.name} - ${banner.position}`}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                            ))}
-                            {ad.banners.length > 2 && (
-                              <div className="flex items-center justify-center text-xs text-muted-foreground">
-                                +{ad.banners.length - 2} more
-                              </div>
-                            )}
-                          </>
-                        )}
-
-                        {/* Fallback for ads with no images */}
-                        {!ad.banners?.length && !ad.image && (
-                          <div className="w-16 h-10 bg-muted rounded-md"></div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="line-clamp-2">{ad.name}</div>
-                      {ad.description && (
-                        <div className="text-xs text-muted-foreground line-clamp-1">
-                          {ad.description}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 max-w-[200px]">
-                        {ad.banners?.map((banner) => (
-                          <Badge
-                            key={banner.position}
-                            variant="outline"
-                            className="capitalize"
-                          >
-                            {formatPosition(banner.position)}
-                          </Badge>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="text-sm">
-                          {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="text-sm">
-                          {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="line-clamp-1">
-                          {ad.associatedProduct?.name || "N/A"}
-                        </span>
-                        {ad.otherAssociatedProducts?.length > 0 && (
-                          <span className="text-xs text-muted-foreground">
-                            +{ad.otherAssociatedProducts.length} more
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={ad.isActive ? "default" : "secondary"}
-                        className={
-                          ad.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }
-                      >
-                        {ad.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AdForm initialValues={ad}>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                            </AdForm>
-                          </TooltipTrigger>
-                          <TooltipContent>Edit</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive cursor-pointer"
-                              onClick={() => handleDelete(ad._id)}
-                              disabled={deleteAdMutation.isPending}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Delete</TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <AdsTable
+              ads={ads}
+              onDelete={handleDelete}
+              isDeleting={deleteAdMutation.isPending}
+              onPreviewImage={openImagePreview}
+            />
           )}
         </CardContent>
       </Card>
