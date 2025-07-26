@@ -1,18 +1,18 @@
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
+const pageTitle = "Return Policy";
 
 export const metadata: Metadata = {
-  title: "Return Policy | DWEC WINERY",
+  title: pageTitle,
   description: "Our return and shopping policy for DWEC WINERY products",
 };
 
 export default function ReturnPolicy() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16 ">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2">Return & Shopping Policy</h1>
-        <p className="text-muted-foreground">
+        <p className="text-stone-500 dark:text-stone-400">
           Last updated: {new Date().toLocaleDateString()}
         </p>
       </div>
@@ -60,9 +60,15 @@ export default function ReturnPolicy() {
             For return requests or questions about our policy, please contact
             our customer service.
           </p>
-          <Button asChild variant="outline">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
+
+          <address className="not-italic space-y-1">
+            <p>📍 DWEC WINERY</p>
+            <p>
+              86A Woji Road, GRA Phase 2, Port Harcourt, Rivers State, Nigeria
+            </p>
+            <p>📞 +2347 03625 4646, +2348 05823 2688</p>
+            <p>📧 Email: dwecwinery@gmail.com; info@dwecwinery.ng</p>
+          </address>
         </div>
       </div>
     </div>

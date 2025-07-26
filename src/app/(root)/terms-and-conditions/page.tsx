@@ -1,18 +1,18 @@
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
+const pageTitle = "Terms & Conditions";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | DWEC WINERY",
+  title: pageTitle,
   description: "Our terms and conditions for using DWEC WINERY services",
 };
 
 export default function TermsAndConditions() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="mx-auto px-4 py-12 max-w-4xl">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2">Terms & Conditions</h1>
-        <p className="text-muted-foreground">
+        <p className="text-stone-500 dark:text-stone-400">
           Last updated: {new Date().toLocaleDateString()}
         </p>
       </div>
@@ -80,9 +80,15 @@ export default function TermsAndConditions() {
             For any questions regarding these terms, please contact our customer
             service.
           </p>
-          <Button asChild variant="outline">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
+
+          <address className="not-italic">
+            <p>📍 DWEC WINERY</p>
+            <p>
+              86A Woji Road, GRA Phase 2, Port Harcourt, Rivers State, Nigeria
+            </p>
+            <p>📞 +2347 03625 4646, +2348 05823 2688</p>
+            <p>📧 Email: dwecwinery@gmail.com; info@dwecwinery.ng</p>
+          </address>
         </div>
       </div>
     </div>
