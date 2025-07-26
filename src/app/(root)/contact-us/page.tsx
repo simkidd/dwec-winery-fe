@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Metadata } from "next";
+
+const pageTitle = "Contact Us";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+};
 
 const ContactUs = () => {
   const contactMethods = [

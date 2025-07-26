@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselApi,
@@ -8,17 +8,16 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Autoplay from "embla-carousel-autoplay";
-import Fade from "embla-carousel-fade";
-import useAds from "@/hooks/use-ads";
-import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
-import Logo from "../shared/Logo";
-import Link from "next/link";
+import useAds from "@/hooks/use-ads";
 import { FilterAdsParams, IAds } from "@/interfaces/ads.interface";
 import { slugify } from "@/utils/helpers";
+import Autoplay from "embla-carousel-autoplay";
+import Fade from "embla-carousel-fade";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import Logo from "../shared/Logo";
 
 const HeroSection = () => {
   const [filter] = useState<FilterAdsParams>({
@@ -127,27 +126,63 @@ const HeroSection = () => {
         ]}
       >
         <CarouselContent className="-ml-0">
-          {ads.map((slide) => {
-            const link = getAdLink(slide);
+          {ads.map((ad) => {
+            const link = getAdLink(ad);
+
+            const banner = ad.banners?.[0];
 
             return (
-              <CarouselItem key={slide._id} className="pl-0">
+              <CarouselItem key={ad._id} className="pl-0">
                 <div className="p-0">
-                  <Card className="border-0 p-0 rounded-none overflow-hidden">
-                    <CardContent className="relative p-0 aspect-[2.5/1] md:aspect-[3/1]">
-                      {/* Background Image with overlay */}
+                  <div className="border-0 p-0 rounded-none overflow-hidden">
+                    <div className="relative p-0 w-full aspect-[1440/428]">
+                    {/* <div className="relative p-0 aspect-[2.5/1] md:aspect-[3.5/1]"> */}
+                      {/* Blurred background */}
+                      {/* {banner?.image && (
+                        <div
+                          className="absolute inset-0 w-full h-full"
+                          style={{
+                            backgroundImage: `url(${banner.image})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            filter: "blur(8px)",
+                            opacity: 0.7,
+                          }}
+                        />
+                      )} */}
+
+                      {/* Main banner image container */}
                       <Link
                         href={link}
                         as={typeof link === "string" ? link : formatHref(link)}
                         passHref
                       >
                         <div
-                          className="w-full h-full bg-cover bg-center relative"
-                          style={{ backgroundImage: `url(${slide.image})` }}
-                        ></div>
+                          className="w-full h-full relative"
+                          style={{
+                            backgroundImage: `url(${banner?.image})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        >
+                          {/* 1520x434 */}
+                          {/* Mobile image that will show on smaller screens */}
+                          {banner?.mobileImage && (
+                            <div
+                              className="md:hidden w-full h-full"
+                              style={{
+                                backgroundImage: `url(${banner.mobileImage})`,
+                                backgroundSize: "contain",
+                                backgroundPosition: "center",
+                                backgroundRepeat: "no-repeat",
+                              }}
+                            />
+                          )}
+                        </div>
                       </Link>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </div>
               </CarouselItem>
             );
@@ -155,8 +190,8 @@ const HeroSection = () => {
         </CarouselContent>
 
         {/* Navigation Arrows */}
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100" />
+        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100 disabled:hidden" />
+        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white/30 hover:bg-white/50 text-white border-0 cursor-pointer opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100 focus-visible:opacity-100 disabled:hidden" />
       </Carousel>
 
       {/* Pagination Dots */}

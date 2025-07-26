@@ -7,8 +7,18 @@ import { IProduct, ProductVariant } from "@/interfaces/product.interface";
 import { addToCart } from "@/store/features/cart/cart.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
-import { Minus, Plus, Share2, Shield, Truck } from "lucide-react";
-import { useState } from "react";
+import {
+  Facebook,
+  Linkedin,
+  LinkIcon,
+  Minus,
+  Plus,
+  Share2,
+  Shield,
+  Truck,
+  Twitter,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import FavouriteButton from "../shared/FavouriteButton";
 import {
@@ -22,6 +32,67 @@ import ProductCard from "./ProductCard";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 import ProductImages from "./ProductImages";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+const ShareButtons = ({ product }: { product: IProduct }) => {
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  useEffect(() => {
+    setCurrentUrl(`${window.location.origin}/products/${product.slug}`);
+  }, [product.slug]);
+
+  const copyToClipboard = () => {
+    if (!currentUrl) return;
+    navigator.clipboard.writeText(currentUrl);
+    toast.info("Link copied to clipboard!");
+  };
+
+  const encodedTitle = encodeURIComponent(product.name);
+
+  return (
+    <div className="flex space-x-4 p-4">
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700"
+        aria-label="Share on Facebook"
+      >
+        <Facebook size={18} />
+      </a>
+      <a
+        href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${currentUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-400 text-white hover:bg-blue-500"
+        aria-label="Share on Twitter"
+      >
+        <Twitter size={18} />
+      </a>
+      <a
+        href={`https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${encodedTitle}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-700 text-white hover:bg-blue-800"
+        aria-label="Share on LinkedIn"
+      >
+        <Linkedin size={18} />
+      </a>
+      <button
+        onClick={copyToClipboard}
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 cursor-pointer"
+        aria-label="Copy link"
+        disabled={!currentUrl}
+      >
+        <LinkIcon size={18} />
+      </button>
+    </div>
+  );
+};
 
 const ProductDetails = ({ product }: { product: IProduct }) => {
   const dispatch = useAppDispatch();
@@ -222,13 +293,21 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
               )}
 
               <FavouriteButton product={product} className="" />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full cursor-pointer"
-              >
-                <Share2 className="h-5 w-5" />
-              </Button>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full cursor-pointer"
+                  >
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <ShareButtons product={product} />
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Trust Badges */}
@@ -263,7 +342,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
             <Carousel
               opts={{
                 align: "start",
-                slidesToScroll: "auto",
+                slidesToScroll: 1,
               }}
               className="w-full px-2"
             >
@@ -271,7 +350,7 @@ const ProductDetails = ({ product }: { product: IProduct }) => {
                 {relatedProducts.map((product) => (
                   <CarouselItem
                     key={product._id}
-                    className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 pl-2"
+                    className="flex-[0_0_46%] md:flex-[0_0_32%] lg:flex-[0_0_22%] pl-2"
                   >
                     <div className="p-1">
                       <ProductCard product={product} />

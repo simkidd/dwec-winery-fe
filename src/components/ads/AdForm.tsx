@@ -42,14 +42,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
-import {
-  CalendarIcon,
-  ImagePlus,
-  Loader2,
-  Megaphone,
-  Search,
-  X,
-} from "lucide-react";
+import { CalendarIcon, ImagePlus, Loader2, Search, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -68,23 +61,24 @@ export const NairaIcon = () => <span className="font-medium">₦</span>;
 const BANNER_POSITIONS = [
   { value: "hero", label: "Hero Banner" },
   { value: "featured", label: "Featured Section" },
-  { value: "sidebar", label: "Sidebar" },
-  { value: "promotion", label: "Promotion Section" },
+  // { value: "sidebar", label: "Sidebar" },
+  // { value: "promotion", label: "Promotion Section" },
+  // { value: "main", label: "Main Section" },
+  // { value: "product", label: "Product Section" },
+  // { value: "footer", label: "Bottom Section" },
 ] as const;
 
-export interface AdsFormRef {
-  submitForm: () => Promise<boolean>;
-  isSubmitting: boolean;
-}
+// const BANNER_TYPES = [
+//   { value: "promotional", label: "Promotional" },
+//   { value: "seasonal", label: "Seasonal" },
+//   { value: "default", label: "Default" },
+// ] as const;
 
 // Form validation schema
 const formSchema = z
   .object({
     name: z.string().min(2, {
       message: "Name must be at least 2 characters.",
-    }),
-    position: z.enum(["hero", "featured", "sidebar", "promotion"], {
-      required_error: "Please select a banner position",
     }),
     description: z.string().optional(),
     validFrom: z.date({
@@ -106,6 +100,7 @@ const formSchema = z
     otherAssociatedProducts: z.array(z.string()).optional(),
     isFreeDeliveryOnAssociatedProduct: z.boolean(),
     isActive: z.boolean(),
+    type: z.enum(["promotional", "seasonal", "default"]),
   })
   .refine(
     (data) => {
@@ -118,6 +113,12 @@ const formSchema = z
   );
 
 export type AdsFormValues = z.infer<typeof formSchema>;
+
+interface BannerWithFiles {
+  position: string;
+  desktopImage: string | File;
+  mobileImage?: string | File;
+}
 
 interface AdFormProps {
   initialValues?: Partial<IAds>;
@@ -139,9 +140,22 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [isOtherProductsDialogOpen, setIsOtherProductsDialogOpen] =
     useState(false);
+
+  // State for new banner creation
+  const [bannersWithFiles, setBannersWithFiles] = useState<BannerWithFiles[]>(
+    []
+  );
+
+  const [newBannerPosition, setNewBannerPosition] = useState<string>("");
+  const [newBannerDesktopFile, setNewBannerDesktopFile] = useState<File | null>(
+    null
+  );
+  const [newBannerMobileFile, setNewBannerMobileFile] = useState<File | null>(
+    null
+  );
+
   const { isPending: productsLoading, products } = useProducts(filters);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+
   // Add new state for temporary selections
   const [tempAssociatedProduct, setTempAssociatedProduct] =
     useState<string>("");
@@ -163,7 +177,6 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      position: undefined,
       description: "",
       validFrom: undefined,
       expiresOn: undefined,
@@ -173,6 +186,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
       otherAssociatedProducts: [],
       isFreeDeliveryOnAssociatedProduct: false,
       isActive: true,
+      type: "default",
     },
   });
 
@@ -180,7 +194,6 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     if (initialValues) {
       form.reset({
         name: initialValues.name || "",
-        position: initialValues.position || undefined,
         description: initialValues.description || "",
         validFrom: initialValues.validFrom
           ? new Date(initialValues.validFrom)
@@ -197,30 +210,86 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
           initialValues.isFreeDeliveryOnAssociatedProduct || false,
         isActive:
           initialValues.isActive !== undefined ? initialValues.isActive : true,
+        type: initialValues.type || "default",
       });
-      if (initialValues.image) {
-        setPreviewImage(initialValues.image);
+
+      // Handle banners data
+      if (initialValues.banners && initialValues.banners.length > 0) {
+        const initialBanners = initialValues.banners.map((banner) => ({
+          position: banner.position,
+          desktopImage: banner.image, // URL string
+          desktopImageUrl: banner.image, // Keep original URL
+          mobileImage: banner.mobileImage, // URL string or undefined
+          mobileImageUrl: banner.mobileImage, // Keep original URL
+        }));
+        setBannersWithFiles(initialBanners);
+      } else {
+        // No banners - clear existing
+        setBannersWithFiles([]);
       }
     }
   }, [initialValues, form]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-    },
+  // Dropzone for desktop banner image
+  const {
+    getRootProps: getDesktopRootProps,
+    getInputProps: getDesktopInputProps,
+  } = useDropzone({
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
     maxFiles: 1,
     onDrop: (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      if (file) {
-        setImageFile(file);
-        setPreviewImage(URL.createObjectURL(file));
+      if (acceptedFiles.length > 0) {
+        setNewBannerDesktopFile(acceptedFiles[0]);
       }
     },
   });
 
-  const removeImage = () => {
-    setImageFile(null);
-    setPreviewImage(null);
+  // Dropzone for mobile banner image
+  const {
+    getRootProps: getMobileRootProps,
+    getInputProps: getMobileInputProps,
+  } = useDropzone({
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        setNewBannerMobileFile(acceptedFiles[0]);
+      }
+    },
+  });
+
+  // Add new banner to form
+  const addNewBanner = () => {
+    if (!newBannerPosition || !newBannerDesktopFile) {
+      toast.error("Please provide banner position and desktop image");
+      return;
+    }
+
+    const alreadyUsed = bannersWithFiles.some(
+      (b) => b.position === newBannerPosition
+    );
+    if (alreadyUsed) {
+      toast.error("Banner position already added");
+      return;
+    }
+
+    setBannersWithFiles((prev) => [
+      ...prev,
+      {
+        position: newBannerPosition,
+        desktopImage: newBannerDesktopFile,
+        mobileImage: newBannerMobileFile || undefined,
+      },
+    ]);
+    // Reset new banner state
+    setNewBannerPosition("");
+    setNewBannerDesktopFile(null);
+    setNewBannerMobileFile(null);
+  };
+
+  // Remove existing banner
+  const removeBanner = (index: number) => {
+    setBannersWithFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const createAdMutation = useMutation({
@@ -255,23 +324,12 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
   const onSubmit = async (values: AdsFormValues) => {
     // Validate image for both create and edit cases
     const isEditing = !!initialValues?._id;
-    const hadOriginalImage = !!initialValues?.image;
-    const imageWasRemoved = isEditing && hadOriginalImage && !previewImage;
-    const noNewImageProvided = !imageFile;
-
-    if (
-      (!isEditing && noNewImageProvided) ||
-      (isEditing && imageWasRemoved && noNewImageProvided)
-    ) {
-      return;
-    }
 
     const formData = new FormData();
 
-    // Append all form values
+    // Append all non-file fields
     formData.append("name", values.name);
-    formData.append("position", values.position);
-    formData.append("description", values.description || "");
+    if (values.description) formData.append("description", values.description);
     formData.append("validFrom", values.validFrom.toISOString());
     formData.append("expiresOn", values.expiresOn.toISOString());
     formData.append("totalAmountPaid", values.totalAmountPaid.toString());
@@ -282,16 +340,37 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
       values.isFreeDeliveryOnAssociatedProduct.toString()
     );
     formData.append("isActive", values.isActive.toString());
+    formData.append("type", values.type);
 
-    // Append array items individually
-    values.otherAssociatedProducts?.forEach((productId) => {
-      formData.append("otherAssociatedProducts[]", productId);
+    // Append other associated products if they exist
+    if (
+      values.otherAssociatedProducts &&
+      values.otherAssociatedProducts.length > 0
+    ) {
+      values.otherAssociatedProducts.forEach((productId) => {
+        formData.append("otherAssociatedProducts[]", productId);
+      });
+    }
+
+    // Prepare banners data with correct field names
+    const bannersPayload = bannersWithFiles.map((banner) => ({
+      position: banner.position,
+      // No need to include image field names here - backend expects specific field names
+    }));
+
+    formData.append("banners", JSON.stringify(bannersPayload));
+
+    // Append image files with correct field names
+    bannersWithFiles.forEach((banner) => {
+      const position = banner.position;
+      if (banner.desktopImage) {
+        formData.append(`desktopImage_${position}`, banner.desktopImage);
+      }
+      if (banner.mobileImage) {
+        formData.append(`mobileImage_${position}`, banner.mobileImage);
+      }
     });
 
-    // Append the image file if it exists
-    if (imageFile) {
-      formData.append("file", imageFile);
-    }
     if (isEditing) {
       updateAdMutation.mutate(formData);
     } else {
@@ -344,14 +423,18 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       form.reset();
+      setNewBannerPosition("");
+      setNewBannerDesktopFile(null);
+      setNewBannerMobileFile(null);
     }
     setOpen(isOpen);
   };
 
   const handleClose = () => {
     form.reset();
-    setPreviewImage(null);
-    setImageFile(null);
+    setNewBannerPosition("");
+    setNewBannerDesktopFile(null);
+    setNewBannerMobileFile(null);
     setOpen(false);
   };
 
@@ -570,126 +653,38 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <FormField
+                  {/* <FormField
                     control={form.control}
-                    name="position"
+                    name="type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Position*</FormLabel>
+                        <FormLabel>Ad Type*</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full cursor-pointer">
-                              <div className="flex items-center gap-2">
-                                <Megaphone className="h-4 w-4" />
-                                <SelectValue placeholder="Select banner position" />
-                              </div>
+                              <SelectValue placeholder="Select ad type" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {BANNER_POSITIONS.map((position) => (
-                              <SelectItem
-                                key={position.value}
-                                value={position.value}
-                              >
-                                <div className="flex items-center gap-2">
-                                  {position.label}
-                                </div>
+                            {BANNER_TYPES.map((type) => (
+                              <SelectItem key={type.value} value={type.value}>
+                                {type.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormDescription>
-                          Where this banner will be displayed on the website
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
+                </div>
 
-                  <div className="space-y-4">
-                    <FormLabel>Banner Image*</FormLabel>
-                    {previewImage ? (
-                      <div className="relative group">
-                        <div className="relative w-full h-48 rounded-md overflow-hidden border">
-                          <Image
-                            src={previewImage}
-                            alt="Ad preview"
-                            fill
-                            className="w-full h-full object-contain"
-                            onError={() => setPreviewImage(null)}
-                          />
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={removeImage}
-                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full cursor-pointer"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div
-                        {...getRootProps()}
-                        className={cn(
-                          "border-2 border-input border-dashed hover:border-primary rounded-lg text-center cursor-pointer transition-colors",
-                          isDragActive
-                            ? "border-primary bg-primary/10"
-                            : "border-muted-foreground/30",
-                          form.formState.isSubmitted && !imageFile
-                            ? "border-destructive"
-                            : "border-input hover:border-primary"
-                        )}
-                      >
-                        <input {...getInputProps()} />
-                        <div
-                          className={cn(
-                            "flex flex-col items-center justify-center gap-2 h-48"
-                          )}
-                        >
-                          <ImagePlus className="h-8 w-8 text-gray-400" />
-                          {isDragActive ? (
-                            <p className="font-medium">Drop the image here</p>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center gap-2 ">
-                              <p className="text-sm text-gray-500">
-                                Drag & drop an image here, or click to select
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                JPEG, PNG, WEBP (Max 5MB)
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    {form.formState.isSubmitted && (
-                      <>
-                        {!initialValues?._id && !imageFile && (
-                          <p className="text-sm font-medium text-destructive">
-                            Banner image is required
-                          </p>
-                        )}
-                        {initialValues?._id &&
-                          initialValues.image &&
-                          !previewImage &&
-                          !imageFile && (
-                            <p className="text-sm font-medium text-destructive">
-                              Please provide a new image or keep the existing
-                              one
-                            </p>
-                          )}
-                      </>
-                    )}
-                  </div>
-
+                {/* Right Column */}
+                <div className="space-y-6">
                   {/* Associated Product Field */}
                   <FormField
                     control={form.control}
@@ -1063,6 +1058,227 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                       </FormItem>
                     )}
                   />
+
+                  {/* Banner Images */}
+                  <div className="space-y-2">
+                    <FormLabel>Banners*</FormLabel>
+                    <div className="space-y-4">
+                      {/* Existing banners */}
+                      {bannersWithFiles.map((banner, index) => (
+                        <div
+                          key={index}
+                          className="border rounded-lg p-4 relative"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="font-medium">
+                              {
+                                BANNER_POSITIONS.find(
+                                  (p) => p.value === banner.position
+                                )?.label
+                              }
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeBanner(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium mb-2">
+                                Desktop Image
+                              </p>
+                              {banner.desktopImage ? (
+                                <div className="relative aspect-video rounded-md overflow-hidden">
+                                  <Image
+                                    src={
+                                      typeof banner.desktopImage === "string"
+                                        ? banner.desktopImage
+                                        : URL.createObjectURL(
+                                            banner.desktopImage
+                                          )
+                                    }
+                                    alt={`Banner ${index + 1}`}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="aspect-video bg-stone-100 dark:bg-stone-800 rounded-md flex items-center justify-center">
+                                  <p className="text-sm text-stone-500">
+                                    No image
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <p className="text-sm font-medium mb-2">
+                                Mobile Image
+                              </p>
+                              {banner.mobileImage ? (
+                                <div className="relative aspect-video rounded-md overflow-hidden">
+                                  <Image
+                                    src={
+                                      typeof banner.mobileImage === "string"
+                                        ? banner.mobileImage
+                                        : URL.createObjectURL(
+                                            banner.mobileImage
+                                          )
+                                    }
+                                    alt={`Mobile Banner ${index + 1}`}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="aspect-video bg-stone-100 dark:bg-stone-800 rounded-md flex items-center justify-center">
+                                  <p className="text-sm text-stone-500">
+                                    No image
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Add new banner section */}
+                      <div className="border rounded-lg p-4">
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium mb-2">
+                            Select Position
+                          </label>
+                          <Select
+                            value={newBannerPosition}
+                            onValueChange={setNewBannerPosition}
+                          >
+                            <SelectTrigger className="w-full cursor-pointer">
+                              <SelectValue placeholder="Select banner position" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BANNER_POSITIONS.map((position) => (
+                                <SelectItem
+                                  key={position.value}
+                                  value={position.value}
+                                >
+                                  {position.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium mb-2">
+                              Desktop Image*
+                            </p>
+                            <div
+                              {...getDesktopRootProps()}
+                              className="border-2 border-dashed rounded-md p-4 text-center cursor-pointer hover:border-primary"
+                            >
+                              <input {...getDesktopInputProps()} />
+                              {newBannerDesktopFile ? (
+                                <div className="relative aspect-video">
+                                  <Image
+                                    src={URL.createObjectURL(
+                                      newBannerDesktopFile
+                                    )}
+                                    alt="Desktop banner preview"
+                                    fill
+                                    className="object-cover rounded-md"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setNewBannerDesktopFile(null);
+                                    }}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center gap-2 h-full">
+                                  <ImagePlus className="h-6 w-6 text-gray-400" />
+                                  <p className="text-sm">
+                                    Click or drag to upload
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    JPEG, PNG, WEBP (Max 5MB)
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-medium mb-2">
+                              Mobile Image (Optional)
+                            </p>
+                            <div
+                              {...getMobileRootProps()}
+                              className="border-2 border-dashed rounded-md p-4 text-center cursor-pointer hover:border-primary"
+                            >
+                              <input {...getMobileInputProps()} />
+                              {newBannerMobileFile ? (
+                                <div className="relative aspect-video">
+                                  <Image
+                                    src={URL.createObjectURL(
+                                      newBannerMobileFile
+                                    )}
+                                    alt="Mobile banner preview"
+                                    fill
+                                    className="object-cover rounded-md"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setNewBannerMobileFile(null);
+                                    }}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center gap-2 h-full">
+                                  <ImagePlus className="h-6 w-6 text-gray-400" />
+                                  <p className="text-sm">
+                                    Click or drag to upload
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    JPEG, PNG, WEBP (Max 5MB)
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button
+                          type="button"
+                          className="mt-4 w-full"
+                          onClick={addNewBanner}
+                          disabled={!newBannerPosition || !newBannerDesktopFile}
+                        >
+                          Add Banner
+                        </Button>
+                      </div>
+                    </div>
+                    {/* {form.formState.errors.banners && (
+                      <p className="text-sm font-medium text-destructive">
+                        {form.formState.errors.banners.message}
+                      </p>
+                    )} */}
+                  </div>
                 </div>
               </div>
             </form>

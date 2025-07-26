@@ -1,8 +1,16 @@
+import { Metadata } from "next";
 import React from "react";
+
+const pageTitle = "Privacy Policy";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: "Our privacy policy for using DWEC WINERY services",
+};
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 text-sm lg:py-16">
+    <div className="max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16">
       <h1 className="text-3xl font-bold text-center mb-6">
         Privacy Policy for DWEC WINERY
       </h1>

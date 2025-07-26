@@ -124,7 +124,7 @@ export const getFavourites = async () => {
 
 export const getAds = async (params?: FilterAdsParams) => {
   try {
-    const response = await instance.get(`/users/ads/get-ads`, { params });
+    const response = await instance.get(`/users/ads/get-user-ads`, { params });
 
     return handleResponse(response);
   } catch (error) {
@@ -157,7 +157,7 @@ export const getAdminAdById = async (id: string) => {
  */
 export const createAd = async (data: FormData) => {
   try {
-    const response = await instance.post(`/admin/create-ad`, data, {
+    const response = await instance.post(`/admin/new-create-ad`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -171,7 +171,7 @@ export const createAd = async (data: FormData) => {
 
 export const updateAd = async (id: string, data: FormData) => {
   try {
-    const response = await instance.patch(`/admin/update-ad/${id}`, data, {
+    const response = await instance.patch(`/admin/new-update-ad/${id}`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

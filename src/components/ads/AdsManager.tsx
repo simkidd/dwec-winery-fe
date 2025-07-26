@@ -16,35 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import useAds from "@/hooks/use-ads";
 import { deleteAd } from "@/lib/api/products";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { formatDate } from "date-fns";
-import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "../ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import AdForm from "./AdForm";
-
-const formatPosition = (position: string) => {
-  const positionMap: Record<string, string> = {
-    hero: "Hero",
-    featured: "Featured",
-    sidebar: "Sidebar",
-    promotion: "Promotion",
-  };
-  return positionMap[position] || position;
-};
+import AdsTable from "./AdsTable";
 
 const AdsManager = () => {
   const queryClient = useQueryClient();
@@ -112,124 +92,12 @@ const AdsManager = () => {
               <Loader2 className="animate-spin text-primary" />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Preview</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Valid From</TableHead>
-                  <TableHead>Expires On</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {ads.map((ad) => (
-                  <TableRow key={ad._id}>
-                    <TableCell>
-                      <div
-                        className="relative w-20 h-10 rounded-md overflow-hidden border cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => ad.image && openImagePreview(ad.image)}
-                      >
-                        {ad.image ? (
-                          <Image
-                            src={ad.image}
-                            alt={ad.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted"></div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium min-w-[200px] ">
-                      <span className="line-clamp-2 text-wrap">{ad.name}</span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {formatPosition(ad.position)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(new Date(ad.validFrom), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(new Date(ad.expiresOn), "MMM d, yyyy")}
-                    </TableCell>
-                    <TableCell className="min-w-[150px] max-w-[160px]">
-                      <span className="text-wrap line-clamp-2">
-                        {ad.associatedProduct?.name || "N/A"}
-                      </span>
-                      {ad.otherAssociatedProducts?.length > 0 && (
-                        <span className="text-muted-foreground text-xs block">
-                          +{ad.otherAssociatedProducts.length} more
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={ad.isActive ? "default" : "secondary"}
-                        className={
-                          ad.isActive ? "bg-green-100 text-green-800" : ""
-                        }
-                      >
-                        {ad.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {/* <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="cursor-pointer"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>View Info</TooltipContent>
-                        </Tooltip> */}
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AdForm initialValues={ad}>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                            </AdForm>
-                          </TooltipTrigger>
-                          <TooltipContent>Edit</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive cursor-pointer"
-                              onClick={() => handleDelete(ad._id)}
-                              disabled={deleteAdMutation.isPending}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Delete</TooltipContent>
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <AdsTable
+              ads={ads}
+              onDelete={handleDelete}
+              isDeleting={deleteAdMutation.isPending}
+              onPreviewImage={openImagePreview}
+            />
           )}
         </CardContent>
       </Card>

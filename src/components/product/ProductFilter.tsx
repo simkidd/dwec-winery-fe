@@ -229,7 +229,13 @@ const ProductFilter = () => {
         <div className="flex items-baseline justify-between">
           <h4 className="font-medium text-lg">Filter By Price</h4>
 
-          <Button variant={'link'} className="cursor-pointer" onClick={applyFilters}>Apply</Button>
+          <Button
+            variant={"link"}
+            className="cursor-pointer"
+            onClick={applyFilters}
+          >
+            Apply
+          </Button>
         </div>
 
         <div className="space-y-4 pt-2">
