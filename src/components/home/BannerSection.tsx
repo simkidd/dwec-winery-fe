@@ -1,11 +1,8 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  CarouselItem
 } from "@/components/ui/carousel";
 import useAds from "@/hooks/use-ads";
 import { FilterAdsParams, IAds } from "@/interfaces/ads.interface";
@@ -127,7 +124,7 @@ const BannerSection = ({
                         <div className="w-full h-full relative">
                           {/* Desktop Image */}
                           <div
-                            className="hidden md:block w-full h-full "
+                            className="block w-full h-full "
                             style={{
                               backgroundImage: `url(${banner?.image})`,
                               backgroundSize: "cover",
@@ -136,7 +133,7 @@ const BannerSection = ({
                             }}
                           />
                           {/* Mobile Image */}
-                          {banner?.mobileImage && (
+                          {/* {banner?.mobileImage && (
                             <div
                               className="md:hidden w-full h-full "
                               style={{
@@ -145,7 +142,7 @@ const BannerSection = ({
                                 backgroundPosition: "center",
                               }}
                             />
-                          )}
+                          )} */}
                         </div>
                       </Link>
                     </div>
@@ -154,12 +151,12 @@ const BannerSection = ({
               );
             })}
           </CarouselContent>
-          {displayedAds.length > 1 && (
+          {/* {displayedAds.length > 1 && (
             <>
               <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
               <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
             </>
-          )}
+          )} */}
         </Carousel>
       ) : (
         // Single banner display
@@ -168,11 +165,11 @@ const BannerSection = ({
           const banner = ad.banners?.find((b) => b.position === position);
 
           return (
-            <Card
+            <div
               key={ad._id}
               className="border-0 p-0 rounded-none overflow-hidden"
             >
-              <CardContent
+              <div
                 className={`relative p-0 ${dimensions.desktop.aspect} md:${dimensions.mobile.aspect}`}
               >
                 <Link
@@ -183,7 +180,7 @@ const BannerSection = ({
                   <div className="w-full h-full relative">
                     {/* Desktop Image */}
                     <div
-                      className="hidden md:block w-full h-full "
+                      className="block w-full h-full "
                       style={{
                         backgroundImage: `url(${banner?.image})`,
                         backgroundSize: "cover",
@@ -191,7 +188,7 @@ const BannerSection = ({
                       }}
                     />
                     {/* Mobile Image */}
-                    {banner?.mobileImage && (
+                    {/* {banner?.mobileImage && (
                       <div
                         className="md:hidden w-full h-full "
                         style={{
@@ -200,11 +197,11 @@ const BannerSection = ({
                           backgroundPosition: "center",
                         }}
                       />
-                    )}
+                    )} */}
                   </div>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })
       )}

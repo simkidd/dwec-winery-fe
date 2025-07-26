@@ -34,7 +34,7 @@ const AppDownloadSection = () => {
           </div>
 
           {/* Right Column - Content */}
-          <div className="max-w-xl mx-auto text-center lg:text-left py-10">
+          <div className="max-w-xl mx-auto text-center lg:text-left py-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
