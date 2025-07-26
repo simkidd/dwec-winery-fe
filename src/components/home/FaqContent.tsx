@@ -1,28 +1,86 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Gift, Mail, Phone, Truck, Wine } from "lucide-react";
-import { useState } from "react";
+import {
+  ChevronDown,
+  Mail,
+  Phone,
+  Truck,
+  Wine,
+  Star,
+  ShoppingCart,
+} from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 
+// Define types for better TypeScript support
+interface FAQQuestion {
+  question: string;
+  answer: string | React.ReactNode;
+  searchableText?: string; // For search functionality
+}
+
+interface FAQCategory {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  questions: FAQQuestion[];
+}
+
 const FaqContent = () => {
-  const [activeTab, setActiveTab] = useState("delivery");
+  const [activeTab, setActiveTab] = useState("dwec");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const faqData = [
+  const faqData: FAQCategory[] = [
+    {
+      id: "dwec",
+      title: "About DWEC Winery",
+      icon: <Star className="w-5 h-5" />,
+      questions: [
+        {
+          question: "What is DWEC WINERY?",
+          answer:
+            "DWEC WINERY is a premium online and offline platform offering a curated selection of wines, spirits, champagne, and non-alcoholic beverages. We are committed to delivering excellent service, 24/7 availability, and top-quality products tailored to every lifestyle and occasion.",
+        },
+        {
+          question: "Where is DWEC WINERY located?",
+          answer:
+            "Our physical store is located at: DWEC WINERY, 86A Woji Road, GRA Phase 2, Port Harcourt, Rivers State, Nigeria.",
+        },
+        {
+          question: "How do I contact DWEC WINERY?",
+          answer: (
+            <div>
+              <p>You can reach us through:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Phone/WhatsApp: +2347 03625 4646, +2348 05823 2688</li>
+                <li>
+                  Store Visit: DWEC WINERY, 86A Woji Road, GRA Phase 2, PHC,
+                  Rivers State
+                </li>
+                <li>Email: dwecwinery@gmail.com web: www.dwec.ng</li>
+                <li>Social Media: Instagram & TikTok @dwecwinery</li>
+              </ul>
+            </div>
+          ),
+          searchableText:
+            "Phone WhatsApp +2347 03625 4646 +2348 05823 2688 Store Visit DWEC WINERY 86A Woji Road GRA Phase 2 PHC Rivers State Email dwecwinery@gmail.com www.dwec.ng Social Media Instagram TikTok @dwecwinery",
+        },
+      ],
+    },
     {
       id: "delivery",
       title: "Delivery & Shipping",
       icon: <Truck className="w-5 h-5" />,
       questions: [
         {
-          question: "What are your delivery options?",
+          question: "Do you deliver?",
           answer:
-            "We offer same-day delivery for orders placed before 2pm in major cities, next-day delivery for other areas, and express 3-hour delivery for an additional fee.",
+            "Yes, we offer fast and reliable delivery within and outside of Rivers State. Same-day delivery is available depending on your location and the time of order.",
         },
         {
-          question: "Do you ship internationally?",
+          question: "Do you ship outside Rivers State?",
           answer:
-            "Yes, we ship to over 30 countries worldwide. International shipping rates and delivery times vary by destination.",
+            "Yes, we deliver nationwide. Please contact us directly to discuss possibilities.",
         },
       ],
     },
@@ -32,42 +90,117 @@ const FaqContent = () => {
       icon: <Wine className="w-5 h-5" />,
       questions: [
         {
-          question: "How do I verify a bottle's authenticity?",
-          answer:
-            "All our premium bottles feature holographic seals, batch numbers, and QR codes that can be scanned for verification through the producer's official system.",
+          question: "What types of products do you offer?",
+          answer: (
+            <div>
+              <p>Our categories include:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Wines: Red, White, Rosé, Sparkling, Dessert</li>
+                <li>Champagne</li>
+                <li>Whiskey: Scotch, Bourbon, Single-Malt</li>
+                <li>Cognac & Brandy</li>
+                <li>Vodka</li>
+                <li>Rum</li>
+                <li>Tequila & Gin</li>
+                <li>Liqueurs & Aperitifs</li>
+                <li>Non-Alcoholic Beverages: Juices, sodas, cocktail mixers</li>
+              </ul>
+            </div>
+          ),
+          searchableText:
+            "Wines Red White Rosé Sparkling Dessert Champagne Whiskey Scotch Bourbon Single-Malt Cognac Brandy Vodka Rum Tequila Gin Liqueurs Aperitifs Non-Alcoholic Beverages Juices sodas cocktail mixers",
         },
         {
-          question: "What's your oldest vintage available?",
+          question: "Is there an age restriction?",
           answer:
-            "Our collection includes rare vintages dating back to 1975 for select wines. Contact our sommelier for access to our vintage catalog.",
+            "Yes. In compliance with Nigerian law, customers must be 18 years or older to purchase alcoholic beverages from DWEC WINERY.",
         },
       ],
     },
     {
-      id: "services",
-      title: "Services",
-      icon: <Gift className="w-5 h-5" />,
+      id: "ordering",
+      title: "Orders & Payments",
+      icon: <ShoppingCart className="w-5 h-5" />,
       questions: [
         {
-          question: "Do you offer corporate gifting?",
-          answer:
-            "Our concierge team creates custom corporate gift packages with branded messaging, starting from ₦500,000 with volume discounts available.",
+          question: "How can I place an order?",
+          answer: (
+            <div>
+              <p>You can order through any of the following:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Call/WhatsApp: +2347 03625 4646, +2348 05823 2688</li>
+                <li>Visit our store at the address above</li>
+                <li>Connect via social media Instagram, Twitter @dwecwinery</li>
+              </ul>
+            </div>
+          ),
+          searchableText:
+            "Call WhatsApp +2347 03625 4646 +2348 05823 2688 Visit store social media Instagram Twitter @dwecwinery",
         },
         {
-          question: "Can I schedule recurring deliveries?",
+          question: "What payment methods do you accept?",
+          answer: (
+            <div>
+              <p>We accept:</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Bank transfers</li>
+                <li>POS payments (in-store)</li>
+                <li>Mobile money</li>
+                <li>Cash (on delivery, where applicable)</li>
+              </ul>
+            </div>
+          ),
+          searchableText:
+            "Bank transfers POS payments in-store Mobile money Cash delivery",
+        },
+        {
+          question: "What is your return policy?",
           answer:
-            "Yes, our subscription service offers weekly, bi-weekly, or monthly deliveries with 15% discount on all recurring orders.",
+            "Returns are accepted if the product is damaged, defective, or incorrect. Returns must be initiated within 24 hours of delivery or upon delivery. Please refer to our full Return Policy for details.",
+        },
+        {
+          question: "Can I request gift packaging or custom orders?",
+          answer:
+            "Yes! We offer custom gift bundles, luxury packaging, and hampers for personal and corporate occasions. Contact us directly for tailored packages.",
+        },
+        {
+          question: "Do you offer corporate or bulk orders?",
+          answer:
+            "Absolutely. We serve individual clients, corporate customers, event planners, club, lounges, hotels, and restaurants. Bulk and wholesale options are available with competitive pricing.",
+        },
+        {
+          question: "Do you offer discounts or loyalty programs?",
+          answer:
+            "Yes! We regularly provide seasonal offers, loyalty rewards, and referral incentives. Follow us on social media @dwecwinery.",
         },
       ],
     },
+    // {
+    //   id: "services",
+    //   title: "Services & Special Orders",
+    //   icon: <Gift className="w-5 h-5" />,
+    //   questions: [
+
+    //   ],
+    // },
   ];
+
+  // Helper function to get searchable text from answer
+  const getSearchableText = (item: FAQQuestion): string => {
+    if (item.searchableText) {
+      return item.searchableText;
+    }
+    return typeof item.answer === "string" ? item.answer : "";
+  };
 
   const filteredQuestions = searchQuery
     ? faqData.flatMap((category) =>
         category.questions.filter(
           (q) =>
             q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            q.answer.toLowerCase().includes(searchQuery.toLowerCase())
+            getSearchableText(q)
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
         )
       )
     : faqData.find((cat) => cat.id === activeTab)?.questions || [];
@@ -192,7 +325,7 @@ const FaqContent = () => {
             </Button>
             <Button asChild size={"lg"} variant={"outline"}>
               <a
-                href="mailto:concierge@dwecwinery.com"
+                href="mailto:info@dwecwinery.ng"
                 className="inline-flex items-center justify-center gap-3 px-8   rounded-lg hover:bg-stone-700/50 transition-colors text-lg"
               >
                 <Mail className="w-5 h-5" />
@@ -211,7 +344,7 @@ const FAQItem = ({
   answer,
 }: {
   question: string;
-  answer: string;
+  answer: string | React.ReactNode;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

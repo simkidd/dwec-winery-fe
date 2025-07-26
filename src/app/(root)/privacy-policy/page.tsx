@@ -7,7 +7,7 @@ const PrivacyPolicyPage = () => {
         Privacy Policy for DWEC WINERY
       </h1>
       <p className="text-stone-500 dark:text-stone-400 mb-8">
-        Effective Date: [Insert Date]
+        Effective Date: Jan 01, 2025
       </p>
 
       <div className="mb-8">

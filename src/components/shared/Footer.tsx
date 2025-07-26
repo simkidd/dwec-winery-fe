@@ -76,8 +76,8 @@ const Footer = () => {
                 { href: "/blog", text: "Blog" },
                 { href: "/contact-us", text: "Contact Us" },
                 { href: "/privacy-policy", text: "Privacy Policy" },
-                { href: "#", text: "Return & Shopping Policy" },
-                { href: "#", text: "Terms & Conditions" },
+                { href: "/return-policy", text: "Return & Shopping Policy" },
+                { href: "/terms-and-conditions", text: "Terms & Conditions" },
               ].map((link, index) => (
                 <motion.li
                   key={index}
@@ -234,7 +234,7 @@ const Footer = () => {
           <div className="flex space-x-6 mt-4 md:mt-0">
             {[
               { href: "/privacy-policy", text: "Privacy Policy" },
-              { href: "#", text: "Terms of Service" },
+              { href: "/terms-and-conditions", text: "Terms of Service" },
             ].map((item, index) => (
               <div key={index}>
                 <Link
