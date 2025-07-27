@@ -3,5 +3,5 @@ export const config = {
   SITE_DESCRIPTION:
     process.env.WEBSITE_DESCRIPTION ||
     "Your One-Stop App for All Kinds of Drinks",
-  SITE_URL: process.env.WEBSITE_URL || "",
+  SITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL || "http://dwecwinery.ng",
 };
