@@ -20,3 +20,16 @@
     transform: rotate(45deg);
   }
 }
+
+.scroll-top {
+  transform: scale(0);
+  transition: all 0.35s ease;
+
+  &:active {
+    background: #555;
+  }
+
+  &.show-button {
+    transform: scale(1);
+  }
+}

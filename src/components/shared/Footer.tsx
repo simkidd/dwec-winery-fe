@@ -1,10 +1,11 @@
 "use client";
-import { Apple, Facebook, GooglePlay, Instagram } from "iconsax-reactjs";
+import { motion } from "framer-motion";
+import { Apple, GooglePlay, Instagram } from "iconsax-reactjs";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { FaTiktok } from "react-icons/fa";
 import { AnimatedLink } from "./AnimatedLink";
-import { motion } from "framer-motion";
 
 const Footer = () => {
   return (
@@ -15,10 +16,10 @@ const Footer = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 mb-12"
         >
           {/* Brand Info */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="col-span-1 lg:col-span-4 space-y-6">
             <div className="flex items-center space-x-2 mb-4">
               <div className="flex items-center space-x-2 mb-4">
                 <motion.div
@@ -44,28 +45,10 @@ const Footer = () => {
               best prices, with 24/7 customer support, secure payment options,
               and fast same-day delivery across Rivers State.
             </p>
-            <div className="flex space-x-5">
-              <motion.a
-                href="#"
-                className="text-stone-400 hover:text-primary transition-colors"
-                whileHover={{ y: -2 }}
-              >
-                <span className="sr-only">Facebook</span>
-                <Facebook variant="Bold" size={20} />
-              </motion.a>
-              <motion.a
-                href="#"
-                className="text-stone-400 hover:text-primary transition-colors"
-                whileHover={{ y: -2 }}
-              >
-                <span className="sr-only">Instagram</span>
-                <Instagram variant="Bold" size={20} />
-              </motion.a>
-            </div>
           </div>
 
           {/* Quick Links */}
-          <div className="col-span-1">
+          <div className="col-span-1 lg:col-span-2">
             <h3 className="text-lg font-semibold mb-6 text-stone-50">
               Quick Links
             </h3>
@@ -98,7 +81,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <h3 className="text-lg font-semibold mb-6 text-stone-50">
               Contact Us
             </h3>
@@ -175,7 +158,7 @@ const Footer = () => {
           </div>
 
           {/* App Download */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -217,6 +200,29 @@ const Footer = () => {
                 ))}
               </div>
             </motion.div>
+
+            <div className="flex space-x-5 mt-8">
+              <motion.a
+                href="https://www.instagram.com/dwecwinery"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-400 hover:text-primary transition-colors"
+                whileHover={{ y: -2 }}
+              >
+                <span className="sr-only">Instagram</span>
+                <Instagram variant="Bold" size={20} />
+              </motion.a>
+              <motion.a
+                href="https://www.tiktok.com/@dwecwinery"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-stone-400 hover:text-primary transition-colors"
+                whileHover={{ y: -2 }}
+              >
+                <span className="sr-only">Tiktok</span>
+                <FaTiktok size={20} />
+              </motion.a>
+            </div>
           </div>
         </motion.div>
 

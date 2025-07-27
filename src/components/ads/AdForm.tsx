@@ -35,14 +35,14 @@ import {
 import { Switch } from "@/components/ui/switch";
 import useProducts from "@/hooks/use-products";
 import { IAds } from "@/interfaces/ads.interface";
-import { ProductFilterInput } from "@/interfaces/product.interface";
+import { IProduct, ProductFilterInput } from "@/interfaces/product.interface";
 import { createAd, updateAd } from "@/lib/api/products";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { format } from "date-fns";
-import { CalendarIcon, ImagePlus, Loader2, Search, X } from "lucide-react";
+import { CalendarIcon, ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -50,11 +50,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { InputWithAffix } from "../shared/InputWithAffix";
-import { Checkbox } from "../ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { ScrollArea } from "../ui/scroll-area";
-import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
+import { MultiProductSelectionDialog } from "./MultiProductSelectionDialog";
+import { ProductSelectionDialog } from "./ProductSelectionDialog";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
 
@@ -136,6 +135,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<ProductFilterInput>({
     limit: 10,
+    search: "",
   });
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [isOtherProductsDialogOpen, setIsOtherProductsDialogOpen] =
@@ -154,12 +154,31 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     null
   );
 
-  const { isPending: productsLoading, products } = useProducts(filters);
+  const {
+    infiniteQuery: {
+      products: infiniteProducts,
+      isLoading: isLoadingInfinite,
+      isFetchingNextPage,
+      fetchNextPage,
+      hasNextPage,
+    },
+  } = useProducts(filters);
 
   // Add new state for temporary selections
   const [tempAssociatedProduct, setTempAssociatedProduct] =
     useState<string>("");
   const [tempOtherProducts, setTempOtherProducts] = useState<string[]>([]);
+  // product management
+  const [allProducts, setAllProducts] = useState<IProduct[]>([]);
+
+  useEffect(() => {
+    if (
+      infiniteProducts.length > 0 &&
+      JSON.stringify(allProducts) !== JSON.stringify(infiniteProducts)
+    ) {
+      setAllProducts(infiniteProducts);
+    }
+  }, [infiniteProducts]);
 
   const handleSearch = useCallback((search: string) => {
     setSearchTerm(search);
@@ -168,10 +187,6 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
       search,
     }));
   }, []);
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const form = useForm<AdsFormValues>({
     resolver: zodResolver(formSchema),
@@ -378,10 +393,10 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     }
   };
 
-  const selectedProduct = products.find(
+  const selectedProduct = allProducts.find(
     (p) => p._id === form.watch("associatedProduct")
   );
-  const selectedOtherProducts = products.filter((p) =>
+  const selectedOtherProducts = allProducts.filter((p) =>
     form.watch("otherAssociatedProducts")?.includes(p._id)
   );
 
@@ -401,23 +416,27 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
     form.setValue("associatedProduct", tempAssociatedProduct);
     setIsProductDialogOpen(false);
     setSearchTerm("");
+    setFilters({ search: "" });
   }, [tempAssociatedProduct, form]);
 
   const confirmOtherProductsSelection = useCallback(() => {
     form.setValue("otherAssociatedProducts", tempOtherProducts);
     setIsOtherProductsDialogOpen(false);
     setSearchTerm("");
+    setFilters({ search: "" });
   }, [tempOtherProducts, form]);
 
   // Handle dialog cancellations
   const cancelProductSelection = useCallback(() => {
     setIsProductDialogOpen(false);
     setSearchTerm("");
+    setFilters({ search: "" });
   }, []);
 
   const cancelOtherProductsSelection = useCallback(() => {
     setIsOtherProductsDialogOpen(false);
     setSearchTerm("");
+    setFilters({ search: "" });
   }, []);
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -689,7 +708,7 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                   <FormField
                     control={form.control}
                     name="associatedProduct"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel>Associated Product*</FormLabel>
                         <div className="flex items-center gap-2">
@@ -719,122 +738,29 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                               <span>Select a product</span>
                             )}
                           </Button>
-                          {selectedProduct && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => field.onChange("")}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
                         </div>
                         <FormMessage />
 
-                        {/* Product Selection Dialog */}
-                        <Dialog
+                        {/* For the associated product dialog: */}
+                        <ProductSelectionDialog
                           open={isProductDialogOpen}
                           onOpenChange={setIsProductDialogOpen}
-                        >
-                          <DialogContent className="max-h-[80vh] overflow-hidden">
-                            <DialogHeader>
-                              <DialogTitle>
-                                Select Associated Product
-                              </DialogTitle>
-                            </DialogHeader>
-                            <div className="relative">
-                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                              <Input
-                                placeholder="Search products..."
-                                className="pl-10 focus-visible:ring-0 focus-visible:border-primary shadow-none"
-                                value={searchTerm}
-                                onChange={(e) => handleSearch(e.target.value)}
-                              />
-                            </div>
-                            <ScrollArea className="max-h-[240px]">
-                              {productsLoading ? (
-                                <div className="space-y-2">
-                                  {[...Array(5)].map((_, i) => (
-                                    <div
-                                      key={i}
-                                      className="flex items-center space-x-3 p-2"
-                                    >
-                                      <Skeleton className="h-4 w-4 rounded-full" />
-                                      <Skeleton className="h-12 w-12 rounded-md" />
-                                      <Skeleton className="h-4 w-[200px]" />
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : filteredProducts.length > 0 ? (
-                                <RadioGroup
-                                  value={tempAssociatedProduct}
-                                  onValueChange={setTempAssociatedProduct}
-                                  className="divide-y gap-0"
-                                >
-                                  {filteredProducts.map((product) => (
-                                    <div
-                                      key={product._id}
-                                      className={`flex items-center p-2 cursor-pointer hover:bg-accent ${
-                                        tempAssociatedProduct === product._id
-                                          ? "bg-accent"
-                                          : ""
-                                      }`}
-                                      onClick={() => {
-                                        setTempAssociatedProduct(product._id);
-                                      }}
-                                    >
-                                      <div className="flex items-center space-x-3">
-                                        <RadioGroupItem
-                                          value={product._id}
-                                          id={product._id}
-                                        />
-                                        {product.images?.length > 0 && (
-                                          <div className="relative w-12 h-12 rounded-md overflow-hidden bg-primary/10">
-                                            <Image
-                                              src={product.images[0]}
-                                              alt={product.name}
-                                              width={50}
-                                              height={50}
-                                              className="w-full h-full object-contain"
-                                            />
-                                          </div>
-                                        )}
-                                        <label
-                                          htmlFor={product._id}
-                                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                          {product.name}
-                                        </label>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </RadioGroup>
-                              ) : (
-                                <div className="text-center py-12 text-muted-foreground">
-                                  No products found
-                                </div>
-                              )}
-                            </ScrollArea>
-
-                            <DialogFooter className="flex justify-end gap-2 pt-4">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={cancelProductSelection}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                type="button"
-                                disabled={!tempAssociatedProduct}
-                                onClick={confirmProductSelection}
-                              >
-                                Done
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                          title="Select Associated Product"
+                          searchTerm={searchTerm}
+                          onSearch={handleSearch}
+                          products={infiniteProducts}
+                          isLoading={isLoadingInfinite}
+                          isFetchingNextPage={isFetchingNextPage}
+                          selectedValue={tempAssociatedProduct}
+                          onSelect={setTempAssociatedProduct}
+                          onConfirm={confirmProductSelection}
+                          onCancel={cancelProductSelection}
+                          selectedProduct={allProducts.find(
+                            (p) => p._id === tempAssociatedProduct
+                          )}
+                          loadMore={fetchNextPage}
+                          hasMore={hasNextPage}
+                        />
                       </FormItem>
                     )}
                   />
@@ -855,6 +781,8 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                           >
                             Select Products ({field.value?.length || 0})
                           </Button>
+
+                          {/* Other Products Preview */}
                           {selectedOtherProducts.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-2">
                               {selectedOtherProducts.map((product) => (
@@ -872,15 +800,20 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                                       />
                                     </div>
                                   )}
-                                  {product.name}
+                                  <span className="truncate max-w-[120px]">
+                                    {product.name}
+                                  </span>
                                   <button
                                     type="button"
                                     className="ml-2"
                                     onClick={() => {
-                                      field.onChange(
-                                        field.value?.filter(
-                                          (id) => id !== product._id
-                                        )
+                                      form.setValue(
+                                        "otherAssociatedProducts",
+                                        form
+                                          .getValues("otherAssociatedProducts")
+                                          ?.filter(
+                                            (id) => id !== product._id
+                                          ) || []
                                       );
                                     }}
                                   >
@@ -894,125 +827,25 @@ const AdForm = ({ initialValues, children }: AdFormProps) => {
                         <FormMessage />
 
                         {/* Other Products Selection Dialog */}
-                        <Dialog
+                        <MultiProductSelectionDialog
                           open={isOtherProductsDialogOpen}
                           onOpenChange={setIsOtherProductsDialogOpen}
-                        >
-                          <DialogContent className="max-h-[80vh] overflow-hidden">
-                            <DialogHeader>
-                              <DialogTitle>
-                                Select Other Associated Products
-                              </DialogTitle>
-                            </DialogHeader>
-                            <div className="relative mb-4">
-                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                              <Input
-                                placeholder="Search products..."
-                                className="pl-10 focus-visible:ring-0 focus-visible:border-primary shadow-none"
-                                value={searchTerm}
-                                onChange={(e) => handleSearch(e.target.value)}
-                              />
-                            </div>
-                            <ScrollArea className=" max-h-[240px] ">
-                              {productsLoading ? (
-                                <div className="space-y-2">
-                                  {[...Array(5)].map((_, i) => (
-                                    <div
-                                      key={i}
-                                      className="flex items-center space-x-3 p-2"
-                                    >
-                                      <Skeleton className="h-4 w-4 rounded" />
-                                      <Skeleton className="h-12 w-12 rounded-md" />
-                                      <Skeleton className="h-4 w-[200px]" />
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : filteredProducts.length > 0 ? (
-                                <div className="divide-y">
-                                  {filteredProducts.map((product) => (
-                                    <div
-                                      key={product._id}
-                                      className={`flex items-center p-2 cursor-pointer hover:bg-accent ${
-                                        tempOtherProducts.includes(product._id)
-                                          ? "bg-accent"
-                                          : ""
-                                      }`}
-                                      onClick={() => {
-                                        const newValues =
-                                          tempOtherProducts.includes(
-                                            product._id
-                                          )
-                                            ? tempOtherProducts.filter(
-                                                (id) => id !== product._id
-                                              )
-                                            : [
-                                                ...tempOtherProducts,
-                                                product._id,
-                                              ];
-                                        setTempOtherProducts(newValues);
-                                      }}
-                                    >
-                                      <div className="flex items-center space-x-3">
-                                        <Checkbox
-                                          id={`other-${product._id}`}
-                                          checked={tempOtherProducts.includes(
-                                            product._id
-                                          )}
-                                          onCheckedChange={(checked) => {
-                                            const newValues = checked
-                                              ? [
-                                                  ...tempOtherProducts,
-                                                  product._id,
-                                                ]
-                                              : tempOtherProducts.filter(
-                                                  (id) => id !== product._id
-                                                );
-                                            setTempOtherProducts(newValues);
-                                          }}
-                                        />
-                                        {product.images?.length > 0 && (
-                                          <div className="relative w-12 h-12 rounded-md overflow-hidden">
-                                            <Image
-                                              src={product.images[0]}
-                                              alt={product.name}
-                                              fill
-                                              className="object-cover"
-                                            />
-                                          </div>
-                                        )}
-                                        <label
-                                          htmlFor={`other-${product._id}`}
-                                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                          {product.name}
-                                        </label>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="text-center py-4 text-muted-foreground">
-                                  No products found
-                                </div>
-                              )}
-                            </ScrollArea>
-                            <DialogFooter className="flex justify-end gap-2 pt-4">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={cancelOtherProductsSelection}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                type="button"
-                                onClick={confirmOtherProductsSelection}
-                              >
-                                Done
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                          title="Select Other Associated Products"
+                          searchTerm={searchTerm}
+                          onSearch={handleSearch}
+                          products={infiniteProducts}
+                          isLoading={isLoadingInfinite}
+                          isFetchingNextPage={isFetchingNextPage}
+                          selectedValues={tempOtherProducts}
+                          onSelect={setTempOtherProducts}
+                          onConfirm={confirmOtherProductsSelection}
+                          onCancel={cancelOtherProductsSelection}
+                          selectedProducts={allProducts.filter((p) =>
+                            tempOtherProducts.includes(p._id)
+                          )}
+                          loadMore={fetchNextPage}
+                          hasMore={hasNextPage}
+                        />
                       </FormItem>
                     )}
                   />
