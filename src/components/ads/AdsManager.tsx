@@ -21,17 +21,30 @@ import { deleteAd } from "@/lib/api/products";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, X } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import AdForm from "./AdForm";
 import AdsTable from "./AdsTable";
 
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
 const AdsManager = () => {
   const queryClient = useQueryClient();
-  const { ads, isPending } = useAds(true);
+  const { ads: allAds, isPending } = useAds(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [adToDelete, setAdToDelete] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
+
+  const paginatedAds = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return allAds.slice(startIndex, startIndex + pageSize);
+  }, [allAds, currentPage, pageSize]);
+
+  const totalItems = allAds.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
   const deleteAdMutation = useMutation({
     mutationFn: deleteAd,
@@ -66,6 +79,15 @@ const AdsManager = () => {
     setPreviewImage(null);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card>
@@ -93,10 +115,16 @@ const AdsManager = () => {
             </div>
           ) : (
             <AdsTable
-              ads={ads}
+              ads={paginatedAds}
               onDelete={handleDelete}
               isDeleting={deleteAdMutation.isPending}
               onPreviewImage={openImagePreview}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+              totalItems={totalItems}
             />
           )}
         </CardContent>
