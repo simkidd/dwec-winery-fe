@@ -80,7 +80,7 @@ const CategoryProductGrid = ({
     sortOptions.find((opt) => opt.value === filter.sort)?.label || "Sort By";
 
   return (
-    <div className="w-full py-6">
+    <div className="w-full py-6 mt-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-8 relative">
           {/* Filters Sidebar - Hidden on small screens */}

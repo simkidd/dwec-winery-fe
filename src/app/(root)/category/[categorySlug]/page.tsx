@@ -1,4 +1,3 @@
-import CategoryProductGrid from "@/components/product/CategoryProductGrid";
 import SubcategoriesGrid from "@/components/product/SubcategoriesGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { ICategory } from "@/interfaces/product.interface";
@@ -123,7 +122,7 @@ const CategoryProducts = async ({
 
       <SubcategoriesGrid category={category} />
 
-      <CategoryProductGrid category={category} />
+      {/* <CategoryProductGrid category={category} /> */}
     </div>
   );
 };

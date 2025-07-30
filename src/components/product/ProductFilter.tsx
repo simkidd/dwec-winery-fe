@@ -1,10 +1,8 @@
 "use client";
-import useCategories from "@/hooks/use-categories";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { FilterX } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -18,13 +16,12 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
-import { Skeleton } from "../ui/skeleton";
 import { Slider } from "../ui/slider";
 
 const ProductFilter = () => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
-  const { categories, isPending: categoriesLoading } = useCategories();
+  // const { categories, isPending: categoriesLoading } = useCategories();
   const isMobile = useIsMobile();
 
   // Local filter state (only applied when clicking Apply)
@@ -87,7 +84,7 @@ const ProductFilter = () => {
             <ScrollArea className="h-[50vh] px-4">
               <div className={`w-full space-y-6`}>
                 {/* Categories Links */}
-                <div className="space-y-2 border-b">
+                {/* <div className="space-y-2 border-b">
                   <h4 className="font-medium text-lg">Categories</h4>
                   <ul className="space-y-2 py-2">
                     {categoriesLoading
@@ -113,7 +110,7 @@ const ProductFilter = () => {
                           </li>
                         ))}
                   </ul>
-                </div>
+                </div> */}
 
                 {/* Price Filter Section */}
                 <div className="space-y-4 border-b pb-4">
@@ -196,7 +193,7 @@ const ProductFilter = () => {
   return (
     <div className="space-y-6">
       {/* Categories Links */}
-      <div className="space-y-2 border-b">
+      {/* <div className="space-y-2 border-b">
         <h4 className="font-medium text-lg">Categories</h4>
         <ul className="py-2 space-y-1">
           {categoriesLoading
@@ -222,7 +219,7 @@ const ProductFilter = () => {
                 </li>
               ))}
         </ul>
-      </div>
+      </div> */}
 
       {/* Price Filter Section */}
       <div className="space-y-4 border-b pb-4">
