@@ -13,21 +13,19 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useCategories from "@/hooks/use-categories";
 import useLogout from "@/hooks/use-logout";
 import { useIsMobile } from "@/hooks/use-mobile";
-import useProducts from "@/hooks/use-products";
 import { IUser } from "@/interfaces/user.interface";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { User } from "iconsax-reactjs";
 import { ChevronLeft, ChevronRight, LogIn, Menu } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
+import Logo from "./Logo";
 import { ScrollArea } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
-import Logo from "./Logo";
 
 type MenuState = "main" | "products" | "categories";
 
@@ -41,36 +39,12 @@ const MenuNavigation = ({
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const { signOut } = useLogout();
-  const { categories } = useCategories();
-  const [filter, setFilter] = useState({});
-  const { products, isPending } = useProducts(filter);
+  const { categories, isPending: loadingCategories } = useCategories();
 
   const [isOpen, setIsOpen] = useState(false);
   const [menuState, setMenuState] = useState<MenuState>("main");
   const [menuHistory, setMenuHistory] = useState<MenuState[]>(["main"]);
   const [direction, setDirection] = useState(1);
-
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-
-  // Prefetch all products on initial load
-  useEffect(() => {
-    if (categories?.length) {
-      setFilter({
-        category: categories.map((c) => c._id), // Get all category IDs at once
-        limit: 20,
-      });
-    }
-  }, [categories]);
-
-  // Filter products client-side based on active category
-  const filteredProducts = activeCategory
-    ? products?.filter((p) => p.category._id === activeCategory)
-    : products;
-
-  // Handle category hover
-  const handleCategoryHover = (categoryId: string | null) => {
-    setActiveCategory(categoryId);
-  };
 
   const isActive = (href: string) => {
     return (
@@ -313,16 +287,37 @@ const MenuNavigation = ({
         <span className="ml-2 font-medium">All Categories</span>
       </div>
 
-      {categories?.map((category) => (
-        <MobileNavItem
-          key={category._id}
-          href={`/category/${category.slug}`}
-          isActive={pathname.includes(`/category/${category.slug}`)}
-          onClick={closeMenu}
-        >
-          {category.name}
-        </MobileNavItem>
-      ))}
+      <ScrollArea className="h-[calc(100vh-180px)]">
+        <div className="space-y-1">
+          {categories?.map((category) => (
+            <div key={category._id}>
+              <MobileNavItem
+                href={`/category/${category.slug}`}
+                isActive={pathname.includes(`/category/${category.slug}`)}
+                onClick={closeMenu}
+              >
+                {category.name}
+              </MobileNavItem>
+              {category.subCategories && category.subCategories.length > 0 && (
+                <div className="pl-4">
+                  {category.subCategories.map((subcategory) => (
+                    <MobileNavItem
+                      key={subcategory._id}
+                      href={`/category/${category.slug}/${subcategory.slug}`}
+                      isActive={pathname.includes(
+                        `/category/${category.slug}/${subcategory.slug}`
+                      )}
+                      onClick={closeMenu}
+                    >
+                      {subcategory.name}
+                    </MobileNavItem>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     </motion.div>
   );
 
@@ -371,135 +366,77 @@ const MenuNavigation = ({
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>All Products</NavigationMenuTrigger>
-          <NavigationMenuContent className="p-0 h-[500px]">
-            <div className="grid w-[800px] h-full gap-6 md:grid-cols-[250px_1fr] text-sm">
-              {/* Categories Column */}
-              <div className="border-r ">
-                <ScrollArea className="h-full p-2">
-                  <ul className="space-y-1">
-                    {/* Featured Products Section */}
-                    <li
-                      className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center ${
-                        !activeCategory
-                          ? "bg-accent font-medium"
-                          : "hover:bg-accent/50"
-                      }`}
-                      onMouseEnter={() => handleCategoryHover(null)}
+        {loadingCategories ? (
+          <>
+            {[...Array(6)].map((_, i) => (
+              <NavigationMenuItem key={i}>
+                <Skeleton className="h-6 w-12 rounded-md" />
+              </NavigationMenuItem>
+            ))}
+          </>
+        ) : (
+          categories.map((category) => (
+            <NavigationMenuItem key={category._id}>
+              {category.subCategories && category.subCategories.length > 0 ? (
+                <>
+                  <NavigationMenuTrigger>
+                    <NavigationMenuLink
+                      asChild
+                      className={cn(
+                        "border-b-3 border-b-transparent capitalize",
+                        navigationMenuTriggerStyle(),
+                        isActive(`/category/${category.slug}`) &&
+                          "border-b-primary font-semibold"
+                      )}
                     >
-                      Featured Products
-                      <ChevronRight className="h-3 w-3 ml-auto" />
-                    </li>
-
-                    {/* Best Selling Section */}
-                    <li
-                      className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center hover:bg-accent/50`}
-                      onMouseEnter={() => handleCategoryHover(null)}
-                    >
-                      Best Selling
-                      <ChevronRight className="h-3 w-3 ml-auto" />
-                    </li>
-
-                    {/* Categories Section */}
-                    {categories?.map((category) => (
-                      <li
-                        key={category._id}
-                        className={`px-3 py-2 rounded-md transition-colors cursor-pointer flex items-center ${
-                          activeCategory === category._id
-                            ? "bg-accent font-medium"
-                            : "hover:bg-accent/50"
-                        }`}
-                        onMouseEnter={() => handleCategoryHover(category._id)}
-                      >
+                      <Link href={`/category/${category.slug}`}>
                         {category.name}
-
-                        <span className="ml-auto">
-                          <ChevronRight className="h-3 w-3" />
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </ScrollArea>
-              </div>
-
-              {/* Products Column */}
-              <div className="p-2 py-4">
-                <Link
-                  href={
-                    activeCategory
-                      ? `/category/${
-                          categories?.find((c) => c._id === activeCategory)
-                            ?.slug
-                        }`
-                      : "/products"
-                  }
-                  className="hover:underline hover:underline-offset-2"
-                >
-                  <h3 className="text-base font-semibold mb-4 flex items-center">
-                    {activeCategory
-                      ? `All ${
-                          categories?.find((c) => c._id === activeCategory)
-                            ?.name
-                        }`
-                      : "Featured Products"}
-                    <span className="ml-1">
-                      <ChevronRight className="h-4 w-4" />
-                    </span>
-                  </h3>
-                </Link>
-
-                <ScrollArea className="flex-1 p-4">
-                  {isPending ? (
-                    <ul className="grid grid-cols-5 gap-4">
-                      {[...Array(8)].map((_, i) => (
-                        <li key={i} className="w-full">
-                          <div className="flex flex-col items-center gap-2">
-                            <Skeleton className="size-16 rounded-full" />
-                            <div className="w-full space-y-1 text-center">
-                              <Skeleton className="h-4 w-3/4 mx-auto" />
-                              <Skeleton className="h-3 w-1/2 mx-auto" />
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : filteredProducts?.length ? (
-                    <ul className="grid grid-cols-5 gap-4">
-                      {filteredProducts.map((product) => (
-                        <li key={product._id}>
-                          <Link
-                            href={`/products/${product.slug}`}
-                            className="hover:text-primary transition-colors flex flex-col items-center gap-2"
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <NavigationMenuList className="grid gap-0">
+                      {category.subCategories.map((subcategory) => (
+                        <NavigationMenuItem key={subcategory._id}>
+                          <NavigationMenuLink
+                            asChild
+                            className={cn(
+                              "border-b-3 border-b-transparent capitalize",
+                              navigationMenuTriggerStyle(),
+                              isActive(
+                                `/category/${category.slug}/${subcategory.slug}`
+                              ) && "text-primary font-semibold"
+                            )}
                           >
-                            <div className="size-16 rounded-full bg-primary/10 dark:bg-muted/30 overflow-hidden flex-shrink-0">
-                              <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                width={200}
-                                height={200}
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                            <div className="text-center w-full">
-                              <span className="block truncate text-sm">
-                                {product.name}
-                              </span>
-                            </div>
-                          </Link>
-                        </li>
+                            <Link
+                              href={`/category/${category.slug}/${subcategory.slug}`}
+                            >
+                              {subcategory.name}
+                            </Link>
+                          </NavigationMenuLink>
+                        </NavigationMenuItem>
                       ))}
-                    </ul>
-                  ) : (
-                    <div className="text-muted-foreground py-4 text-center">
-                      No products found in this category
-                    </div>
+                    </NavigationMenuList>
+                  </NavigationMenuContent>
+                </>
+              ) : (
+                <NavigationMenuLink
+                  asChild
+                  className={cn(
+                    "border-b-3 border-b-transparent capitalize",
+                    navigationMenuTriggerStyle(),
+                    isActive(`/category/${category.slug}`) &&
+                      "border-b-primary font-semibold"
                   )}
-                </ScrollArea>
-              </div>
-            </div>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+                >
+                  <Link href={`/category/${category.slug}`}>
+                    {category.name}
+                  </Link>
+                </NavigationMenuLink>
+              )}
+            </NavigationMenuItem>
+          ))
+        )}
 
         {/* <NavigationMenuItem>
           <NavigationMenuLink

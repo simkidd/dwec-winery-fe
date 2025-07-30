@@ -115,8 +115,8 @@ const ExploreCategories = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="hidden md:flex cursor-pointer disabled:hidden" />
-                <CarouselNext className="hidden md:flex cursor-pointer disabled:hidden" />
+                <CarouselPrevious className="hidden md:flex cursor-pointer disabled:hidden left-4 size-12 !bg-background/90 hover:!bg-background" />
+                <CarouselNext className="hidden md:flex cursor-pointer disabled:hidden right-4 size-12 !bg-background/90 hover:!bg-background" />
               </Carousel>
             </div>
           </motion.div>

@@ -80,6 +80,7 @@ export const getProductBySlug = async (slug: string) => {
   }
 };
 
+// categories
 export const getAllCategories = async () => {
   try {
     const response = await instance.get(`/categories`);
@@ -93,6 +94,40 @@ export const getAllCategories = async () => {
 export const getCategoryBySlug = async (slug: string) => {
   try {
     const response = await instance.get(`/categories/slug/${slug}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+// subcategories
+export const getAllSubCategories = async () => {
+  try {
+    const response = await instance.get(`/categories/subcategories`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getSubcategoryBySlug = async (slug: string) => {
+  try {
+    const response = await instance.get(`/categories/subcategories/by-slug/${slug}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+// get subcategories by category ID
+export const getSubcategoriesByCategoryId = async (categoryId: string) => {
+  try {
+    const response = await instance.get(
+      `/categories/subcategories/by-category/${categoryId}`
+    );
 
     return handleResponse(response);
   } catch (error) {

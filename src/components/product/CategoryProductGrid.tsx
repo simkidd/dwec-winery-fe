@@ -1,6 +1,6 @@
 "use client";
 import useProducts from "@/hooks/use-products";
-import { ICategory } from "@/interfaces/product.interface";
+import { ICategory, ISubCategory } from "@/interfaces/product.interface";
 import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { ChevronDown, Frown } from "lucide-react";
@@ -15,6 +15,11 @@ import {
 import ProductCard from "./ProductCard";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 import ProductFilter from "./ProductFilter";
+
+interface CategoryProductGridProps {
+  category: ICategory;
+  subcategory?: ISubCategory;
+}
 
 type SortOption =
   | "desc"
@@ -33,7 +38,10 @@ const sortOptions = [
   { value: "z-a", label: "Name: Z-A" },
 ];
 
-const CategoryProductGrid = ({ category }: { category: ICategory }) => {
+const CategoryProductGrid = ({
+  category,
+  subcategory,
+}: CategoryProductGridProps) => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
   const {
@@ -52,9 +60,10 @@ const CategoryProductGrid = ({ category }: { category: ICategory }) => {
     dispatch(
       setFilter({
         category: [category._id],
+        ...(subcategory && { subCategory: [subcategory._id] }),
       })
     );
-  }, [dispatch, category._id]);
+  }, [dispatch, category._id, subcategory]);
 
   const handleSortFilter = (value: SortOption) => {
     dispatch(
@@ -62,6 +71,7 @@ const CategoryProductGrid = ({ category }: { category: ICategory }) => {
         ...filter,
         sort: value,
         category: [category._id],
+        ...(subcategory && { subCategory: [subcategory._id] }),
       })
     );
   };

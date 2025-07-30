@@ -5,6 +5,7 @@ export interface IProduct {
   name: string;
   description: string;
   category: ICategory;
+  subCategory: ISubCategory;
   images: string[];
   price: number;
   slug: string;
@@ -36,6 +37,17 @@ export interface ICategory {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  subCategories: ISubCategory[];
+}
+
+export interface ISubCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  isDeleted: boolean;
+  category: ICategory;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProductFilterInput {
@@ -43,6 +55,7 @@ export interface ProductFilterInput {
   limit?: number;
   search?: string;
   category?: string[];
+  subCategory?: string[];
   minPrice?: string;
   maxPrice?: string;
   sort?: "desc" | "asc" | "lowestPrice" | "highestPrice" | "a-z" | "z-a";
