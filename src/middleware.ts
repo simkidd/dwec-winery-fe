@@ -32,10 +32,10 @@ export default async function middleware(req: NextRequest) {
     }
   }
 
-  console.log("from middleware>>>", {
-    token,
-    user,
-  });
+  // console.log("from middleware>>>", {
+  //   token,
+  //   user,
+  // });
 
   // Redirect authenticated users from auth routes to homepage
   if (authRoutes.some((route) => pathname.startsWith(route))) {
