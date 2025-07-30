@@ -9,7 +9,7 @@ import { AnimatedLink } from "./AnimatedLink";
 
 const Footer = () => {
   return (
-    <footer className="bg-stone-900 text-stone-100 pt-16 pb-12">
+    <footer className="bg-stone-900 text-stone-100 pt-16 pb-12 mt-12">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

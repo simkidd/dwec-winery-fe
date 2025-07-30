@@ -1,4 +1,5 @@
 import CategoryProductGrid from "@/components/product/CategoryProductGrid";
+import SubcategoriesGrid from "@/components/product/SubcategoriesGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { ICategory } from "@/interfaces/product.interface";
 import { getAllCategories, getCategoryBySlug } from "@/lib/api/products";
@@ -9,11 +10,11 @@ import { notFound } from "next/navigation";
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ categorySlug: string }>;
 }) => {
   try {
-    const { slug } = await params;
-    const data = await getCategoryBySlug(slug);
+    const { categorySlug } = await params;
+    const data = await getCategoryBySlug(categorySlug);
     const category = data.category as ICategory;
 
     if (!category) {
@@ -88,10 +89,10 @@ export const generateStaticParams = async () => {
 const CategoryProducts = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ categorySlug: string }>;
 }) => {
-  const { slug } = await params;
-  const data = await getCategoryBySlug(slug);
+  const { categorySlug } = await params;
+  const data = await getCategoryBySlug(categorySlug);
   const category = data.category as ICategory;
 
   if (!category) {
@@ -120,9 +121,9 @@ const CategoryProducts = async ({
         </div>
       </div>
 
-      <div>
-        <CategoryProductGrid category={category} />
-      </div>
+      <SubcategoriesGrid category={category} />
+
+      <CategoryProductGrid category={category} />
     </div>
   );
 };

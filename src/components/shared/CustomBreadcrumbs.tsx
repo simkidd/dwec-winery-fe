@@ -23,6 +23,10 @@ type CustomBreadcrumbsProps = {
       name: string;
       slug: string;
     };
+    subCategory?: {
+      name: string;
+      slug: string;
+    };
   };
   blogPost?: {
     title: string;
@@ -52,6 +56,21 @@ const CustomBreadcrumbs = ({ product, blogPost }: CustomBreadcrumbsProps) => {
         //     ]
         //   : []),
         { name: blogPost.title, href: pathname }
+      );
+      return breadcrumbs;
+    }
+
+    if (product?.category && product?.subCategory) {
+      breadcrumbs.push(
+        {
+          name: product.category.name,
+          href: `/category/${product.category.slug}`,
+        },
+        {
+          name: product.subCategory.name,
+          href: `/category/${product.category.slug}/${product.subCategory.slug}`,
+        },
+        { name: product.name, href: pathname }
       );
       return breadcrumbs;
     }

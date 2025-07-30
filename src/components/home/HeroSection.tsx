@@ -200,10 +200,10 @@ const HeroSection = () => {
           <button
             key={index}
             onClick={() => api?.scrollTo(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+            className={`w-3 h-3 rounded-full transition-all duration-300 cursor-pointer border-stone-400 ${
               currentIndex === index
                 ? "bg-primary w-6"
-                : "bg-primary/50 hover:bg-primary/70"
+                : "bg-white/50 hover:bg-white/70"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
