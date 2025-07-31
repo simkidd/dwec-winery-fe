@@ -44,6 +44,8 @@ const OrdersList = () => {
   const { orders, isFetchingOrders, totalPages } = useOrders(filter);
   const orderListRef = useRef<HTMLDivElement>(null);
 
+  console.log("OrdersList rendered with filter:", orders);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Processing":
@@ -147,7 +149,7 @@ const OrdersList = () => {
             {order.products.map((item) => (
               <div key={item._id} className="flex items-start gap-4 pr-4 ">
                 <div className="w-16 h-16 bg-primary/10 rounded-md overflow-hidden flex-shrink-0">
-                  {item.product.images.length > 0 ? (
+                  {item.product?.images.length > 0 ? (
                     <Image
                       src={
                         item.variantUsed
@@ -167,7 +169,7 @@ const OrdersList = () => {
                 </div>
                 <div className="flex-1 min-w-0 ">
                   <h4 className="font-medium truncate text-wrap">
-                    {item.product.name}
+                    {item.product?.name}
                   </h4>
                   {item.variantUsed && (
                     <p className="text-sm text-gray-500 truncate text-wrap">
@@ -187,7 +189,7 @@ const OrdersList = () => {
                     </p>
                   ) : (
                     <p>
-                      {formatCurrency(item.product.price * item.qty, "NGN", 2)}
+                      {formatCurrency(item.product?.price * item.qty, "NGN", 2)}
                     </p>
                   )}
                 </div>
@@ -280,7 +282,7 @@ const OrdersList = () => {
                           key={item._id}
                           className="w-16 h-16 bg-primary/10 rounded-lg overflow-hidden shadow-sm border"
                         >
-                          {item.product.images.length > 0 ? (
+                          {item.product?.images.length > 0 ? (
                             <Image
                               src={
                                 item.variantUsed
