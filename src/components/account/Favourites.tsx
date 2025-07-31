@@ -28,7 +28,7 @@ const Favourites = () => {
           }
         />
       ) : isFetching ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[...Array(12)].map((_, i) => (
             <div key={i} className="flex flex-col gap-2">
               <Skeleton className="aspect-square rounded-sm" />
@@ -46,7 +46,7 @@ const Favourites = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {favorites?.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
