@@ -1,7 +1,12 @@
+import CategoryProductGrid from "@/components/product/CategoryProductGrid";
 import SubcategoriesGrid from "@/components/product/SubcategoriesGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import { ICategory } from "@/interfaces/product.interface";
-import { getAllCategories, getCategoryBySlug } from "@/lib/api/products";
+import {
+  getAllCategories,
+  getCategoryBySlug,
+  getSubcategoriesByCategoryId,
+} from "@/lib/api/products";
 import { cn } from "@/lib/utils";
 import { config } from "@/utils/config";
 import { notFound } from "next/navigation";
@@ -98,6 +103,11 @@ const CategoryProducts = async ({
     return notFound();
   }
 
+  let subCategories = [];
+  const subCatData = await getSubcategoriesByCategoryId(category._id);
+  subCategories = subCatData.subCategories || [];
+  const shouldShowSubCategories = subCategories.length > 0;
+
   return (
     <div>
       <CustomBreadcrumbs />
@@ -120,9 +130,11 @@ const CategoryProducts = async ({
         </div>
       </div>
 
-      <SubcategoriesGrid category={category} />
-
-      {/* <CategoryProductGrid category={category} /> */}
+      {shouldShowSubCategories ? (
+        <SubcategoriesGrid category={category} />
+      ) : (
+        <CategoryProductGrid category={category} />
+      )}
     </div>
   );
 };

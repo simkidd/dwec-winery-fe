@@ -60,6 +60,7 @@ const CategoryProductGrid = ({
     dispatch(
       setFilter({
         category: [category._id],
+        subCategory: undefined, 
         ...(subcategory && { subCategory: [subcategory._id] }),
       })
     );
@@ -86,7 +87,7 @@ const CategoryProductGrid = ({
           {/* Filters Sidebar - Hidden on small screens */}
           <div className="hidden md:block w-full md:w-64 flex-shrink-0">
             <div className="">
-              <ProductFilter />
+              <ProductFilter category={category} />
             </div>
           </div>
 
@@ -96,7 +97,7 @@ const CategoryProductGrid = ({
             <div className="flex justify-between items-center gap-4 mb-6">
               {/* Mobile Filters */}
               <div className="md:hidden">
-                <ProductFilter />
+                <ProductFilter category={category} />
               </div>
 
               <div className="ms-auto">

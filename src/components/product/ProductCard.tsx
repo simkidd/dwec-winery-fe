@@ -108,16 +108,18 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               )}
 
               {/* Favorite button */}
-              <FavouriteButton
-                product={product}
-                className={cn(
-                  "absolute top-2 right-2",
-                  isHovered
-                    ? "opacity-100 translate-x-0"
-                    : "lg:opacity-0 lg:translate-x-2",
-                  isImageLoading && "opacity-0"
-                )}
-              />
+              {!isOutOfStock && (
+                <FavouriteButton
+                  product={product}
+                  className={cn(
+                    "absolute top-2 right-2",
+                    isHovered
+                      ? "opacity-100 translate-x-0"
+                      : "lg:opacity-0 lg:translate-x-2",
+                    isImageLoading && "opacity-0"
+                  )}
+                />
+              )}
 
               {/* Out of stock badge */}
               {isOutOfStock && (

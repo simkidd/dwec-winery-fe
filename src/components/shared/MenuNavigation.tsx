@@ -23,9 +23,9 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import Logo from "./Logo";
 import { ScrollArea } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
+import Logo from "./Logo";
 
 type MenuState = "main" | "products" | "categories";
 
@@ -366,78 +366,6 @@ const MenuNavigation = ({
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        {loadingCategories ? (
-          <>
-            {[...Array(6)].map((_, i) => (
-              <NavigationMenuItem key={i}>
-                <Skeleton className="h-6 w-12 rounded-md" />
-              </NavigationMenuItem>
-            ))}
-          </>
-        ) : (
-          categories.map((category) => (
-            <NavigationMenuItem key={category._id}>
-              {category.subCategories && category.subCategories.length > 0 ? (
-                <>
-                  <NavigationMenuTrigger>
-                    <NavigationMenuLink
-                      asChild
-                      className={cn(
-                        "border-b-3 border-b-transparent capitalize",
-                        navigationMenuTriggerStyle(),
-                        isActive(`/category/${category.slug}`) &&
-                          "border-b-primary font-semibold"
-                      )}
-                    >
-                      <Link href={`/category/${category.slug}`}>
-                        {category.name}
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <NavigationMenuList className="grid gap-0">
-                      {category.subCategories.map((subcategory) => (
-                        <NavigationMenuItem key={subcategory._id}>
-                          <NavigationMenuLink
-                            asChild
-                            className={cn(
-                              "border-b-3 border-b-transparent capitalize",
-                              navigationMenuTriggerStyle(),
-                              isActive(
-                                `/category/${category.slug}/${subcategory.slug}`
-                              ) && "text-primary font-semibold"
-                            )}
-                          >
-                            <Link
-                              href={`/category/${category.slug}/${subcategory.slug}`}
-                            >
-                              {subcategory.name}
-                            </Link>
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
-                      ))}
-                    </NavigationMenuList>
-                  </NavigationMenuContent>
-                </>
-              ) : (
-                <NavigationMenuLink
-                  asChild
-                  className={cn(
-                    "border-b-3 border-b-transparent capitalize",
-                    navigationMenuTriggerStyle(),
-                    isActive(`/category/${category.slug}`) &&
-                      "border-b-primary font-semibold"
-                  )}
-                >
-                  <Link href={`/category/${category.slug}`}>
-                    {category.name}
-                  </Link>
-                </NavigationMenuLink>
-              )}
-            </NavigationMenuItem>
-          ))
-        )}
-
         {/* <NavigationMenuItem>
           <NavigationMenuLink
             asChild
@@ -489,6 +417,90 @@ const MenuNavigation = ({
             <Link href="/contact-us">Contact Us</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
+
+        {loadingCategories ? (
+          <>
+            <NavigationMenuItem>
+              <div className="flex items-center">
+                <span className="text-sm text-muted-foreground mb-1">|</span>
+              </div>
+            </NavigationMenuItem>
+            {[...Array(6)].map((_, i) => (
+              <NavigationMenuItem key={i}>
+                <Skeleton className="h-6 w-12 rounded-md" />
+              </NavigationMenuItem>
+            ))}
+          </>
+        ) : (
+          <>
+            <NavigationMenuItem>
+              <div className="flex items-center">
+                <span className="text-sm text-muted-foreground mb-1">|</span>
+              </div>
+            </NavigationMenuItem>
+            {categories.map((category) => (
+              <NavigationMenuItem key={category._id}>
+                {category.subCategories && category.subCategories.length > 0 ? (
+                  <>
+                    <NavigationMenuTrigger>
+                      <NavigationMenuLink
+                        asChild
+                        className={cn(
+                          "border-b-3 border-b-transparent capitalize",
+                          navigationMenuTriggerStyle(),
+                          isActive(`/category/${category.slug}`) &&
+                            "border-b-primary font-semibold"
+                        )}
+                      >
+                        <Link href={`/category/${category.slug}`}>
+                          {category.name}
+                        </Link>
+                      </NavigationMenuLink>
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <NavigationMenuList className="grid gap-0">
+                        {category.subCategories.map((subcategory) => (
+                          <NavigationMenuItem key={subcategory._id}>
+                            <NavigationMenuLink
+                              asChild
+                              className={cn(
+                                "border-b-3 border-b-transparent capitalize !px-2",
+                                navigationMenuTriggerStyle(),
+                                isActive(
+                                  `/category/${category.slug}/${subcategory.slug}`
+                                ) && "text-primary font-semibold"
+                              )}
+                            >
+                              <Link
+                                href={`/category/${category.slug}/${subcategory.slug}`}
+                              >
+                                {subcategory.name}
+                              </Link>
+                            </NavigationMenuLink>
+                          </NavigationMenuItem>
+                        ))}
+                      </NavigationMenuList>
+                    </NavigationMenuContent>
+                  </>
+                ) : (
+                  <NavigationMenuLink
+                    asChild
+                    className={cn(
+                      "border-b-3 border-b-transparent capitalize",
+                      navigationMenuTriggerStyle(),
+                      isActive(`/category/${category.slug}`) &&
+                        "border-b-primary font-semibold"
+                    )}
+                  >
+                    <Link href={`/category/${category.slug}`}>
+                      {category.name}
+                    </Link>
+                  </NavigationMenuLink>
+                )}
+              </NavigationMenuItem>
+            ))}
+          </>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );

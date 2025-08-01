@@ -17,8 +17,13 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
 import { Slider } from "../ui/slider";
+import { useQuery } from "@tanstack/react-query";
+import { getSubcategoriesByCategoryId } from "@/lib/api/products";
+import { ICategory, ISubCategory } from "@/interfaces/product.interface";
+import { Skeleton } from "../ui/skeleton";
+import Link from "next/link";
 
-const ProductFilter = () => {
+const ProductFilter = ({ category }: { category?: ICategory }) => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
   // const { categories, isPending: categoriesLoading } = useCategories();
@@ -31,6 +36,12 @@ const ProductFilter = () => {
   });
 
   const [priceRange, setPriceRange] = useState([0, 1000000]);
+
+  const { data: subcategories, isPending: loadingSubcategories } = useQuery({
+    queryKey: ["subcategories", category?._id],
+    queryFn: () => getSubcategoriesByCategoryId(category?._id as string),
+    select: (data) => data.subCategories as ISubCategory[],
+  });
 
   // Initialize local state when filters change
   useEffect(() => {
@@ -84,33 +95,34 @@ const ProductFilter = () => {
             <ScrollArea className="h-[50vh] px-4">
               <div className={`w-full space-y-6`}>
                 {/* Categories Links */}
-                {/* <div className="space-y-2 border-b">
-                  <h4 className="font-medium text-lg">Categories</h4>
+                <div className="space-y-2 border-b">
+                  <h4 className="font-medium text-lg">Sub Categories</h4>
                   <ul className="space-y-2 py-2">
-                    {categoriesLoading
+                    {loadingSubcategories
                       ? [...Array(5)].map((_, i) => (
                           <li key={i}>
                             <Skeleton className="h-8 w-full rounded-sm" />
                           </li>
                         ))
-                      : categories.map((category) => (
-                          <li key={category._id}>
+                      : subcategories &&
+                        subcategories.map((subcat) => (
+                          <li key={subcat._id}>
                             <Button
                               variant="ghost"
                               className="w-full justify-start font-normal"
                               asChild
                             >
                               <Link
-                                href={`/category/${category.slug}`}
+                                href={`/category/${category?.slug}/${subcat.slug}`}
                                 className="text-sm"
                               >
-                                {category.name}
+                                {subcat.name}
                               </Link>
                             </Button>
                           </li>
                         ))}
                   </ul>
-                </div> */}
+                </div>
 
                 {/* Price Filter Section */}
                 <div className="space-y-4 border-b pb-4">
@@ -192,34 +204,44 @@ const ProductFilter = () => {
 
   return (
     <div className="space-y-6">
-      {/* Categories Links */}
-      {/* <div className="space-y-2 border-b">
-        <h4 className="font-medium text-lg">Categories</h4>
-        <ul className="py-2 space-y-1">
-          {categoriesLoading
-            ? [...Array(5)].map((_, i) => (
-                <li key={i}>
-                  <Skeleton className="h-8 w-full rounded-sm" />
-                </li>
-              ))
-            : categories.map((category) => (
-                <li key={category._id}>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start font-normal"
-                    asChild
-                  >
-                    <Link
-                      href={`/category/${category.slug}`}
-                      className="text-sm"
-                    >
-                      {category.name}
-                    </Link>
-                  </Button>
-                </li>
-              ))}
-        </ul>
-      </div> */}
+      {/* SubCategories Links */}
+      <div className="space-y-2 ">
+        {loadingSubcategories ? (
+          <ul className="py-2 space-y-1 border-b">
+            {[...Array(5)].map((_, i) => (
+              <li key={i}>
+                <Skeleton className="h-8 w-full rounded-sm" />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <>
+            {subcategories && subcategories?.length > 0 && (
+              <>
+                <h4 className="font-medium text-lg">Sub Categories</h4>
+                <ul className="py-2 space-y-1 border-b">
+                  {subcategories.map((subcat) => (
+                    <li key={subcat._id}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start font-normal"
+                        asChild
+                      >
+                        <Link
+                          href={`/category/${category?.slug}/${subcat.slug}`}
+                          className="text-sm"
+                        >
+                          {subcat.name}
+                        </Link>
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Price Filter Section */}
       <div className="space-y-4 border-b pb-4">
