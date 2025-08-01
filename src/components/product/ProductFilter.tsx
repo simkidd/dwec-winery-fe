@@ -41,6 +41,7 @@ const ProductFilter = ({ category }: { category?: ICategory }) => {
     queryKey: ["subcategories", category?._id],
     queryFn: () => getSubcategoriesByCategoryId(category?._id as string),
     select: (data) => data.subCategories as ISubCategory[],
+    enabled: !!category?._id,
   });
 
   // Initialize local state when filters change
@@ -94,35 +95,48 @@ const ProductFilter = ({ category }: { category?: ICategory }) => {
             <DrawerHeader></DrawerHeader>
             <ScrollArea className="h-[50vh] px-4">
               <div className={`w-full space-y-6`}>
-                {/* Categories Links */}
-                <div className="space-y-2 border-b">
-                  <h4 className="font-medium text-lg">Sub Categories</h4>
-                  <ul className="space-y-2 py-2">
-                    {loadingSubcategories
-                      ? [...Array(5)].map((_, i) => (
+                {/* sub Categories Links */}
+                {category && (
+                  <div className="space-y-2 ">
+                    {loadingSubcategories ? (
+                      <ul className="py-2 space-y-1 border-b">
+                        {[...Array(5)].map((_, i) => (
                           <li key={i}>
                             <Skeleton className="h-8 w-full rounded-sm" />
                           </li>
-                        ))
-                      : subcategories &&
-                        subcategories.map((subcat) => (
-                          <li key={subcat._id}>
-                            <Button
-                              variant="ghost"
-                              className="w-full justify-start font-normal"
-                              asChild
-                            >
-                              <Link
-                                href={`/category/${category?.slug}/${subcat.slug}`}
-                                className="text-sm"
-                              >
-                                {subcat.name}
-                              </Link>
-                            </Button>
-                          </li>
                         ))}
-                  </ul>
-                </div>
+                      </ul>
+                    ) : (
+                      <>
+                        {subcategories && subcategories?.length > 0 && (
+                          <>
+                            <h4 className="font-medium text-lg">
+                              Sub Categories
+                            </h4>
+                            <ul className="py-2 space-y-1 border-b">
+                              {subcategories.map((subcat) => (
+                                <li key={subcat._id}>
+                                  <Button
+                                    variant="ghost"
+                                    className="w-full justify-start font-normal"
+                                    asChild
+                                  >
+                                    <Link
+                                      href={`/category/${category?.slug}/${subcat.slug}`}
+                                      className="text-sm"
+                                    >
+                                      {subcat.name}
+                                    </Link>
+                                  </Button>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {/* Price Filter Section */}
                 <div className="space-y-4 border-b pb-4">
@@ -205,44 +219,45 @@ const ProductFilter = ({ category }: { category?: ICategory }) => {
   return (
     <div className="space-y-6">
       {/* SubCategories Links */}
-      <div className="space-y-2 ">
-        {loadingSubcategories ? (
-          <ul className="py-2 space-y-1 border-b">
-            {[...Array(5)].map((_, i) => (
-              <li key={i}>
-                <Skeleton className="h-8 w-full rounded-sm" />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <>
-            {subcategories && subcategories?.length > 0 && (
-              <>
-                <h4 className="font-medium text-lg">Sub Categories</h4>
-                <ul className="py-2 space-y-1 border-b">
-                  {subcategories.map((subcat) => (
-                    <li key={subcat._id}>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start font-normal"
-                        asChild
-                      >
-                        <Link
-                          href={`/category/${category?.slug}/${subcat.slug}`}
-                          className="text-sm"
+      {category && (
+        <div className="space-y-2 ">
+          {loadingSubcategories ? (
+            <ul className="py-2 space-y-1 border-b">
+              {[...Array(5)].map((_, i) => (
+                <li key={i}>
+                  <Skeleton className="h-8 w-full rounded-sm" />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <>
+              {subcategories && subcategories?.length > 0 && (
+                <>
+                  <h4 className="font-medium text-lg">Sub Categories</h4>
+                  <ul className="py-2 space-y-1 border-b">
+                    {subcategories.map((subcat) => (
+                      <li key={subcat._id}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start font-normal"
+                          asChild
                         >
-                          {subcat.name}
-                        </Link>
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </>
-        )}
-      </div>
-
+                          <Link
+                            href={`/category/${category?.slug}/${subcat.slug}`}
+                            className="text-sm"
+                          >
+                            {subcat.name}
+                          </Link>
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      )}
       {/* Price Filter Section */}
       <div className="space-y-4 border-b pb-4">
         <div className="flex items-baseline justify-between">

@@ -366,6 +366,19 @@ const MenuNavigation = ({
           </NavigationMenuLink>
         </NavigationMenuItem>
 
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/about-us") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/products">All Products</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
         {/* <NavigationMenuItem>
           <NavigationMenuLink
             asChild

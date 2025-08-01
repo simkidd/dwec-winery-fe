@@ -39,15 +39,12 @@ const SearchBar = ({
 
     if (pathname !== "/search") {
       router.push(searchUrl);
+      // window.location.href = searchUrl
     } else {
       const params = new URLSearchParams(searchParams.toString());
       params.set("q", searchQuery);
       router.replace(`${pathname}?${params.toString()}`);
-    }
-
-    // Only update filter if not on /products page
-    if (pathname !== "/products") {
-      dispatch(setFilter({ search: searchQuery }));
+      // window.location.href = `${pathname}?${params.toString()}`
     }
 
     onToggleMobileSearch?.(false);

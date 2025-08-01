@@ -15,7 +15,13 @@ const SearchResults = ({ query }: { query: string }) => {
   // Update filter with search query when it changes
   useEffect(() => {
     if (filter.search !== query) {
-      dispatch(setFilter({ ...filter, search: query }));
+      dispatch(
+        setFilter({
+          search: query,
+          category: undefined,
+          subCategory: undefined,
+        })
+      );
     }
   }, [query, dispatch, filter]);
 
@@ -33,7 +39,7 @@ const SearchResults = ({ query }: { query: string }) => {
 
   if (isLoadingInfinite) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {[...Array(12)].map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
