@@ -375,83 +375,17 @@ const MenuNavigation = ({
               isActive("/about-us") && "border-b-primary font-semibold"
             )}
           >
-            <Link href="/products">All Products</Link>
+            <Link href="/products">Shop</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        {/* <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className={cn(
-              "border-b-3 border-b-transparent",
-              navigationMenuTriggerStyle(),
-              isActive("/about-us") && "border-b-primary font-semibold"
-            )}
-          >
-            <Link href="/about-us">About Us</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem> */}
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className={cn(
-              "border-b-3 border-b-transparent",
-              navigationMenuTriggerStyle(),
-              isActive("/blog") && "border-b-primary font-semibold"
-            )}
-          >
-            <Link href="/blog">Blog</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className={cn(
-              "border-b-3 border-b-transparent",
-              navigationMenuTriggerStyle(),
-              isActive("/faqs") && "border-b-primary font-semibold"
-            )}
-          >
-            <Link href="/faqs">FAQs</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className={cn(
-              "border-b-3 border-b-transparent",
-              navigationMenuTriggerStyle(),
-              isActive("/contact-us") && "border-b-primary font-semibold"
-            )}
-          >
-            <Link href="/contact-us">Contact Us</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        {loadingCategories ? (
-          <>
-            <NavigationMenuItem>
-              <div className="flex items-center">
-                <span className="text-sm text-muted-foreground mb-1">|</span>
-              </div>
-            </NavigationMenuItem>
-            {[...Array(6)].map((_, i) => (
+        {loadingCategories
+          ? [...Array(6)].map((_, i) => (
               <NavigationMenuItem key={i}>
                 <Skeleton className="h-6 w-12 rounded-md" />
               </NavigationMenuItem>
-            ))}
-          </>
-        ) : (
-          <>
-            <NavigationMenuItem>
-              <div className="flex items-center">
-                <span className="text-sm text-muted-foreground mb-1">|</span>
-              </div>
-            </NavigationMenuItem>
-            {categories.map((category) => (
+            ))
+          : categories.map((category) => (
               <NavigationMenuItem key={category._id}>
                 {category.subCategories && category.subCategories.length > 0 ? (
                   <>
@@ -512,8 +446,58 @@ const MenuNavigation = ({
                 )}
               </NavigationMenuItem>
             ))}
-          </>
-        )}
+
+        {/* <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/about-us") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/about-us">About Us</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem> */}
+
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/blog") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/blog">Blog</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/faqs") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/faqs">FAQs</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            asChild
+            className={cn(
+              "border-b-3 border-b-transparent",
+              navigationMenuTriggerStyle(),
+              isActive("/contact-us") && "border-b-primary font-semibold"
+            )}
+          >
+            <Link href="/contact-us">Contact Us</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
