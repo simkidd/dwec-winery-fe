@@ -158,14 +158,6 @@ const MenuNavigation = ({
       </MobileNavItem>
 
       <MobileNavItem
-        href="/faqs"
-        isActive={isActive("/faqs")}
-        onClick={closeMenu}
-      >
-        FAQs
-      </MobileNavItem>
-
-      <MobileNavItem
         href="/contact-us"
         isActive={isActive("/contact-us")}
         onClick={closeMenu}
@@ -299,7 +291,7 @@ const MenuNavigation = ({
                 {category.name}
               </MobileNavItem>
               {category.subCategories && category.subCategories.length > 0 && (
-                <div className="pl-4">
+                <div className="pl-4 bg-gray-50 dark:bg-stone-800">
                   {category.subCategories.map((subcategory) => (
                     <MobileNavItem
                       key={subcategory._id}
@@ -380,9 +372,9 @@ const MenuNavigation = ({
         </NavigationMenuItem> */}
 
         {loadingCategories
-          ? [...Array(6)].map((_, i) => (
+          ? [...Array(7)].map((_, i) => (
               <NavigationMenuItem key={i}>
-                <Skeleton className="h-6 w-12 rounded-md" />
+                <Skeleton className="h-6 w-20 rounded-md" />
               </NavigationMenuItem>
             ))
           : categories.map((category) => (
@@ -470,19 +462,6 @@ const MenuNavigation = ({
             )}
           >
             <Link href="/blog">Blog</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            asChild
-            className={cn(
-              "border-b-3 border-b-transparent",
-              navigationMenuTriggerStyle(),
-              isActive("/faqs") && "border-b-primary font-semibold"
-            )}
-          >
-            <Link href="/faqs">FAQs</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 

@@ -55,12 +55,11 @@ const Footer = () => {
             <ul className="space-y-3">
               {[
                 { href: "/about", text: "About Us" },
-                { href: "/faqs", text: "FAQs" },
-                { href: "/blog", text: "Blog" },
-                { href: "/contact-us", text: "Contact Us" },
                 { href: "/privacy-policy", text: "Privacy Policy" },
                 { href: "/return-policy", text: "Return & Shopping Policy" },
-                { href: "/terms-and-conditions", text: "Terms & Conditions" },
+                { href: "/blog", text: "Blog" },
+                { href: "/faqs", text: "FAQs" },
+                { href: "/contact-us", text: "Contact Us" },
               ].map((link, index) => (
                 <motion.li
                   key={index}
@@ -240,7 +239,7 @@ const Footer = () => {
           <div className="flex space-x-6 mt-4 md:mt-0">
             {[
               { href: "/privacy-policy", text: "Privacy Policy" },
-              { href: "/terms-and-conditions", text: "Terms of Service" },
+              { href: "/terms-and-conditions", text: "Terms & Conditions" },
             ].map((item, index) => (
               <div key={index}>
                 <Link
