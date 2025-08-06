@@ -1,6 +1,6 @@
 "use client";
 import useLogout from "@/hooks/use-logout";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 import { IUser } from "@/interfaces/user.interface";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
@@ -14,7 +14,7 @@ import {
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  X
+  X,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -42,6 +42,7 @@ const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const { signOut } = useLogout();
   const { theme } = useTheme();
 
@@ -74,7 +75,7 @@ const Header = () => {
       )}
     >
       {/* Top Contact Bar */}
-      <div className="bg-gray-50 dark:bg-stone-800 text-muted-foreground text-xs hidden md:block border-b">
+      <div className="bg-gray-50 dark:bg-stone-800 text-muted-foreground text-xs hidden lg:block border-b">
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <a
@@ -107,7 +108,7 @@ const Header = () => {
             {/* Logo */}
             <div className=" flex font-bold text-lg">
               <Link href={"/"}>
-                <div className="h-8 md:h-10">
+                <div className="h-8 lg:h-10">
                   <Image
                     src={
                       theme === "light"
@@ -125,7 +126,9 @@ const Header = () => {
           </div>
 
           {/* Search Input - Hidden on mobile */}
-          {!isMobile && <SearchBar />}
+          <div className="hidden lg:block w-full">
+            <SearchBar />
+          </div>
 
           {/* User & Cart */}
           <div className="flex items-center gap-2 sm:gap-4">
@@ -145,7 +148,7 @@ const Header = () => {
               </Button>
             )}
 
-            {!isMobile &&
+            {(!isMobile || !isTablet) &&
               (user ? (
                 <HoverCard>
                   <HoverCardTrigger asChild>
@@ -284,12 +287,14 @@ const Header = () => {
             <ThemeSwitcher />
 
             {/* Mobile Menu Button */}
-            {isMobile && <MenuNavigation mobileView user={user as IUser} />}
+            {(isMobile || isTablet) && (
+              <MenuNavigation mobileView user={user as IUser} />
+            )}
           </div>
         </div>
 
         {/* Mobile Search Bar - Appears when search button clicked */}
-        {isMobile && (
+        {(isMobile || isTablet) && (
           <div
             className={cn(
               "px-4 transition-all duration-300 ease-in-out ",
@@ -304,13 +309,11 @@ const Header = () => {
       </div>
 
       {/* Bottom Header - Hidden on mobile */}
-      {!isMobile && (
-        <div className=" bg-gray-50 dark:bg-stone-800 border-b">
-          <div className="container mx-auto px-4 flex">
-            <MenuNavigation user={user as IUser} />
-          </div>
+      <div className="hidden lg:block bg-gray-50 dark:bg-stone-800 border-b">
+        <div className="container mx-auto px-4 flex">
+          <MenuNavigation user={user as IUser} />
         </div>
-      )}
+      </div>
 
       <CartSheet
         isOpen={isCartOpen}

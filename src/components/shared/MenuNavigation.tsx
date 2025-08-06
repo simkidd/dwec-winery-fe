@@ -12,7 +12,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useCategories from "@/hooks/use-categories";
 import useLogout from "@/hooks/use-logout";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 import { IUser } from "@/interfaces/user.interface";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -38,6 +38,7 @@ const MenuNavigation = ({
 }) => {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet()
   const { signOut } = useLogout();
   const { categories, isPending: loadingCategories } = useCategories();
 
@@ -313,14 +314,14 @@ const MenuNavigation = ({
     </motion.div>
   );
 
-  if (mobileView || isMobile) {
+  if (mobileView || isMobile || isTablet) {
     return (
       <Sheet open={isOpen} onOpenChange={handleSheetOpenChange}>
         <SheetTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden cursor-pointer"
+            className="lg:hidden cursor-pointer"
           >
             <Menu className="h-5 w-5" />
           </Button>
