@@ -5,3 +5,9 @@ export interface SignUpDTO {
   phoneNumber: string;
   newsletter: boolean;
 }
+
+export interface LoginDTO {
+  email: string;
+  password: string;
+  turnstileToken: string;
+}
