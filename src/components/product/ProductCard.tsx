@@ -2,7 +2,7 @@
 import { IProduct } from "@/interfaces/product.interface";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
-import { Loader2, Truck } from "lucide-react";
+import { Loader2, ShoppingCart, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,11 +10,17 @@ import { AuthDialog } from "../shared/AuthDialog";
 import FavouriteButton from "../shared/FavouriteButton";
 import { Badge } from "../ui/badge";
 import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { useAppDispatch } from "@/store/hooks";
+import { addToCart } from "@/store/features/cart/cart.slice";
+import { toast } from "sonner";
 
 const ProductCard = ({ product }: { product: IProduct }) => {
+   const dispatch = useAppDispatch();
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasImageError, setHasImageError] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const hasDiscount =
     product.currentOffer?.isActive && product.currentOffer?.percentageOff;
@@ -36,6 +42,26 @@ const ProductCard = ({ product }: { product: IProduct }) => {
     setIsImageLoading(true);
     setHasImageError(false);
   }, [product]);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isOutOfStock) return;
+    
+    setIsAddingToCart(true);
+    const payload = {
+      product: {
+        ...product,
+        variants: [], // Clear variants array to avoid data duplication
+      },
+      quantity: 1,
+    };
+
+    dispatch(addToCart(payload));
+    toast.success(`${product.name} added to cart`);
+    setIsAddingToCart(false);
+  };
 
   // Get the first two images (or fallback to first image if only one exists)
   const primaryImage = product.images[0];
@@ -120,6 +146,33 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                   )}
                 />
               )}
+
+               {/* Add to cart button */}
+                {!isOutOfStock && (
+                  <Button
+                    size="sm"
+                    className={cn(
+                      "absolute bottom-2 left-1/2 transform -translate-x-1/2 z-[2]",
+                      "transition-all duration-300",
+                      isHovered
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-2",
+                      "rounded-sm px-4 py-1 h-8 text-xs font-medium",
+                      "flex items-center gap-1"
+                    )}
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                  >
+                    {isAddingToCart ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <>
+                        <ShoppingCart className="h-3 w-3" />
+                        Add to Cart
+                      </>
+                    )}
+                  </Button>
+                )}
 
               {/* Out of stock badge */}
               {isOutOfStock && (
