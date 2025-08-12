@@ -21,7 +21,7 @@ const ExploreCategories = () => {
   return (
     <section className="w-full py-16 bg-gray-50 dark:bg-stone-900/95">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end lg:mb-8 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 lg:mb-8 gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Our Categories

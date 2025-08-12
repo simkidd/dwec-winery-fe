@@ -72,7 +72,7 @@ const ProductsGrid = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-8 relative">
           {/* Filters Sidebar - Hidden on small screens */}
-          <div className="hidden md:block w-full md:w-64 flex-shrink-0">
+          <div className="hidden lg:block w-full md:w-64 flex-shrink-0">
             <div className="">
               <ProductFilter />
             </div>
@@ -83,7 +83,7 @@ const ProductsGrid = () => {
             {/* Mobile Filters & Sort Header */}
             <div className="flex justify-between items-center gap-4 mb-6">
               {/* Mobile Filters */}
-              <div className="md:hidden">
+              <div className="lg:hidden">
                 <ProductFilter />
               </div>
 
@@ -146,7 +146,7 @@ const ProductsGrid = () => {
               </div>
             ) : products.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {products.map((item) => (
                     <ProductCard key={item._id} product={item} />
                   ))}

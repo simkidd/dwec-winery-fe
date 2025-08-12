@@ -1,5 +1,5 @@
 "use client";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useIsTablet } from "@/hooks/use-mobile";
 import { setFilter } from "@/store/features/products/product.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { FilterX } from "lucide-react";
@@ -22,12 +22,21 @@ import { getSubcategoriesByCategoryId } from "@/lib/api/products";
 import { ICategory, ISubCategory } from "@/interfaces/product.interface";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTrigger,
+} from "../ui/sheet";
 
 const ProductFilter = ({ category }: { category?: ICategory }) => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.product);
   // const { categories, isPending: categoriesLoading } = useCategories();
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   // Local filter state (only applied when clicking Apply)
   const [localFilters, setLocalFilters] = useState({
@@ -212,6 +221,134 @@ const ProductFilter = ({ category }: { category?: ICategory }) => {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
+      </div>
+    );
+  }
+
+  if (isTablet) {
+    return (
+      <div className="flex flex-col gap-4">
+        {/* Tablet - Sheet */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant={"outline"} className="rounded-sm cursor-pointer">
+              <FilterX />
+              Filters
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="sm:max-w-[340px]">
+            <SheetHeader></SheetHeader>
+            <ScrollArea className="h-[calc(100vh-100px)] px-4">
+              <div className={`w-full space-y-6`}>
+                {/* SubCategories Links */}
+                {category && (
+                  <div className="space-y-2 ">
+                    {loadingSubcategories ? (
+                      <ul className="py-2 space-y-1 border-b">
+                        {[...Array(5)].map((_, i) => (
+                          <li key={i}>
+                            <Skeleton className="h-8 w-full rounded-sm" />
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <>
+                        {subcategories && subcategories?.length > 0 && (
+                          <>
+                            <h4 className="font-medium text-lg">
+                              Sub Categories
+                            </h4>
+                            <ul className="py-2 space-y-1 border-b">
+                              {subcategories.map((subcat) => (
+                                <li key={subcat._id}>
+                                  <Button
+                                    variant="ghost"
+                                    className="w-full justify-start font-normal"
+                                    asChild
+                                  >
+                                    <Link
+                                      href={`/category/${category?.slug}/${subcat.slug}`}
+                                      className="text-sm"
+                                    >
+                                      {subcat.name}
+                                    </Link>
+                                  </Button>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+                {/* Price Filter Section */}
+                <div className="space-y-4 border-b pb-4">
+                  <div className="flex items-baseline justify-between">
+                    <h4 className="font-medium text-lg">Filter By Price</h4>
+                  </div>
+
+                  <div className="space-y-4 pt-2">
+                    <Slider
+                      min={0}
+                      max={1000000}
+                      step={10}
+                      value={priceRange}
+                      onValueChange={handlePriceRangeChange}
+                      className="w-full"
+                    />
+                    <div className="flex items-center gap-4">
+                      <div className="space-y-1 flex-1">
+                        <Label htmlFor="min-price">Min</Label>
+                        <Input
+                          id="min-price"
+                          type="number"
+                          value={localFilters.minPrice}
+                          placeholder="Min price"
+                          min={0}
+                          className="focus-visible:ring-0 shadow-none rounded-sm"
+                          onChange={(e) =>
+                            setLocalFilters((prev) => ({
+                              ...prev,
+                              minPrice: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <Label htmlFor="max-price">Max</Label>
+                        <Input
+                          id="max-price"
+                          type="number"
+                          value={localFilters.maxPrice}
+                          placeholder="Max price"
+                          min={0}
+                          className="focus-visible:ring-0 shadow-none rounded-sm"
+                          onChange={(e) =>
+                            setLocalFilters((prev) => ({
+                              ...prev,
+                              maxPrice: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ScrollArea>
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button
+                  className="w-full cursor-pointer rounded-sm"
+                  onClick={applyFilters}
+                >
+                  Apply Filters
+                </Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
     );
   }

@@ -1,22 +1,27 @@
 "use client";
 import { IProduct } from "@/interfaces/product.interface";
 import { cn } from "@/lib/utils";
+import { addToCart } from "@/store/features/cart/cart.slice";
+import { useAppDispatch } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { Loader2, ShoppingCart, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AuthDialog } from "../shared/AuthDialog";
 import FavouriteButton from "../shared/FavouriteButton";
 import { Badge } from "../ui/badge";
-import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { useAppDispatch } from "@/store/hooks";
-import { addToCart } from "@/store/features/cart/cart.slice";
-import { toast } from "sonner";
+import { Card, CardContent } from "../ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ProductCard = ({ product }: { product: IProduct }) => {
-   const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasImageError, setHasImageError] = useState(false);
@@ -46,9 +51,9 @@ const ProductCard = ({ product }: { product: IProduct }) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isOutOfStock) return;
-    
+
     setIsAddingToCart(true);
     const payload = {
       product: {
@@ -147,32 +152,35 @@ const ProductCard = ({ product }: { product: IProduct }) => {
                 />
               )}
 
-               {/* Add to cart button */}
-                {!isOutOfStock && (
-                  <Button
-                    size="sm"
-                    className={cn(
-                      "absolute bottom-2 left-1/2 transform -translate-x-1/2 z-[2]",
-                      "transition-all duration-300",
-                      isHovered
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 translate-y-2",
-                      "rounded-sm px-4 py-1 h-8 text-xs font-medium",
-                      "flex items-center gap-1"
-                    )}
-                    onClick={handleAddToCart}
-                    disabled={isAddingToCart}
-                  >
-                    {isAddingToCart ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <>
-                        <ShoppingCart className="h-3 w-3" />
-                        Add to Cart
-                      </>
-                    )}
-                  </Button>
-                )}
+              {/* Add to cart button */}
+              {!isOutOfStock && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size={"icon"}
+                      className={cn(
+                        "absolute bottom-2 right-2 z-[2] hover:bg-stone-700",
+                        "transition-all duration-500",
+                        isHovered
+                          ? "opacity-100 translate-y-0"
+                          : "lg:opacity-0 lg:translate-y-2",
+                        "cursor-pointer"
+                      )}
+                      onClick={handleAddToCart}
+                      disabled={isAddingToCart}
+                    >
+                      {isAddingToCart ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-3 w-3" />
+                        </>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Add to cart</TooltipContent>
+                </Tooltip>
+              )}
 
               {/* Out of stock badge */}
               {isOutOfStock && (
