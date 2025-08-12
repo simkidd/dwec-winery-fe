@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LoginFormValues } from "@/components/auth/LoginForm";
-import { SignUpDTO } from "@/interfaces/auth.interface";
+import { LoginDTO, SignUpDTO } from "@/interfaces/auth.interface";
 import instance from "@/services/axios";
 
 // Handle responses and errors
@@ -21,7 +20,7 @@ const handleError = (error: any) => {
   }
 };
 
-export const loginUser = async (data: LoginFormValues) => {
+export const loginUser = async (data: LoginDTO) => {
   try {
     const response = await instance.post(`/auth/login`, data);
 
