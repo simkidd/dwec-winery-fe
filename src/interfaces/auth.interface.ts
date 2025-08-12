@@ -4,6 +4,7 @@ export interface SignUpDTO {
   fullName: string;
   phoneNumber: string;
   newsletter: boolean;
+  turnstileToken: string;
 }
 
 export interface LoginDTO {
