@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
@@ -27,6 +27,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import AgeConsentModal from "./AgeConsentModal";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 
 // Base schema for all users
 const formSchema = z
@@ -64,6 +65,12 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(true);
   const [over18, setOver18] = useState(false);
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const callbackUrl = searchParams.get("callbackUrl") || "/login";
 
@@ -110,7 +117,10 @@ const SignUpForm = () => {
     };
 
     // console.log(">>>>>>", data);
-    registerMutation.mutate(data);
+    registerMutation.mutate({
+      ...data,
+      turnstileToken: turnstileToken as string,
+    });
   };
 
   return (
@@ -357,10 +367,58 @@ const SignUpForm = () => {
                   )}
                 />
 
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  options={{
+                    theme: theme === "dark" ? "dark" : "light",
+                    size: "normal",
+                  }}
+                  onError={() => {
+                    setTurnstileStatus("error");
+                    setTurnstileError(
+                      "Security check failed. Please try again."
+                    );
+                  }}
+                  onExpire={() => {
+                    setTurnstileStatus("expired");
+                    setTurnstileError(
+                      "Security check expired. Please verify again."
+                    );
+                  }}
+                  onWidgetLoad={() => {
+                    setTurnstileStatus("required");
+                    setTurnstileError(null);
+                  }}
+                  onSuccess={(token) => {
+                    setTurnstileStatus("success");
+                    setTurnstileToken(token);
+                    setTurnstileError(null);
+
+                    console.log("token received:", token);
+                  }}
+                  scriptOptions={{
+                    async: true,
+                    defer: true,
+                    appendTo: "head",
+                  }}
+                />
+                {turnstileError && (
+                  <div
+                    className="flex items-center gap-2 text-red-500 text-sm mb-2"
+                    aria-live="polite"
+                  >
+                    <AlertCircle size={16} />
+                    <span>{turnstileError}</span>
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   className="w-full rounded-sm cursor-pointer"
-                  disabled={registerMutation.isPending}
+                  disabled={
+                    registerMutation.isPending || turnstileStatus !== "success"
+                  }
                 >
                   {registerMutation.isPending ? (
                     <>
