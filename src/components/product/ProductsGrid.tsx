@@ -146,7 +146,7 @@ const ProductsGrid = () => {
               </div>
             ) : products.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                   {products.map((item) => (
                     <ProductCard key={item._id} product={item} />
                   ))}

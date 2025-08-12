@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 const FeaturedProducts = () => {
   const { products, isPending } = useProducts({
-    limit: 20,
+    limit: 12,
     sort: "highestPrice",
   });
 
@@ -35,13 +35,13 @@ const FeaturedProducts = () => {
         </div>
 
         {isPending ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(10)].map((_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((item) => (
               <ProductCard key={item._id} product={item} />
             ))}
