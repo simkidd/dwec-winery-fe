@@ -254,7 +254,7 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center md:justify-end gap-4">
-              <div className="relative h-6 bg-white rounded-[2px] px-1 overflow-hidden">
+              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
                 <Image
                   src="/images/Paystack-logo.png"
                   alt="Paystack"
@@ -263,7 +263,7 @@ const Footer = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="relative h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
+              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
                 <Image
                   src="/images/mastercard-logo.png"
                   alt="Mastercard"
@@ -272,7 +272,7 @@ const Footer = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="relative h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden flex items-center justify-center">
+              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden flex items-center justify-center">
                 <Image
                   src="/images/visa-logo.png"
                   alt="Visa"
