@@ -190,7 +190,8 @@ const LoginForm = () => {
               ref={turnstileRef}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
               options={{
-                theme: theme === "dark" ? "dark" : "light",
+                theme:
+                  theme === "dark" || theme === "system" ? "dark" : "light",
                 size: "normal",
               }}
               onError={() => {

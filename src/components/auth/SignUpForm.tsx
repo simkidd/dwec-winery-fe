@@ -99,7 +99,9 @@ const SignUpForm = () => {
     mutationFn: registerUser,
     onSuccess: (data) => {
       toast.success(data?.message);
-      window.location.href = callbackUrl;
+      window.location.href = `/verify?callbackUrl=${encodeURIComponent(
+        callbackUrl
+      )}`;
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
@@ -371,7 +373,8 @@ const SignUpForm = () => {
                   ref={turnstileRef}
                   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
                   options={{
-                    theme: theme === "dark" ? "dark" : "light",
+                    theme:
+                      theme === "dark" || theme === "system" ? "dark" : "light",
                     size: "normal",
                   }}
                   onError={() => {
