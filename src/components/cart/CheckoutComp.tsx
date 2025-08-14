@@ -27,7 +27,7 @@ import { CreateOrderDTO } from "@/interfaces/order.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -39,6 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { IDeliveryArea } from "@/interfaces/delivery.interface";
 
 // Define base schema
 const baseSchema = z.object({
@@ -82,6 +83,8 @@ const CheckoutComp = () => {
 
   const { items } = useAppSelector((state) => state.cart);
   const { user } = useAppSelector((state) => state.auth);
+  const [selectedDeliveryArea, setSelectedDeliveryArea] =
+    useState<IDeliveryArea>();
 
   const { deliveryAreas, isLoading: isLoadingAreas } = useDeliveryArea();
 
@@ -122,20 +125,14 @@ const CheckoutComp = () => {
   const deliveryMethod = form.watch("deliveryMethod");
   const paymentMethod = form.watch("paymentMethod");
 
-  // Get selected area amount for shipping fee
-  const selectedAreaId = form.watch("deliveryDetails.area");
-  const selectedArea = deliveryAreas?.find(
-    (area) => area._id === selectedAreaId
-  );
   const shippingFee =
-    deliveryMethod === "Home Delivery" ? selectedArea?.amount || 0 : 0;
+    deliveryMethod === "Home Delivery" ? selectedDeliveryArea?.amount || 0 : 0;
 
   const subtotal = items.reduce(
     (sum, item) => sum + (item.variant?.price || item.product.price) * item.qty,
     0
   );
-  const tax = subtotal * 0.1; // 10% tax
-  const total = subtotal + shippingFee + tax;
+  const total = subtotal + shippingFee;
 
   // Mutation: Initialize payment
   const initPaymentMutation = useMutation({
@@ -164,6 +161,11 @@ const CheckoutComp = () => {
 
   const onSubmit = async (values: CheckoutFormValues) => {
     try {
+      if (values.deliveryMethod === "Home Delivery" && !selectedDeliveryArea) {
+        toast.error("Please select a delivery area");
+        return;
+      }
+
       // Transform cart items to match backend order format
       const products = items.map((item) => ({
         product: item.product._id,
@@ -215,21 +217,20 @@ const CheckoutComp = () => {
         totalAmountPaid: total,
       };
 
-      console.log("order>>", orderData)
 
-      // if (values.paymentMethod === "paystack") {
-      //   // Paystack payment flow
-      //   initPaymentMutation.mutate({
-      //     email: values.email,
-      //     amount: total * 100,
-      //     orderData,
-      //     callback_url: `${window.location.origin}/checkout/order-confirmation`,
-      //     cancel_url: `${window.location.origin}/checkout?status=cancelled`,
-      //   });
-      // } else {
-      //   // Pay on delivery flow
-      //   await createOrderMutation.mutateAsync(orderData);
-      // }
+      if (values.paymentMethod === "paystack") {
+        // Paystack payment flow
+        initPaymentMutation.mutate({
+          email: values.email,
+          amount: total * 100,
+          orderData,
+          callback_url: `${window.location.origin}/checkout/order-confirmation`,
+          cancel_url: `${window.location.origin}/checkout?status=cancelled`,
+        });
+      } else {
+        // Pay on delivery flow
+        await createOrderMutation.mutateAsync(orderData);
+      }
     } catch (error) {
       console.error("Checkout error:", error);
     }
@@ -518,37 +519,26 @@ const CheckoutComp = () => {
                       </div>
 
                       <div className="col-span-1 md:col-span-2">
-                        <FormField
-                          control={form.control}
-                          name="deliveryDetails.area"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  value={field.value || undefined}
-                                  disabled={isLoadingAreas}
-                                >
-                                  <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
-                                    <SelectValue placeholder="Select Delivery Area" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {deliveryAreas?.map((area) => (
-                                      <SelectItem
-                                        key={area._id}
-                                        value={area._id}
-                                      >
-                                        {area.name} -{" "}
-                                        {formatCurrency(area.amount)}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                        <Select
+                          disabled={isLoadingAreas}
+                          onValueChange={(value) => {
+                            const area = deliveryAreas?.find(
+                              (a) => a._id === value
+                            );
+                            setSelectedDeliveryArea(area);
+                          }}
+                        >
+                          <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
+                            <SelectValue placeholder="Select Delivery Area" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {deliveryAreas?.map((area) => (
+                              <SelectItem key={area._id} value={area._id}>
+                                {area.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </>
                   )}
@@ -722,16 +712,18 @@ const CheckoutComp = () => {
                     <span>Subtotal</span>
                     <span>{formatCurrency(subtotal)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>
-                      {deliveryMethod === "Pickup"
-                        ? "Pickup in store"
-                        : `Shipping (${selectedArea?.name || "Standard"})`}
-                    </span>
-                    <span>
-                      {shippingFee > 0 ? formatCurrency(shippingFee) : "Free"}
-                    </span>
-                  </div>
+                  {deliveryMethod === "Home Delivery" && shippingFee > 0 && (
+                    <div className="flex justify-between">
+                      <span>Delivery Fee</span>
+                      <span>{formatCurrency(shippingFee)}</span>
+                    </div>
+                  )}
+                  {deliveryMethod === "Home Delivery" && shippingFee === 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Delivery</span>
+                      <span>FREE</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className=" pt-4 flex justify-between text-lg font-bold">
