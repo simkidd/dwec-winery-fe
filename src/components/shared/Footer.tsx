@@ -127,10 +127,10 @@ const Footer = () => {
                   icon: <Mail className="h-5 w-5 shrink-0 text-primary" />,
                   content: (
                     <AnimatedLink
-                      href="mailto:dwecwinery@gmail.com"
+                      href="mailto:info@dwecwinery.ng"
                       className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-primary to-primary text-stone-400 hover:text-stone-100"
                     >
-                      dwecwinery@gmail.com
+                      info@dwecwinery.ng
                     </AnimatedLink>
                   ),
                 },
@@ -231,25 +231,57 @@ const Footer = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center"
+          className="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-start"
         >
           <p className="text-stone-500 text-sm">
             &copy; {new Date().getFullYear()} DWEC Drinks. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            {[
-              { href: "/privacy-policy", text: "Privacy Policy" },
-              { href: "/terms-and-conditions", text: "Terms & Conditions" },
-            ].map((item, index) => (
-              <div key={index}>
-                <Link
-                  href={item.href}
-                  className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
-                >
-                  {item.text}
-                </Link>
+          <div className="flex flex-col gap-4 mt-4 md:mt-0">
+            <div className="flex space-x-6">
+              {[
+                { href: "/privacy-policy", text: "Privacy Policy" },
+                { href: "/terms-and-conditions", text: "Terms & Conditions" },
+              ].map((item, index) => (
+                <div key={index}>
+                  <Link
+                    href={item.href}
+                    className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
+                  >
+                    {item.text}
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center md:justify-end gap-4">
+              <div className="relative h-6 bg-white rounded-[2px] px-1 overflow-hidden">
+                <Image
+                  src="/images/Paystack-logo.png"
+                  alt="Paystack"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
               </div>
-            ))}
+              <div className="relative h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
+                <Image
+                  src="/images/mastercard-logo.png"
+                  alt="Mastercard"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="relative h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden flex items-center justify-center">
+                <Image
+                  src="/images/visa-logo.png"
+                  alt="Visa"
+                  width={80}
+                  height={80}
+                  className="w-full h-3 object-contain"
+                />
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
