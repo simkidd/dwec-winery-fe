@@ -31,6 +31,14 @@ import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { useDeliveryArea } from "@/hooks/use-delivery";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 // Define base schema
 const baseSchema = z.object({
@@ -75,6 +83,8 @@ const CheckoutComp = () => {
   const { items } = useAppSelector((state) => state.cart);
   const { user } = useAppSelector((state) => state.auth);
 
+  const { deliveryAreas, isLoading: isLoadingAreas } = useDeliveryArea();
+
   const effectRan = useRef(false);
 
   useEffect(() => {
@@ -112,11 +122,18 @@ const CheckoutComp = () => {
   const deliveryMethod = form.watch("deliveryMethod");
   const paymentMethod = form.watch("paymentMethod");
 
+  // Get selected area amount for shipping fee
+  const selectedAreaId = form.watch("deliveryDetails.area");
+  const selectedArea = deliveryAreas?.find(
+    (area) => area._id === selectedAreaId
+  );
+  const shippingFee =
+    deliveryMethod === "Home Delivery" ? selectedArea?.amount || 0 : 0;
+
   const subtotal = items.reduce(
     (sum, item) => sum + (item.variant?.price || item.product.price) * item.qty,
     0
   );
-  const shippingFee = deliveryMethod === "Home Delivery" ? 5 : 0;
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + shippingFee + tax;
 
@@ -198,19 +215,21 @@ const CheckoutComp = () => {
         totalAmountPaid: total,
       };
 
-      if (values.paymentMethod === "paystack") {
-        // Paystack payment flow
-        initPaymentMutation.mutate({
-          email: values.email,
-          amount: total * 100,
-          orderData,
-          callback_url: `${window.location.origin}/checkout/order-confirmation`,
-          cancel_url: `${window.location.origin}/checkout?status=cancelled`,
-        });
-      } else {
-        // Pay on delivery flow
-        await createOrderMutation.mutateAsync(orderData);
-      }
+      console.log("order>>", orderData)
+
+      // if (values.paymentMethod === "paystack") {
+      //   // Paystack payment flow
+      //   initPaymentMutation.mutate({
+      //     email: values.email,
+      //     amount: total * 100,
+      //     orderData,
+      //     callback_url: `${window.location.origin}/checkout/order-confirmation`,
+      //     cancel_url: `${window.location.origin}/checkout?status=cancelled`,
+      //   });
+      // } else {
+      //   // Pay on delivery flow
+      //   await createOrderMutation.mutateAsync(orderData);
+      // }
     } catch (error) {
       console.error("Checkout error:", error);
     }
@@ -497,6 +516,40 @@ const CheckoutComp = () => {
                           />
                         </div>
                       </div>
+
+                      <div className="col-span-1 md:col-span-2">
+                        <FormField
+                          control={form.control}
+                          name="deliveryDetails.area"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  value={field.value || undefined}
+                                  disabled={isLoadingAreas}
+                                >
+                                  <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
+                                    <SelectValue placeholder="Select Delivery Area" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {deliveryAreas?.map((area) => (
+                                      <SelectItem
+                                        key={area._id}
+                                        value={area._id}
+                                      >
+                                        {area.name} -{" "}
+                                        {formatCurrency(area.amount)}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </>
                   )}
 
@@ -673,15 +726,11 @@ const CheckoutComp = () => {
                     <span>
                       {deliveryMethod === "Pickup"
                         ? "Pickup in store"
-                        : "Shipping"}
+                        : `Shipping (${selectedArea?.name || "Standard"})`}
                     </span>
                     <span>
                       {shippingFee > 0 ? formatCurrency(shippingFee) : "Free"}
                     </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tax</span>
-                    <span>{formatCurrency(tax)}</span>
                   </div>
                 </div>
 
