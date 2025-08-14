@@ -1,3 +1,4 @@
+import { AnimatedLink } from "@/components/shared/AnimatedLink";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,8 @@ const ContactUs = () => {
       icon: <Mail className="h-6 w-6 text-primary" />,
       title: "Email Us",
       description: "Our friendly team is here to help.",
-      details: "dwecwinery@gmail.com",
-      action: "mailto:dwecwinery@gmail.com",
+      details: "info@dwecwinery.ng",
+      action: "mailto:info@dwecwinery.ng",
       type: "email",
     },
     {
@@ -159,29 +160,23 @@ const ContactUs = () => {
                           {(
                             method.details as { text: string; href: string }[]
                           ).map((phone, i) => (
-                            <a
+                            <AnimatedLink
                               key={i}
                               href={phone.href}
-                              className="group relative inline-block text-sm text-muted-foreground hover:text-primary transition-colors"
+                              className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-primary to-primary text-stone-400 hover:text-stone-100 text-sm mt-1"
                             >
-                              <span className="relative">
-                                {phone.text}
-                                <span className="absolute left-0 bottom-0 w-full h-[1px] bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                              </span>
-                            </a>
+                              {phone.text}
+                            </AnimatedLink>
                           ))}
                         </div>
                       ) : method.action ? (
-                        <a
+                        <AnimatedLink
                           href={method.action}
-                          className="group relative inline-block text-sm text-muted-foreground hover:text-primary transition-colors mt-1"
+                          className="!bg-[length:0_1px] hover:!bg-[length:100%_1px] from-primary to-primary text-stone-400 hover:text-stone-100 text-sm mt-1"
                           target="_blank"
                         >
-                          <span className="relative">
-                            {method.details as string}
-                            <span className="absolute left-0 bottom-0 w-full h-[1px] bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                          </span>
-                        </a>
+                          {method.details as string}
+                        </AnimatedLink>
                       ) : (
                         <p className="text-sm text-muted-foreground mt-1">
                           {method.details as string}
