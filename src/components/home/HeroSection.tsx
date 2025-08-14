@@ -173,7 +173,7 @@ const HeroSection = () => {
                               className="md:hidden w-full h-full"
                               style={{
                                 backgroundImage: `url(${banner.mobileImage})`,
-                                backgroundSize: "contain",
+                                backgroundSize: "cover",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
                               }}
