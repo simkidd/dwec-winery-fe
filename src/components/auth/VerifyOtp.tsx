@@ -22,11 +22,21 @@ import { Loader2Icon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Card } from "../ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 const formSchema = z.object({
   code: z.string().min(6, {
@@ -38,10 +48,14 @@ export type FormValues = z.infer<typeof formSchema>;
 
 const RESEND_COOLDOWN = 30;
 
-const VerifyOtp = ({ email }: { email: string }) => {
+const VerifyOtp = ({ email: paramsEmail }: { email?: string }) => {
   const { theme } = useTheme();
+  const searchParams = useSearchParams();
   const [cooldown, setCooldown] = useState(0);
   const [isCooldownActive, setIsCooldownActive] = useState(false);
+  const [email, setEmail] = useState(paramsEmail || "");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,6 +69,7 @@ const VerifyOtp = ({ email }: { email: string }) => {
     onSuccess: async (data) => {
       toast.success(data?.message || "Account verified successfully");
       startCooldown();
+      window.location.href = callbackUrl;
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
@@ -65,7 +80,8 @@ const VerifyOtp = ({ email }: { email: string }) => {
   const resendVerifyCodeMutation = useMutation({
     mutationFn: userRequestVerification,
     onSuccess: async (data) => {
-      toast.success(data?.message || "Account verified successfully");
+      toast.success(data?.message || "Verification email resent");
+      setDialogOpen(false);
       startCooldown();
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -96,6 +112,14 @@ const VerifyOtp = ({ email }: { email: string }) => {
   };
 
   const handleResend = async () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogResend = async () => {
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
     resendVerifyCodeMutation.mutate(email);
   };
 
@@ -173,23 +197,79 @@ const VerifyOtp = ({ email }: { email: string }) => {
                 )}
               </Button>
 
-              <Button
-                variant="link"
-                className="text-sm text-muted-foreground cursor-pointer disabled:text-gray-400"
-                type="button"
-                onClick={handleResend}
-                disabled={
-                  isCooldownActive || resendVerifyCodeMutation.isPending
-                }
-              >
-                {resendVerifyCodeMutation.isPending ? (
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                ) : isCooldownActive ? (
-                  `Resend in ${cooldown}s`
-                ) : (
-                  "Didn't receive code? Resend"
-                )}
-              </Button>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="link"
+                    className="text-sm text-muted-foreground hover:text-primary cursor-pointer disabled:text-gray-400 disabled:cursor-not-allowed"
+                    type="button"
+                    onClick={handleResend}
+                    disabled={
+                      isCooldownActive || resendVerifyCodeMutation.isPending
+                    }
+                  >
+                    {resendVerifyCodeMutation.isPending ? (
+                      <>
+                        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : isCooldownActive ? (
+                      `Resend in ${cooldown}s`
+                    ) : (
+                      "Didn't receive code? Resend"
+                    )}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] [&>button]:hidden">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg font-medium">
+                      Resend Verification Code
+                    </DialogTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Enter your email to receive a new verification code
+                    </p>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      className="cursor-pointer"
+                      onClick={() => setDialogOpen(false)}
+                      disabled={resendVerifyCodeMutation.isPending}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleDialogResend}
+                      disabled={resendVerifyCodeMutation.isPending || !email}
+                      className="min-w-[100px] cursor-pointer"
+                    >
+                      {resendVerifyCodeMutation.isPending ? (
+                        <>
+                          <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                          Sending
+                        </>
+                      ) : (
+                        "Resend Code"
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </form>
         </Form>
