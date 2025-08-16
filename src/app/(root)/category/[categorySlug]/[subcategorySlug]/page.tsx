@@ -23,7 +23,7 @@ const SubcategoryPage = async ({
       <CustomBreadcrumbs />
       <div
         className={cn(
-          "w-full h-40 lg:h-60 relative flex items-center",
+          "w-full h-60 relative flex items-center",
           ` bg-no-repeat bg-cover bg-center`
         )}
         style={{ backgroundImage: `url(${subcategory.category.image})` }}

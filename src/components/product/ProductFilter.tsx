@@ -376,14 +376,16 @@ const ProductFilter = ({ category }: { category?: ICategory }) => {
                       <li key={subcat._id}>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start font-normal"
+                          className="w-full justify-start font-normal truncate"
                           asChild
                         >
                           <Link
                             href={`/category/${category?.slug}/${subcat.slug}`}
-                            className="text-sm"
+                            className="text-sm truncate block max-w-full"
                           >
-                            {subcat.name}
+                            <span className="truncate block">
+                              {subcat.name}
+                            </span>
                           </Link>
                         </Button>
                       </li>

@@ -1,5 +1,5 @@
-@import '../styles/custom.css';
-@import '../styles/rich-text-editor.css';
+@import "../styles/custom.css";
+@import "../styles/rich-text-editor.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -84,44 +84,44 @@
   /* Base colors */
   --background: #1d1a18; /* Deep stone */
   --foreground: #f5f3f0; /* Light cream text */
-  
+
   /* Card surfaces */
   --card: #292524; /* Medium stone */
   --card-foreground: #f5f3f0;
-  
+
   /* Popovers/modals */
   --popover: #292524;
   --popover-foreground: #f5f3f0;
-  
+
   /* Primary brand color (kept your burgundy) */
   --primary: #8a2f30;
   --primary-foreground: #f5f3f0;
-  
+
   /* Secondary elements */
   --secondary: #44403b; /* Lightest stone */
   --secondary-foreground: #f5f3f0;
-  
+
   /* Muted/disabled content */
   --muted: #292524;
   --muted-foreground: #a8a5a0; /* Soft stone text */
-  
+
   /* Accents */
   --accent: #44403b;
   --accent-foreground: #f5f3f0;
-  
+
   /* Destructive actions */
   --destructive: #c74e4b; /* Warm red that complements stone */
   --border: #3a3632; /* Stone border */
   --input: #3a3632; /* Input backgrounds */
   --ring: #8a2f30; /* Focus rings use primary color */
-  
+
   /* Chart colors */
   --chart-1: #8a2f30; /* Burgundy */
   --chart-2: #5c6b6f; /* Cool slate */
   --chart-3: #b38e6d; /* Warm clay */
   --chart-4: #44403b; /* Neutral stone */
   --chart-5: #9e4a4f; /* Muted red */
-  
+
   /* Sidebar */
   --sidebar: #292524;
   --sidebar-foreground: #f5f3f0;
@@ -160,6 +160,11 @@
 
     @media (min-width: 992px) {
       max-width: 960px;
+    }
+
+    /* 👇 New breakpoint for iPad landscape */
+    @media (min-width: 1024px) and (max-width: 1199px) {
+      max-width: 1100px; /* adjust as needed (980–1024px works well) */
     }
 
     @media (min-width: 1200px) {
