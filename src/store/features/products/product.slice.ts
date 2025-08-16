@@ -17,7 +17,7 @@ export const SLICE_NAME = "product";
 
 export const initialFilterState: ProductFilterInput = {
   page: 1,
-  limit: 12,
+  limit: 20,
   sort: "highestPrice",
 };
 

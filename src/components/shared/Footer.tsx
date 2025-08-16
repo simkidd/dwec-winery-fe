@@ -222,6 +222,36 @@ const Footer = () => {
                 <FaTiktok size={20} />
               </motion.a>
             </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative w-fit h-4 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
+                <Image
+                  src="/images/Paystack-logo.png"
+                  alt="Paystack"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="relative w-fit h-4 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
+                <Image
+                  src="/images/mastercard-logo.png"
+                  alt="Mastercard"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="relative w-fit h-4 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden flex items-center justify-center">
+                <Image
+                  src="/images/visa-logo.png"
+                  alt="Visa"
+                  width={80}
+                  height={80}
+                  className="w-full h-3 object-contain"
+                />
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -251,36 +281,6 @@ const Footer = () => {
                   </Link>
                 </div>
               ))}
-            </div>
-
-            <div className="flex items-center md:justify-end gap-4">
-              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
-                <Image
-                  src="/images/Paystack-logo.png"
-                  alt="Paystack"
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden">
-                <Image
-                  src="/images/mastercard-logo.png"
-                  alt="Mastercard"
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="relative h-5 lg:h-6 bg-white rounded-[2px] py-0.5 px-1 overflow-hidden flex items-center justify-center">
-                <Image
-                  src="/images/visa-logo.png"
-                  alt="Visa"
-                  width={80}
-                  height={80}
-                  className="w-full h-3 object-contain"
-                />
-              </div>
             </div>
           </div>
         </motion.div>

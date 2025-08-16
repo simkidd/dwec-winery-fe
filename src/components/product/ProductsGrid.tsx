@@ -72,7 +72,7 @@ const ProductsGrid = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-8 relative">
           {/* Filters Sidebar - Hidden on small screens */}
-          <div className="hidden lg:block w-full md:w-64 flex-shrink-0">
+          <div className="hidden lg:block w-full md:w-52 flex-shrink-0">
             <div className="">
               <ProductFilter />
             </div>

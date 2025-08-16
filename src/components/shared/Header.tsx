@@ -133,7 +133,7 @@ const Header = () => {
           {/* User & Cart */}
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Mobile Search Button */}
-            {isMobile && (
+            {(isMobile || isTablet) && (
               <Button
                 variant="ghost"
                 size="icon"
@@ -297,7 +297,7 @@ const Header = () => {
         {(isMobile || isTablet) && (
           <div
             className={cn(
-              "px-4 transition-all duration-300 ease-in-out ",
+              "container mx-auto px-4 transition-all duration-300 ease-in-out ",
               showMobileSearch
                 ? "pb-4 max-h-20 opacity-100"
                 : "max-h-0 opacity-0"
