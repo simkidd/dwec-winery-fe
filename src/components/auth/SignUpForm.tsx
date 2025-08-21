@@ -375,7 +375,7 @@ const SignUpForm = () => {
                   options={{
                     theme:
                       theme === "dark" || theme === "system" ? "dark" : "light",
-                    size: "normal",
+                    size: "flexible",
                   }}
                   onError={() => {
                     setTurnstileStatus("error");
