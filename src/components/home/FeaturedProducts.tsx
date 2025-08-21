@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 const FeaturedProducts = () => {
   const { products, isPending } = useProducts({
-    limit: 12,
+    limit: 20,
     sort: "highestPrice",
   });
 
