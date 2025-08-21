@@ -125,8 +125,17 @@ const CheckoutComp = () => {
   const deliveryMethod = form.watch("deliveryMethod");
   const paymentMethod = form.watch("paymentMethod");
 
-  const shippingFee =
-    deliveryMethod === "Home Delivery" ? selectedDeliveryArea?.amount || 0 : 0;
+  // Check if any product has free delivery
+  const hasFreeDelivery = items.some((item) => item.product.isFreeDelivery);
+
+  // const shippingFee =
+  //   deliveryMethod === "Home Delivery" ? selectedDeliveryArea?.amount || 0 : 0;
+
+  const shippingFee = hasFreeDelivery
+    ? 0
+    : deliveryMethod === "Home Delivery"
+    ? selectedDeliveryArea?.amount || 0
+    : 0;
 
   const subtotal = items.reduce(
     (sum, item) => sum + (item.variant?.price || item.product.price) * item.qty,
@@ -216,7 +225,6 @@ const CheckoutComp = () => {
         paymentMethod: values.paymentMethod,
         totalAmountPaid: total,
       };
-
 
       if (values.paymentMethod === "paystack") {
         // Paystack payment flow
@@ -314,7 +322,7 @@ const CheckoutComp = () => {
                     )}
                   />
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="saveInfo"
                     render={({ field }) => (
@@ -330,7 +338,7 @@ const CheckoutComp = () => {
                         </FormLabel>
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
                   <h2 className="text-xl font-bold pt-4 border-t">
                     Delivery Method
@@ -534,7 +542,7 @@ const CheckoutComp = () => {
                           <SelectContent>
                             {deliveryAreas?.map((area) => (
                               <SelectItem key={area._id} value={area._id}>
-                                {area.name}
+                                {area.name} ({formatCurrency(area.amount)})
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -718,10 +726,10 @@ const CheckoutComp = () => {
                       <span>{formatCurrency(shippingFee)}</span>
                     </div>
                   )}
-                  {deliveryMethod === "Home Delivery" && shippingFee === 0 && (
+                  {deliveryMethod === "Home Delivery" && hasFreeDelivery && (
                     <div className="flex justify-between text-green-600">
-                      <span>Delivery</span>
-                      <span>FREE</span>
+                      <span>Delivery Fee</span>
+                      <span>Free Delivery</span>
                     </div>
                   )}
                 </div>
