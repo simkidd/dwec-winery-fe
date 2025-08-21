@@ -170,7 +170,12 @@ const CheckoutComp = () => {
 
   const onSubmit = async (values: CheckoutFormValues) => {
     try {
-      if (values.deliveryMethod === "Home Delivery" && !selectedDeliveryArea) {
+      // Only require delivery area selection if it's Home Delivery AND no free delivery
+      if (
+        values.deliveryMethod === "Home Delivery" &&
+        !hasFreeDelivery &&
+        !selectedDeliveryArea
+      ) {
         toast.error("Please select a delivery area");
         return;
       }
@@ -526,28 +531,32 @@ const CheckoutComp = () => {
                         </div>
                       </div>
 
-                      <div className="col-span-1 md:col-span-2">
-                        <Select
-                          disabled={isLoadingAreas}
-                          onValueChange={(value) => {
-                            const area = deliveryAreas?.find(
-                              (a) => a._id === value
-                            );
-                            setSelectedDeliveryArea(area);
-                          }}
-                        >
-                          <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
-                            <SelectValue placeholder="Select Delivery Area" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {deliveryAreas?.map((area) => (
-                              <SelectItem key={area._id} value={area._id}>
-                                {area.name} ({formatCurrency(area.amount)})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {/* Delivery area selection - only show and require if no free delivery */}
+                      {deliveryMethod === "Home Delivery" &&
+                        !hasFreeDelivery && (
+                          <div className="col-span-1 md:col-span-2">
+                            <Select
+                              disabled={isLoadingAreas}
+                              onValueChange={(value) => {
+                                const area = deliveryAreas?.find(
+                                  (a) => a._id === value
+                                );
+                                setSelectedDeliveryArea(area);
+                              }}
+                            >
+                              <SelectTrigger className="w-full cursor-pointer focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm">
+                                <SelectValue placeholder="Select Delivery Area" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {deliveryAreas?.map((area) => (
+                                  <SelectItem key={area._id} value={area._id}>
+                                    {area.name} ({formatCurrency(area.amount)})
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                     </>
                   )}
 
@@ -720,16 +729,14 @@ const CheckoutComp = () => {
                     <span>Subtotal</span>
                     <span>{formatCurrency(subtotal)}</span>
                   </div>
-                  {deliveryMethod === "Home Delivery" && shippingFee > 0 && (
+                  {deliveryMethod === "Home Delivery" && (
                     <div className="flex justify-between">
                       <span>Delivery Fee</span>
-                      <span>{formatCurrency(shippingFee)}</span>
-                    </div>
-                  )}
-                  {deliveryMethod === "Home Delivery" && hasFreeDelivery && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Delivery Fee</span>
-                      <span>Free Delivery</span>
+                      <span className={hasFreeDelivery ? "text-green-600" : ""}>
+                        {hasFreeDelivery
+                          ? "Free Delivery"
+                          : formatCurrency(shippingFee)}
+                      </span>
                     </div>
                   )}
                 </div>
