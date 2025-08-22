@@ -7,6 +7,7 @@ const AdsManagerPage = () => {
       <PageHeader
         title="Ads & Banners Manager"
         description="Create, edit, and manage promotional banners and advertisements"
+        image="/images/paper-hand-holding-megaphone.jpg"
       />
 
       <div className="mt-6">

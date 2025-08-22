@@ -7,6 +7,7 @@ const BlogManagerPage = () => {
       <PageHeader
         title="Blog Manager"
         description="Create, edit, and manage blog posts and content"
+        image="/images/top-view-wine-bottle-marble-background.jpg"
       />
 
       <div>
