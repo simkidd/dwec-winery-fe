@@ -64,6 +64,7 @@ const ContactUs = () => {
       <PageHeader
         title="Contact Us"
         description="We'd love to hear from you! Get in touch with our team."
+        image="/images/copy-space-with-full-bottle-wine.jpg"
       />
 
       <div className="container mx-auto px-4 py-16 space-y-8">

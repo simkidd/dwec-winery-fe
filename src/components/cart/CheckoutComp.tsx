@@ -268,7 +268,11 @@ const CheckoutComp = () => {
   return (
     <div>
       <CustomBreadcrumbs />
-      <PageHeader title="Checkout" className="hidden md:flex" />
+      <PageHeader
+        title="Checkout"
+        className="hidden md:flex"
+        image="/images/wine-with-red-green-grapes-frame.jpg"
+      />
 
       <div className="container mx-auto px-4 py-8">
         <Button variant="ghost" className="mb-6 pl-0" asChild>

@@ -62,6 +62,7 @@ const BlogManager = () => {
     onSuccess: () => {
       toast.success("Post deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["blog-stats"] });
       setShowDeleteDialog(false);
     },
     onError: (error) => {

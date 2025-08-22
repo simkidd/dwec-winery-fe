@@ -192,12 +192,6 @@ const BlogPost = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
             {/* Your actual blog content would go here */}
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
-
-            {/* Example content sections */}
-            <h2>Introduction</h2>
-            <p>This is where your rich blog content would appear...</p>
-            <h3>Subheading</h3>
-            <p>More detailed content sections...</p>
           </article>
 
           {/* Share Buttons */}

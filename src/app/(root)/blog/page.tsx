@@ -16,6 +16,7 @@ const BlogPage = () => {
       <PageHeader
         title="Blogs"
         description="Discover our latest articles and insights"
+        image="/images/top-view-wine-bottle-marble-background.jpg"
       />
 
       <div className=" py-12">
