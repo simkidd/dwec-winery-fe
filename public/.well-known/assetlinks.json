@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.dwecwinery.app",
+      "sha256_cert_fingerprints": [
+        "54:78:B0:8D:B9:89:6F:AE:9E:B9:31:A2:A6:7D:1D:4E:AE:FA:ED:12:56:3C:A4:6C:9D:85:AE:B4:BB:B6:10:E3"
+      ]
+    }
+  }
+]
