@@ -22,7 +22,7 @@ const handleError = (error: any) => {
 
 export const loginUser = async (data: LoginDTO) => {
   try {
-    const response = await instance.post(`/auth/login`, data);
+    const response = await instance.post(`/auth/web/login`, data);
 
     return handleResponse(response);
   } catch (error) {
@@ -32,7 +32,7 @@ export const loginUser = async (data: LoginDTO) => {
 
 export const registerUser = async (data: SignUpDTO) => {
   try {
-    const response = await instance.post(`/auth/signup`, data);
+    const response = await instance.post(`/auth/web/signup`, data);
 
     return handleResponse(response);
   } catch (error) {
