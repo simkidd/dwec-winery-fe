@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Clock, Mail, MapPin, Phone, Send } from "lucide-react";
 import { Metadata } from "next";
+import ImageBg from "../../../../public/images/copy-space-with-full-bottle-wine.jpg"
 
 const pageTitle = "Contact Us";
 
@@ -64,7 +65,7 @@ const ContactUs = () => {
       <PageHeader
         title="Contact Us"
         description="We'd love to hear from you! Get in touch with our team."
-        image="/images/copy-space-with-full-bottle-wine.jpg"
+        image={ImageBg}
       />
 
       <div className="container mx-auto px-4 py-16 space-y-8">

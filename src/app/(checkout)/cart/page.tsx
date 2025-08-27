@@ -17,6 +17,8 @@ import EmptyCart from "@/components/cart/EmptyCart";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
 import Link from "next/link";
+import ImageBg from "../../../../public/images/wine-with-red-green-grapes-frame.jpg";
+
 
 const CartPage = () => {
   const dispatch = useAppDispatch();
@@ -56,7 +58,7 @@ const CartPage = () => {
       <PageHeader
         title="Cart"
         className="hidden md:flex"
-        image="/images/wine-with-red-green-grapes-frame.jpg"
+        image={ImageBg}
       />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">

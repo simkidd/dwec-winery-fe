@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { IDeliveryArea } from "@/interfaces/delivery.interface";
+import ImageBg from "../../../public/images/wine-with-red-green-grapes-frame.jpg";
 
 // Define base schema
 const baseSchema = z.object({
@@ -271,7 +272,7 @@ const CheckoutComp = () => {
       <PageHeader
         title="Checkout"
         className="hidden md:flex"
-        image="/images/wine-with-red-green-grapes-frame.jpg"
+        image={ImageBg}
       />
 
       <div className="container mx-auto px-4 py-8">

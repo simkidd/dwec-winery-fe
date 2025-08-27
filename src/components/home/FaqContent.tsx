@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 // Define types for better TypeScript support
 interface FAQQuestion {
@@ -243,25 +244,28 @@ const FaqContent = () => {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex overflow-x-auto px-6 border-b border-stone-200 dark:border-stone-700 no-scrollbar">
-          {faqData.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => {
-                setActiveTab(category.id);
-                setSearchQuery("");
-              }}
-              className={`flex items-center px-8 py-5 font-medium whitespace-nowrap border-b-2 transition-colors ${
-                activeTab === category.id && !searchQuery
-                  ? "border-primary text-primary"
-                  : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
-              }`}
-            >
-              <span className="mr-3">{category.icon}</span>
-              {category.title}
-            </button>
-          ))}
-        </div>
+        <ScrollArea>
+          <div className="flex px-6 border-b border-stone-200 dark:border-stone-700 no-scrollbar">
+            {faqData.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => {
+                  setActiveTab(category.id);
+                  setSearchQuery("");
+                }}
+                className={`flex items-center px-8 py-5 font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
+                  activeTab === category.id && !searchQuery
+                    ? "border-primary text-primary"
+                    : "border-transparent text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                }`}
+              >
+                <span className="mr-3">{category.icon}</span>
+                {category.title}
+              </button>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         {/* FAQ Content */}
         <div className="divide-y divide-stone-200 dark:divide-stone-700">
@@ -355,7 +359,7 @@ const FAQItem = ({
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center p-8 text-left hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors"
+        className="w-full flex justify-between items-center p-8 text-left hover:bg-stone-50 dark:hover:bg-stone-700/30 transition-colors cursor-pointer"
       >
         <h3 className="font-medium text-lg md:text-xl">{question}</h3>
         <motion.div
@@ -375,7 +379,7 @@ const FAQItem = ({
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="px-8 pb-8 text-stone-600 dark:text-stone-300">
+            <div className="px-8 pb-8 pt-1 text-stone-600 dark:text-stone-300">
               {answer}
             </div>
           </motion.div>

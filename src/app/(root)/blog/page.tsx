@@ -2,6 +2,7 @@ import BlogGrid from "@/components/blog/BlogGrid";
 import CustomBreadcrumbs from "@/components/shared/CustomBreadcrumbs";
 import PageHeader from "@/components/shared/PageHeader";
 import { Metadata } from "next";
+import ImageBg from "../../../../public/images/top-view-wine-bottle-marble-background.jpg";
 
 const pageTitle = "Blog";
 
@@ -16,7 +17,7 @@ const BlogPage = () => {
       <PageHeader
         title="Blogs"
         description="Discover our latest articles and insights"
-        image="/images/top-view-wine-bottle-marble-background.jpg"
+        image={ImageBg}
       />
 
       <div className=" py-12">

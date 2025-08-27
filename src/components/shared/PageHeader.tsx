@@ -1,7 +1,11 @@
-"use client"
+"use client";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+import { useEffect, useState } from "react";
+
+type BackgroundImage = StaticImageData | string;
 
 const PageHeader = ({
   title,
@@ -11,9 +15,18 @@ const PageHeader = ({
 }: {
   title: string;
   description?: string;
-  image?: string;
+  image?: BackgroundImage;
   className?: string;
 }) => {
+  const isMobile = useIsMobile();
+  const [isStaticImage, setIsStaticImage] = useState(false);
+
+  // Check if bgImage is StaticImageData or string URL
+  useEffect(() => {
+    // StaticImageData has a 'src' property, strings don't
+    setIsStaticImage(typeof image === "object" && "src" in image);
+  }, [image]);
+
   return (
     <div
       className={cn(
@@ -27,11 +40,12 @@ const PageHeader = ({
           <div className="absolute inset-0">
             <Image
               src={image}
-              alt=""
+              alt="page header background"
               fill
+              quality={isMobile ? 70 : 80}
               className="object-cover"
               priority
-              quality={80}
+              placeholder={isStaticImage ? "blur" : "empty"}
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-stone-900/40 dark:from-stone-900/90 dark:to-stone-900/60" />
@@ -68,7 +82,7 @@ const PageHeader = ({
       </div>
 
       {/* Decorative elements */}
-      <motion.div 
+      <motion.div
         className="absolute bottom-0 left-0 w-full h-1 bg-primary"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
