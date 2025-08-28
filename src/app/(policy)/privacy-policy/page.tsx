@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16">
+    <div className="container max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16">
       <h1 className="text-3xl font-bold text-center mb-6">
         Privacy Policy for DWEC WINERY
       </h1>

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ReturnPolicy() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16 ">
+    <div className="container max-w-4xl mx-auto px-4 py-8 text-[15px] lg:py-16 ">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-2">Return & Shopping Policy</h1>
         <p className="text-stone-500 dark:text-stone-400">
