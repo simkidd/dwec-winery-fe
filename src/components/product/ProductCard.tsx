@@ -79,7 +79,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
           <div className="relative">
             {/* Image container */}
             <div
-              className="aspect-square bg-primary/10  rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
+              className="aspect-[3/4] bg-primary/10  rounded-sm mb-2 flex items-center justify-center relative overflow-hidden py-2"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
@@ -95,7 +95,7 @@ const ProductCard = ({ product }: { product: IProduct }) => {
               {/* Error state */}
               {hasImageError && (
                 <Link href={`/products/${product.slug}`}>
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                  <div className="absolute inset-0 flex items-center justify-center bg-primary/10">
                     <span className="text-xs text-muted-foreground">
                       Image not available
                     </span>

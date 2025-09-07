@@ -7,7 +7,7 @@ const ProductCardSkeleton = () => {
   return (
     <div className="flex flex-col gap-2">
       <div className="relative">
-        <Skeleton className="aspect-square rounded-sm bg-stone-200 dark:bg-stone-800" />
+        <Skeleton className="aspect-[3/4] rounded-sm bg-stone-200 dark:bg-stone-800" />
         <motion.div
           initial={{ opacity: 0.3, scale: 0.95 }}
           animate={{
