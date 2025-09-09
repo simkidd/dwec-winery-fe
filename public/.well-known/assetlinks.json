@@ -1,11 +1,15 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.dwecwinery.app",
       "sha256_cert_fingerprints": [
-        "EC:F6:2A:BA:34:28:DF:5C:CF:95:35:2A:03:AC:D3:C6:B5:4E:CA:EE:A7:CD:3F:3D:71:9D:46:45:65:62:42:2C"
+        "EC:F6:2A:BA:34:28:DF:5C:CF:95:35:2A:03:AC:D3:C6:B5:4E:CA:EE:A7:CD:3F:3D:71:9D:46:45:65:62:42:2C",
+        "E1:F8:95:B7:28:57:3A:22:00:65:17:1D:FB:0F:A1:28:DD:3E:A9:70:F8:BD:49:68:39:94:8C:94:02:FD:BD:5A"
       ]
     }
   }
